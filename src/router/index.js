@@ -6,6 +6,9 @@ import system from '@/components/system_manager/system'
 import user from '@/components/user_manager/user/user'
 import network from '@/components/network_manager/network'
 import bond from '@/components/network_manager/bond'
+import disk from '@/components/storage_manager/disk'
+import raid from '@/components/raid_manager/raid'
+import group from '@/components/user_manager/group/group'
 
 Vue.use(Router)
 
@@ -45,6 +48,30 @@ export default new Router({
             components: {
                 default: bar,
                 content: bond
+            }
+        },
+        {
+            path: '/disk',
+            name: 'disk',
+            components: {
+                default: bar,
+                content: disk
+            }
+        },
+        {
+            path: '/raid',
+            name: 'raid',
+            components: {
+                default: bar,
+                content: raid
+            }
+        },
+        {
+            path: '/group',
+            name: 'group',
+            components: {
+                default: bar,
+                content: group
             }
         }
     ]

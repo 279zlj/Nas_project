@@ -15,7 +15,7 @@
                     <el-col :xs='1' :sm='1' :md='1' :lg='1' :xl='1' :offset='1' style='margin-bottom:.5em'>
                         <el-button type='warning' @click='createuser = true' :disabled="unbondcan">解聚</el-button>
                     </el-col>
-                    <el-table ref='multipleTable' :data='bonddata' tooltip-effect="dark" style='width:100%' height="400">
+                    <el-table ref='multipleTable' :data='bonddata.slice((currpage - 1) * pagesize, currpage * pagesize)' tooltip-effect="dark" style='width:100%' height="400" @selection-change="selectrow">
                         <el-table-column type='selection' width="55"></el-table-column>
                         <el-table-column label="网口" prop='interface'></el-table-column>
                         <el-table-column label="IP地址" prop='ip'></el-table-column>
@@ -37,8 +37,11 @@ export default {
     data(){
         return{
             bonddata:[],
-            bondcan:false,
-            unbondcan:true
+            bondcan:true,
+            unbondcan:true,
+            pagesize: 5,
+            currpage: 1,
+            multiplesletion:[]
         }
     },
     mounted() {
@@ -52,6 +55,10 @@ export default {
             }).catch(error=>{
                 console.log(error)
             })
+        },
+        selectrow(val){
+            this.multiplesletion = val
+            console.log(this.multiplesletion)
         }
     },  
 }

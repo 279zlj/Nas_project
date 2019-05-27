@@ -42,7 +42,7 @@
                     </el-form-item>
                 </el-form>
             </el-dialog>
-            <el-dialog title="修改用户" :visible.sync="modifydialog" width="30%" center :close-on-click-modal='false'>
+            <el-dialog title="修改用户" :visible.sync="modifydialog" width="30%" :before-close="handleClose" center :close-on-click-modal='false'>
                 <el-form :model="userform" :rules="userrule" ref='userform' label-width="30" class='demo-ruleForm'>
                   <el-form-item label="新密码" prop='userpwd'>
                     <el-input v-model="userform.userpwd" placeholder="请输入新密码" type="password" style='width:80%'></el-input>
@@ -50,13 +50,15 @@
                   <el-form-item label="确认密码" prop='userpwdt'>
                     <el-input v-model="userform.userpwdt" placeholder="请再次输入新密码" type="password" style='width:80%'></el-input>
                   </el-form-item>
-                  <el-button type="primary" @click="modifysubmit('userform')">提交</el-button>
-                  <el-button @click="userreset('userform')">重置</el-button>
+                  <el-form-item>
+                    <el-button type="primary" @click="modifysubmit('userform')">提交</el-button>
+                    <el-button @click="userreset('userform')">重置</el-button>
+                  </el-form-item>
                 </el-form>
             </el-dialog>
             <el-dialog title="删除用户" :visible.sync="deletedialog" width="30%" center :close-on-click-modal="false">
                 <p>删除用户：{{target}}?</p>
-                <el-button type="primary" @click='deleteuser()'>确认</el-button>
+                <el-button type="primary" @click='deleteu()'>确认</el-button>
                 <el-button @click='deletedialog=false'>取消</el-button>
             </el-dialog>
         </div>
@@ -151,7 +153,6 @@ export default {
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
-                    console.log(_this.userform.username,_this.userform.usertype)
                     _this.$axios.post(this.$host+'',{name:_this.userform.username,type:userform.usertype}).then(function(res){
                         _this.createuser=false
                         if(res.data.status=='OK'){
@@ -176,7 +177,6 @@ export default {
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
-                    console.log(_this.userform.userpwd)
                     _this.$axios.post(this.$host+'',{name:_this.target,pwd:_this.userform.userpwd}).then(res=>{
                         _this.modifydialog=false
                         if(res.data.status=='OK'){
@@ -197,7 +197,7 @@ export default {
                 }
             })
         },
-        deleteuser(){
+        deleteu(){
             this.$axios.post(this.$host+'',{name:target}).then(res=>{
                 _this.deletedialog=false
                 if(res.data.status=='OK'){
