@@ -3,41 +3,49 @@
         <headerBar></headerBar>
         <div>
             <div class='tip_bg'>
-                <span class='tip'>组管理</span>
+                <span class='tip'>{{$t('message.group')}}</span>
             </div>
             <el-row class='main_table'>
                 <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-                <el-alert type="error" title="操作失败" show-icon id='error_tip' :closable='false' center style='display:none'></el-alert>
-                <el-alert type="success" title="操作成功" show-icon id='success_tip' :closable='false' center style='display:none'></el-alert>
-                <el-col :xs='1' :sm='1' :md='1' :lg='1' :xl='1' :offset='23' style='margin-bottom:.5em'>
-                    <el-tooltip content="添加" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" @click='creategroup = true'></el-button></el-tooltip>
-                </el-col>
-                <el-table :data='groupdata.slice((currpage - 1) * pagesize, currpage * pagesize)' height='400' border style='width:100%'>
-                    <el-table-column label="组名" prop='name'></el-table-column>
-                    <el-table-column label="组ID" prop='type'></el-table-column>
-                    <el-table-column label="操作" width:='150'>
+                <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
+                <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
+                <el-row style='margin-bottom:.5em;float:right'>
+                    <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='creategroup = true'></el-button></el-tooltip>
+                </el-row>
+                <el-table :data='groupdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border cell-style="padding:.7em" style='width:100%;min-height:310px;max-height:100%'>
+                    <el-table-column :label="$t('group.name')" prop='name'></el-table-column>
+                    <el-table-column :label="$t('group.id')" prop='id'></el-table-column>
+                    <el-table-column :label="$t('message.oper')" width:='150'>
                         <template slot-scope='scope'>
-                            <el-tooltip content="删除" placement="bottom"><el-button type='danger' icon="el-icon-delete" size='mini' @click='deletegroup(scope.row)'></el-button></el-tooltip>
+                            <el-tooltip :content="$t('message.delete')" placement="bottom"><el-button type='danger' icon="el-icon-delete" size='mini' @click='deletegroup(scope.row)'></el-button></el-tooltip>
                         </template>
                     </el-table-column>
                 </el-table>
+                <el-pagination
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :page-sizes="[5, 10]"
+                :page-size="pagesize"
+                :total="groupdata.length" style="text-align: right;margin: 1em">
+                </el-pagination>
                 </el-col>
             </el-row>
-            <el-dialog title="新建组" width="20%" :close-on-click-modal="false" :visible.sync="creategroup" :before-close="handleClose">
+            <el-dialog :title="$t('group.new')" width="20%" :close-on-click-modal="false" :visible.sync="creategroup" :before-close="handleClose">
                 <el-form :model='groupform' :rules='grouprule' ref='groupform' label-width="30" class="demo-ruleForm">
-                    <el-form-item label="组名" prop='groupname'>
-                        <el-input v-model="groupform.groupname" placeholder="请输入组名" style='width:80%'></el-input>
+                    <el-form-item :label="$t('group.name')" prop='groupname'>
+                        <el-input v-model="groupform.groupname" :placeholder="$t('group.input')" style='width:80%'></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="groupsubmit('groupform')">提交</el-button>
-                        <el-button @click="groupreset('groupform')">重置</el-button>
+                        <el-button type="primary" @click="groupsubmit('groupform')">{{$t('message.submit')}}</el-button>
+                        <el-button @click="groupreset('groupform')">{{$t('message.reset')}}</el-button>
                     </el-form-item>
                 </el-form>
             </el-dialog>
-            <el-dialog title="删除组" :visible.sync="deletelog" width="30%" center :close-on-click-modal="false">
-                <p>删除组：{{grouptarget}}?</p>
-                <el-button type="primary" @click='deleteg()'>确认</el-button>
-                <el-button @click='deletedialog=false'>取消</el-button>
+            <el-dialog :title="$t('group.delete')" :visible.sync="deletelog" width="30%" center :close-on-click-modal="false">
+                <p>{{$t('group.delete')}}：{{grouptarget}}?</p>
+                <el-button type="primary" @click='deleteg()'>{{$t('message.sure')}}</el-button>
+                <el-button @click='deletelog=false'>{{$t('message.cancel')}}</el-button>
             </el-dialog>
         </div>
     </div>
@@ -77,13 +85,36 @@ export default {
             deletelog:false
         }
     },
+    mounted(){
+        this.getgroup()
+    },
     methods: {
+        getgroup(){
+            var _this=this
+            this.$axios.get(this.$host+'group').then(function(res){
+                _this.groupdata = res.data.data                
+            })
+        },
         groupsubmit(formname){
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
-                    _this.$axios.post(this.$host+'',{name:_this.groupform.groupname}).then(res=>{
-
+                    _this.$axios.post(this.$host+'group',{name:_this.groupform.groupname}).then(res=>{
+                        _this.creategroup=false
+                        if(res.data.success){
+                            $('#success_tip').css({'display':'flex'})
+                            setTimeout(function(){
+                                $('#success_tip').css({'display':'none'})
+                            },3000)
+                        }
+                        else if(!res.data.success){
+                            $('#error_tip').css({'display':'flex'})
+                            setTimeout(function(){
+                                $('#error_tip').css({'display':'none'})
+                            },3000)
+                        }
+                        _this.getgroup()
+                        _this.groupreset('groupform')
                     }).catch(error=>{
                         console.log(error)
                     })
@@ -97,17 +128,38 @@ export default {
         groupreset(formname){
             this.$refs[formname].resetFields();
         },
-        deletegroup(){
+        deletegroup(row){
             this.deletelog=true;
             this.grouptarget=row.name
         },
         deleteg(){
-            this.$axios.post(this.$host+'',{name:target}).then(res=>{
-
+            var _this=this
+            this.$axios.delete(this.$host+'group',{data:{name:_this.grouptarget}}).then(res=>{
+                _this.deletelog=false
+                if(res.data.success){
+                    $('#success_tip').css({'display':'flex'})
+                    setTimeout(function(){
+                        $('#success_tip').css({'display':'none'})
+                    },3000)
+                }
+                else if(!res.data.success){
+                    $('#error_tip').css({'display':'flex'})
+                    setTimeout(function(){
+                        $('#error_tip').css({'display':'none'})
+                    },3000)
+                }
+                _this.getgroup()
+                _this.groupreset('groupform')
             }).catch(error=>{
                 console.log(error)
             })
-        }
+        },
+        handleCurrentChange(cpage) {
+          this.currpage = cpage;
+        },
+        handleSizeChange(psize) {
+          this.pagesize = psize;
+        },
     },    
 }
 </script>

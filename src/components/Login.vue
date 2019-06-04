@@ -2,15 +2,29 @@
   <el-row id="Login">
     <el-col :span='10' :offset='7' id='login_form'>
       <el-row>
-        <el-col :span='4' :offset='10' class='user_bg'>
-          <i class='el-icon-pingtaiguanli-yonghuguanli iconfont users'></i>
-        </el-col>
-        <el-col :span="12" :offset='6'>
-          <el-input v-model="username" type='text' placeholder="请输入用户名" prefix-icon='el-icon-user-s iconfont' class="user_top" autofocus></el-input>
-          <el-input v-model="pwd" type='password' placeholder="请输入密码" prefix-icon='el-icon-ziyuan iconfont' class='top'></el-input>
-          <el-alert type="error" center  title="账号与密码不匹配！" show-icon id='tip' ></el-alert>
-          <el-button type="success" round class='login_btn' @click='login()'>登 录</el-button>
-        </el-col>
+        <el-row>
+          <el-col :xs='8' :sm='8' :md='8' :lg='9' :xl='10' style='height:1em'></el-col>
+          <el-col :xs='8' :sm='8' :md='8' :lg='5' :xl='4' class='user_bg'>
+            <i class='el-icon-pingtaiguanli-yonghuguanli iconfont users'></i>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' :offset='6'>
+            <el-form  :model="logindata" :rules="loginrule" ref="logindata" label-width="30" class="demo-ruleForm">
+              <el-form-item prop='username'>
+                <el-input v-model="logindata.username" placeholder="请输入用户名" prefix-icon='el-icon-user-s iconfont' class="user_top" autofocus></el-input>
+              </el-form-item>
+              <el-form-item prop='pwd'>
+                <el-input v-model="logindata.pwd" type='password' placeholder="请输入密码" prefix-icon='el-icon-ziyuan iconfont' ></el-input>
+                
+              </el-form-item>
+              <el-form-item >
+                <el-alert type="error" :title="tipsmsg" show-icon id='error_tip' :closable='false' center style="width:100%"></el-alert>
+                <el-button type="success" round class='login_btn' @click='login()'>登 录</el-button>
+              </el-form-item>
+            </el-form>
+          </el-col>
+        </el-row>
       </el-row>
     </el-col>
   </el-row>
@@ -20,22 +34,63 @@
 export default {
   name: 'Login',
   data () {
+    var checkname=(rule,val,callback)=>{
+      if(!val){
+        return callback(new Error('请输入用户名'))
+      }
+      else{
+        callback()
+      }
+    }
+    var checkpwd=(rule,val,callback)=>{
+      if(!val){
+        return callback(new Error('请输入密码'))
+      }
+      else
+        callback()
+    }
     return {
-      username:'',
-      pwd:'',
+      logindata:{
+        username:'',
+        pwd:'',
+      },
+      loginrule:{
+        username:[
+          {validator:checkname, trigger:'blur'}
+        ],
+        pwd:[
+          {validator:checkpwd, trigger:'blur'}
+        ]
+      },
+      tipsmsg:''
     }
   },
   methods: {
     login(){
-      if(this.username=='admin'&&this.pwd=='admin'){
-        this.$router.push('system');
-      }
-      else{
-        $('#tip').css({display:'table'})
-        setTimeout(function(){
-          $('#tip').css({display:'none'})
-        },3000)
-      }
+      this.$axios.post(this.$host+'login',{username:this.logindata.username,password:this.logindata.pwd}).then(res=>{
+        if(res.data.success){
+          sessionStorage.setItem('loginname',this.logindata.username)
+          this.$router.push('system');
+        }
+        else if(!res.data.success){
+          if(res.data.data){
+            this.tipsmsg=res.data.data
+            $('#error_tip').css({'display':'flex'})
+            setTimeout(function(){
+                $('#error_tip').css({'display':'none'})
+            },2000)
+          }
+          else{
+            this.tipsmsg='账号密码不匹配！'
+            $('#error_tip').css({'display':'flex'})
+            setTimeout(function(){
+                $('#error_tip').css({'display':'none'})
+            },2000)
+          }
+        }
+      }).catch(error=>{
+        console.log(error)
+      })
     }
   },
 }
@@ -78,9 +133,8 @@ export default {
 }
 .login_btn{
   width:100%;
-  margin-top:3em;
 }
-#tip{
+/* #tip{
   display:none;
-}
+} */
 </style>

@@ -30,6 +30,9 @@ export default {
 .main_table{
   margin-top:3.5em;
 }
+.other_table{
+  margin-top: 6.3em;
+}
 .tip_bg{
     background-color:#FFF;
     height:3.5em;
@@ -43,5 +46,10 @@ export default {
 }
 a{
   text-decoration:none;
+}
+#error_tip,#success_tip{
+        display: none;
+        position: absolute;
+        width: inherit;
 }
 </style>
