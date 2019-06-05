@@ -15,12 +15,12 @@
                 <el-input v-model="logindata.username" placeholder="请输入用户名" prefix-icon='el-icon-user-s iconfont' class="user_top" autofocus></el-input>
               </el-form-item>
               <el-form-item prop='pwd'>
-                <el-input v-model="logindata.pwd" type='password' placeholder="请输入密码" prefix-icon='el-icon-ziyuan iconfont' ></el-input>
+                <el-input v-model="logindata.pwd" type='password' placeholder="请输入密码" prefix-icon='el-icon-ziyuan iconfont' @keyup.enter.native="login()"></el-input>
                 
               </el-form-item>
               <el-form-item >
                 <el-alert type="error" :title="tipsmsg" show-icon id='error_tip' :closable='false' center style="width:100%"></el-alert>
-                <el-button type="success" round class='login_btn' @click='login()'>登 录</el-button>
+                <el-button type="success" round class='login_btn' @click='login()' >登 录</el-button>
               </el-form-item>
             </el-form>
           </el-col>

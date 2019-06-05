@@ -71,11 +71,11 @@
 <script>
 import 'echarts'
 import headerBar from '../common/headerBar'
-import cpucharts from './charts/cpucharts'
-import menorycharts from './charts/menorycharts'
+// import cpucharts from './charts/cpucharts'
+// import menorycharts from './charts/menorycharts'
 export default {
     name:'syetem',
-    components:{cpucharts,menorycharts,headerBar},
+    components:{headerBar},
     data(){
         var datecheck=(rule,val,callback)=>{
             if(!val){
@@ -246,6 +246,6 @@ export default {
     font-weight:700;
 }
 #cpu,#menory{
-        width: 100%;height:250px;border-radius: .3em;
+        width: 100%;height:300px;border-radius: .3em;
     }
 </style>

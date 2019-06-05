@@ -11,7 +11,7 @@
             <el-row style='margin-bottom:.5em;float:right'>
                 <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createiscsi = true'></el-button></el-tooltip>
             </el-row>
-            <el-table :data='iscsidata.slice((currpage - 1)*pagesize,currpage*pagesize)' border cell-style="padding:.7em" style='width:100%;min-height:310px;max-height:100%'>
+            <el-table :data='iscsidata.slice((currpage - 1)*pagesize,currpage*pagesize)' border  class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
                 <el-table-column label="IQN" prop='node_wwn' :show-overflow-tooltip="true"></el-table-column>
                 <el-table-column :label="$t('iscsi.name')" prop='disk_name' width="160"></el-table-column>
                 <el-table-column :label="$t('iscsi.path')" prop='disk_path' width="160"></el-table-column>

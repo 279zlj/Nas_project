@@ -12,7 +12,7 @@
                 <el-row style='margin-bottom:.5em;float:right'>
                     <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createuser = true'></el-button></el-tooltip>
                 </el-row>
-                    <el-table :data='userdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border cell-style="padding:.7em" style='width:100%;min-height:310px;max-height:100%' v-if='alive'>
+                    <el-table :data='userdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell" style='width:100%;min-height:310px;max-height:100%' v-if='alive'>
                         <el-table-column :label="$t('user.id')" prop='userid'></el-table-column>
                         <el-table-column :label="$t('user.name')" prop='username'></el-table-column>
                         <el-table-column :label="$t('user.type')" prop='last_name'></el-table-column>

@@ -21,7 +21,7 @@ const cn = {
         'change': '切换语言',
         'cha': '中文',
         'eng': '英语',
-        'exit': 'Exit',
+        'exit': '退出',
         'logout': '登出账号',
         'sure': '确定',
         'cancel': '取消',

@@ -31,11 +31,12 @@ router.beforeEach((to, from, next) => { // 路由守卫
     } else {
         next();
     }
-    if (from.name == 'Login' && name == null) {
+    if (from.name == 'Login' && name == null || from.name == '*' && name == null) {
         next('/')
     }
-    if (to.name == 'Login' && name) {
+    if (to.name == 'Login' && name || from.name == '*' && name) {
         sessionStorage.removeItem('loginname')
+        next('/')
     }
 });
 

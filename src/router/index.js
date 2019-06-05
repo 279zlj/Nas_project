@@ -16,6 +16,7 @@ import smb from '@/components/sharing_manager/smb_manager/smb'
 import afp from '@/components/sharing_manager/afp_manager/afp'
 import pool from '@/components/storage_manager/pool/pool'
 import iscsi from '@/components/sharing_manager/iSCSI_manager/iSCSI'
+import Error from '@/components/common/Error'
 
 Vue.use(Router)
 
@@ -151,6 +152,11 @@ export default new Router({
                 content: iscsi
             },
             meta: { requiresAuth: true }
+        },
+        {
+            path: '*',
+            name: '*',
+            component: Error
         }
     ]
 })

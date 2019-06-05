@@ -44,6 +44,10 @@ export default {
     font-size:1.4em;
     font-weight:700;
 }
+.table_cell td{
+  
+  padding: 0.7em;
+}
 a{
   text-decoration:none;
 }

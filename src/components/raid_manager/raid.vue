@@ -12,7 +12,7 @@
                     <el-row style='margin-bottom:.5em;float:right'>
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createraid = true'></el-button></el-tooltip>
                     </el-row>
-                    <el-table :data='raiddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border cell-style="padding:.7em" style='width:100%;min-height:310px;max-height:100%'>
+                    <el-table :data='raiddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
                         <el-table-column :label="$t('raid.name')" prop='name' :show-overflow-tooltip="true"></el-table-column>
                         <el-table-column :label="$t('raid.level')" prop='level'></el-table-column>
                         <el-table-column :label="$t('raid.chunk')" prop='chunk' ></el-table-column>
@@ -22,7 +22,7 @@
                         <el-table-column :label="$t('raid.working')" prop='working_num'></el-table-column>
                         <el-table-column :label="$t('raid.failed')" prop='failed_num'></el-table-column>
                         <el-table-column :label="$t('message.state')" prop='state'></el-table-column>
-                        <el-table-column>
+                        <el-table-column :label="$t('message.oper')">
                             <template slot-scope='scope'>
                                 <el-tooltip :content="$t('message.delete')" placement="bottom"><el-button type="danger" icon="el-icon-delete" size='mini' @click='raiddelete(scope.row)'></el-button></el-tooltip>
                             </template>

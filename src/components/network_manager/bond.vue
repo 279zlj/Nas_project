@@ -13,7 +13,7 @@
                         <el-button type='primary' @click='bond = true' size='medium'>{{$t('bond.bond')}}</el-button>
                         <el-button type='warning' @click='unbond = true' :disabled="unbondcan" size='medium'>{{$t('bond.unbond')}}</el-button>
                     </el-row>
-                    <el-table ref='multipleTable' :data='bonddata' tooltip-effect="dark" border cell-style="padding:.7em" style='width:100%;min-height:310px;max-height:100%' @selection-change="selectrow">
+                    <el-table ref='multipleTable' :data='bonddata' tooltip-effect="dark" border class="table_cell" style="width:100%;min-height:310px;max-height:100%" @selection-change="selectrow">
                         <el-table-column type='selection' width="55"></el-table-column>
                         <el-table-column :label="$t('network.interface')" prop='interface'></el-table-column>
                         <el-table-column :label="$t('network.ip')" prop='addr'></el-table-column>
@@ -110,14 +110,16 @@ export default {
                 var nn = []
                 for(let i=0;i<res.data.network.length;i++){
                     var n ={}
+                    var a = res.data.network[i].interface
                     n.key=res.data.network[i].interface
                     n.label=res.data.network[i].interface
-                    if(res.data.network[i].bond==0){
+                    if(a.indexOf('bond')==0){
+                        n.disabled=true
+                    }
+                    else if(res.data.network[i].bond==0){
                         n.disabled=false
-                        
                     }
                     else{
-                        
                         n.disabled=true
                     }
                     nn.push(n)
@@ -141,11 +143,12 @@ export default {
         },
         selectrow(val){
             this.multiplesletion = val
-            this.name=val[0].interface
+            console.log(this.multiplesletion.length)
             if(this.multiplesletion.length==1){
                 this.unbondcan=false
+                this.name=val[0].interface
             }
-            else if(this.multiplesletion.length==0){
+            if(this.multiplesletion.length==0){
                 this.unbondcan=true
             }
             // console.log(this.multiplesletion)

@@ -14,7 +14,7 @@
         </el-col>
         <el-col :xs='2' :sm='2' :md='2' :lg='2' :xl='2' >
         <el-tooltip :content="$t('message.exit')" placement="bottom">
-            <i class='el-icon-denglu iconfont outlogin' @click='out'></i>
+            <i class='el-icon-denglu iconfont' id='outlogin' @click='out'></i>
         </el-tooltip>
         </el-col>
         </el-row>
@@ -58,9 +58,9 @@ export default {
     height:3.5em;
     width:100%;
 }
-.outlogin{
+#outlogin{
     color:white;
-    font-size:2em;
+    font-size:2em !important;
     margin:.4em 1em;
     cursor:pointer;
     float:right;

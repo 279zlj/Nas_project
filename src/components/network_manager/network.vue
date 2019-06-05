@@ -9,7 +9,7 @@
                 <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
                 <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
                 <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
-                <el-table :data='netdata' border cell-style="padding:.7em" style='width:100%;min-height:310px;max-height:100%'>
+                <el-table :data='netdata' border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
                     <el-table-column :label="$t('network.interface')" prop='interface'></el-table-column>
                     <el-table-column :label="$t('network.ip')" prop='addr'></el-table-column>
                     <el-table-column :label="$t('network.mask')" prop='netmask'></el-table-column>

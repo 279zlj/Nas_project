@@ -11,7 +11,7 @@
             <el-row style='margin-bottom:.5em;float:right'>
                 <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createpool = true'></el-button></el-tooltip>
             </el-row>
-            <el-table :data='pooldata.slice((currpage - 1)*pagesize,currpage*pagesize)' border cell-style="padding:.7em" style='width:100%;min-height:310px;max-height:100%'>
+            <el-table :data='pooldata.slice((currpage - 1)*pagesize,currpage*pagesize)' border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
                 <el-table-column :label="$t('pool.name')" prop='vg_name'></el-table-column>
                 <el-table-column :label="$t('pool.capacity')" prop='vg_size'></el-table-column>
                 <el-table-column :label="$t('message.state')" prop="vg_status">
@@ -29,7 +29,7 @@
                 </el-table-column>
                 <el-table-column :label="$t('message.oper')">
                     <template slot-scope="scope">
-                        <el-tooltip :content="$t('message.expend')" placement="bottom"><el-button type='warning' icon="el-icon-edit-outline" size='mini' @click='modifypool(scope.row)'></el-button></el-tooltip>
+                        <el-tooltip :content="$t('message.expend')" placement="bottom"><el-button type='warning' icon="el-icon-kuozhan iconfont" size='mini' @click='modifypool(scope.row)'></el-button></el-tooltip>
                         <el-tooltip :content="$t('message.delete')" placement="bottom"><el-button type="danger" icon="el-icon-delete" size="mini" @click="deletepool(scope.row)"></el-button></el-tooltip>
                     </template>
                 </el-table-column>
