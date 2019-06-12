@@ -29,18 +29,18 @@
                 </el-col>
             </el-row>
             <el-dialog :title="$t('network.modify')" :before-close="handleClose" :visible.sync="modifyn" width="30%" :close-on-click-modal="false" center>
-                <el-form :model="modifydata" :rules="netrule" ref='modifydata' label-width="30" class="demo-ruleForm">
+                <el-form :model="modifydata" :rules="netrule" ref='modifydata' label-width="100px" label-position="left" class="demo-ruleForm">
                   <el-form-item :label="$t('network.interface')">
                     <span>{{rowdata.interface}}</span>
                   </el-form-item>
                   <el-form-item :label="$t('network.ip')" prop='IP'>
-                    <el-input v-model="modifydata.IP" :placeholder="rowdata.addr" style='width:80%'></el-input>
+                    <el-input v-model="modifydata.IP" :placeholder="rowdata.addr" ></el-input>
                   </el-form-item>
                   <el-form-item :label="$t('network.mask')" prop='mask'>
-                    <el-input v-model="modifydata.mask" :placeholder="rowdata.netmask" style='width:80%'></el-input>
+                    <el-input v-model="modifydata.mask" :placeholder="rowdata.netmask" ></el-input>
                   </el-form-item>
                   <el-form-item :label="$t('network.dns')" prop="DNS">
-                    <el-input v-model="modifydata.DNS" :placeholder="rowdata.dns" style='width:80%'></el-input>
+                    <el-input v-model="modifydata.DNS" :placeholder="rowdata.dns" ></el-input>
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" @click="netsubmit('modifydata')">{{$t('message.submit')}}</el-button>
@@ -157,18 +157,22 @@ export default {
                 if(valid){
                     _this.$axios.post(this.$host+'network',{iface:_this.rowdata.interface,addr:_this.modifydata.IP,netmask:_this.modifydata.mask,dns:_this.modifydata.DNS}).then(res=>{
                         _this.modifyn=false
-                        if(res.data.success){
-                            $('#success_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#success_tip').css({'display':'none'})
-                            },3000)
-                        }
-                        else if(!res.data.success){
-                            $('#error_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#error_tip').css({'display':'none'})
-                            },3000)
-                        }
+                        // if(res.data.success){
+                        //     $('#success_tip').css({'display':'flex'})
+                        //     setTimeout(function(){
+                        //         $('#success_tip').css({'display':'none'})
+                        //     },3000)
+                        // }
+                        // else if(!res.data.success){
+                        //     $('#error_tip').css({'display':'flex'})
+                        //     setTimeout(function(){
+                        //         $('#error_tip').css({'display':'none'})
+                        //     },3000)
+                        // }
+                        $('#success_tip').css({'display':'flex'})
+                        setTimeout(function(){
+                            $('#success_tip').css({'display':'none'})
+                        },3000)
                         _this.netget()
                         _this.netreset('modifydata')
                     }).catch(error=>{

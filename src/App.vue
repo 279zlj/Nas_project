@@ -45,8 +45,7 @@ export default {
     font-weight:700;
 }
 .table_cell td{
-  
-  padding: 0.7em;
+  padding: 0.7em !important;
 }
 a{
   text-decoration:none;
@@ -55,5 +54,6 @@ a{
         display: none;
         position: absolute;
         width: inherit;
+        z-index: 999;
 }
 </style>

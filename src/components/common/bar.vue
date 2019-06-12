@@ -42,6 +42,7 @@
                 <router-link :to="{name:'disk'}"><el-menu-item index="4-2"><i class="el-icon-cipan iconfont"></i>{{$t('message.disk')}}</el-menu-item></router-link>
                 <router-link :to="{name:'pool'}"><el-menu-item index="4-1"><i class="el-icon-erji-yunziyuanchi iconfont"></i>{{$t('message.pool')}}</el-menu-item></router-link>
                 <router-link :to="{name: 'lv'}"><el-menu-item index="4-4"><i class="el-icon-luojichi iconfont"></i>{{$t('message.logical')}}</el-menu-item></router-link>
+                <router-link :to="{name: 'rbd'}"><el-menu-item index="4-5"><i class="el-icon-bangzhuzhichi_yuncunchu iconfont"></i>{{$t('message.external')}}</el-menu-item></router-link>
             </el-submenu>
             <router-link :to="{name:'raid'}"><el-menu-item index="5">
                 <i class='el-icon--raid iconfont'></i>
@@ -52,6 +53,7 @@
                     <i class='el-icon-gongxiang iconfont'></i>
                     <span slot='title'>{{$t('message.sharing')}}</span>
                 </template>
+                <router-link :to="{name: 'ftp'}"><el-menu-item index="6-5"><i class="el-icon-st-to-ftp iconfont"></i>FTP、SFTP {{$t('message.file')}}</el-menu-item></router-link>
                 <router-link :to="{name:'nfs'}"><el-menu-item index="6-1"><i class="el-icon-lupingNFS iconfont"></i>Unix(NFS) {{$t('message.file')}}</el-menu-item></router-link>
                 <router-link :to="{name:'smb'}"><el-menu-item index="6-2"><i class="el-icon-SMB iconfont"></i>Windows(SMB) {{$t('message.file')}}</el-menu-item></router-link>
                 <router-link :to="{name:'afp'}"><el-menu-item index="6-3"><i class="el-icon-AFPLOGO iconfont"></i>MAC(AFP) {{$t('message.file')}}</el-menu-item></router-link>
@@ -106,6 +108,9 @@ export default {
             else if(name == '#/pool'){
                 this.barnum = '4-1'
             }
+            else if(name == '#/rbd'){
+                this.barnum = '4-5'
+            }
             else if(name == '#/nfs'){
                 this.barnum = '6-1'
             }
@@ -117,6 +122,9 @@ export default {
             }
             else if(name == '#/iscsi'){
                 this.barnum = '6-4'
+            }
+            else if(name == '#/ftp'){
+                this.barnum = '6-5'
             }
         }
     },

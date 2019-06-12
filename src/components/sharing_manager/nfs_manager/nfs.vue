@@ -32,9 +32,9 @@
           </el-col>
         </el-row>
         <el-dialog :title="$t('nfs.new')" :visible.sync="createnfs" width="30%" center :before-close="handleClose" :close-on-click-modal="false">
-            <el-form :model="nfsform" ref='nfsform' :rules="nfsrule" label-width="30" class="demo-ruleForm">
+            <el-form :model="nfsform" ref='nfsform' :rules="nfsrule" label-width="100px" label-position="left" class="demo-ruleForm">
               <el-form-item :label="$t('nfs.path')" prop='path'>
-                  <el-input v-model="nfsform.path" :placeholder="$t('nfs.input')" style='width:80%'></el-input>
+                  <el-input v-model="nfsform.path" :placeholder="$t('nfs.input')" ></el-input>
               </el-form-item>
               <el-form-item :label="$t('nfs.per')" prop='rank'>
                   <el-select v-model="nfsform.rank" :placeholder="$t('nfs.input1')">
@@ -43,8 +43,13 @@
                   </el-select>
               </el-form-item>
               <el-form-item :label="$t('nfs.reli')" prop='address'>
-                  <el-input v-model="nfsform.address" placeholder="x.x.x.x/x,x.x.x.x/x" style='width:80%'></el-input>
+                  <el-input v-model="nfsform.address" placeholder="x.x.x.x/x,x.x.x.x/x" ></el-input>
                   <p style='color:red'>({{$t('nfs.note')}})</p>
+              </el-form-item>
+              <el-form-item :label="$t('message.share_file')" prop='doc'>
+                  <el-select v-model="nfsform.doc" :placeholder="$t('message.input')">
+                    <el-option v-for="i in docdata" :key="i.path" :value="i.path">{{i.name}}</el-option>
+                  </el-select>
               </el-form-item>
               <el-form-item>
                       <el-button type="primary" @click="nfssubmit('nfsform')">{{$t('message.submit')}}</el-button>
@@ -110,6 +115,14 @@ export default {
                 callback()
             }
         }
+        var checkdoc=(rule,val,callback)=>{
+            if(!val){
+                return callback(new Error('请选择共享目录'))
+            }
+            else{
+                callback()
+            }
+        }
         return{
             createnfs:false,
             nfsremove:false,
@@ -118,10 +131,12 @@ export default {
             currpage:1,
             pagesize:5,
             nfsdata:[],
+            docdata:[],
             nfsform:{
                 path:'',
                 rank:'',
                 address:'',
+                doc:''
             },
             nfsrule:{
                 path:[
@@ -132,6 +147,9 @@ export default {
                 ],
                 address:[
                     {validator:addcheck, trigger: 'blur'}
+                ],
+                doc:[
+                    {validator:checkdoc, trigger: 'blur'}
                 ]
             }
         }
@@ -145,12 +163,17 @@ export default {
             this.$axios.get(this.$host+'nfs').then(function(res){
                 _this.nfsdata = res.data.data                
             })
+            this.$axios.get(this.$host+'vd').then(res=>{
+                _this.docdata=res.data.data
+            }).catch(error=>{
+                console.log(error)
+            })
         },
         nfssubmit(formname){
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
-                    _this.$axios.post(this.$host+'nfs',{path:_this.nfsform.path,ip:_this.nfsform.address,permission:_this.nfsform.rank}).then(res=>{
+                    _this.$axios.post(this.$host+'nfs',{path:_this.nfsform.path,ip:_this.nfsform.address,permission:_this.nfsform.rank,lvm:_this.nfsdata.doc}).then(res=>{
                          _this.createnfs=false
                         if(res.data.success){
                             $('#success_tip').css({'display':'flex'})

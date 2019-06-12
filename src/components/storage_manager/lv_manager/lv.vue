@@ -17,14 +17,14 @@
                         <el-table-column :label="$t('lv.pool')" prop='vg_name'></el-table-column>
                         <el-table-column :label="$t('message.state')" prop='state'>
                             <template slot-scope="scope">
-                                <el-tag :type="scope.row.state === 'available' ? 'success' : 'warning'" disable-transitions>{{scope.row.state}}</el-tag>
+                                <el-tag :type="scope.row.state === 'available' ? 'success' : 'warning'">{{scope.row.state}}</el-tag>
                                 <el-popover
                                     placement="top-start"
                                     :title="$t('message.note')"
                                     width="200"
                                     trigger="hover"
                                     content="unkonw:无法识别,available:可用,inactive:无效">
-                                    <el-button slot="reference" type="danger" size='mini' circle><i class="el-icon-warning-outline"></i></el-button>
+                                    <el-button slot="reference" type="info" size='mini' circle><i class="el-icon-info"></i></el-button>
                                 </el-popover>
                             </template>
                         </el-table-column>
@@ -48,9 +48,9 @@
                 </el-col>
             </el-row>
             <el-dialog :title="$t('lv.new')" :visible.sync="createlv" width="30%" center :close-on-click-modal="false" :before-close="headleClose">
-                <el-form :model="lvform" :rules='lvrule' ref='lvform' label-width="30" class='demo-ruleForm'>
+                <el-form :model="lvform" :rules='lvrule' ref='lvform' label-width="100px" label-position="left" class='demo-ruleForm'>
                     <el-form-item :label="$t('lv.name')" prop='name'>
-                        <el-input v-model="lvform.name" :placeholder="$t('lv.input')" style='width:80%'></el-input>
+                        <el-input v-model="lvform.name" :placeholder="$t('lv.input')" ></el-input>
                     </el-form-item>
                     <el-form-item :label="$t('lv.pool')" prop='pool'>
                         <el-select v-model="lvform.pool" :placeholder="$t('lv.input1')" @change="uintchange(lvform)">
@@ -58,7 +58,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('message.size')" prop='size' >
-                        <el-input v-model="lvform.size" type='number' :placeholder="$t('lv.input2')" style='width:80%'></el-input>
+                        <el-input v-model="lvform.size" type='number' :placeholder="$t('lv.input2')" ></el-input>
                     </el-form-item>
                     <el-form-item :label="$t('message.uint')" prop="uint" >
                         <el-select v-model="lvform.uint" :placeholder="$t('lv.input3')" >
@@ -66,7 +66,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('lv.pool_ca')" prop='poolfree'>
-                        <el-input v-model="poolfree" :disabled="true" style='width:70%'></el-input>   
+                        <el-input v-model="poolfree" :disabled="true" ></el-input>   
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="addsubmit('lvform')" v-loading.fullscreen.lock="fullscreenLoading">{{$t('message.submit')}}</el-button>
@@ -91,7 +91,7 @@
                         </el-select>
                   </el-form-item>
                   <el-form-item>
-                        <el-button type="primary" @click="expandsubmit('lvform')">{{$t('message.submit')}}</el-button>
+                        <el-button type="primary" @click="expandsubmit('lvform')" v-loading.fullscreen.lock="fullscreenLoading">{{$t('message.submit')}}</el-button>
                         <el-button @click="lvreset('lvform')">{{$t('message.reset')}}</el-button>
                     </el-form-item>
                 </el-form>
@@ -299,6 +299,12 @@ export default {
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
+                    const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.5)'
+                    });
                     var expendsize=_this.lvform.expand+_this.lvform.expanduint
                     _this.$axios.put(this.$host+'vd',{pool:_this.lvtarget.vg_name,path:_this.lvtarget.path,size:expendsize}).then(res=>{
                          _this.lvextend=false
@@ -307,12 +313,14 @@ export default {
                             setTimeout(function(){
                                 $('#success_tip').css({'display':'none'})
                             },3000)
+                            loading.close();
                         }
                         else if(!res.data.success){
                             $('#error_tip').css({'display':'flex'})
                             setTimeout(function(){
                                 $('#error_tip').css({'display':'none'})
                             },3000)
+                            loading.close();
                         }
                         _this.getlv()
                         _this.lvreset('lvform')

@@ -23,7 +23,7 @@
                             width="200"
                             trigger="hover"
                             content="unkonw:无法识别,resizable:可扩容,active:已激活,inactive:无效">
-                            <el-button slot="reference" type="danger" size='mini' circle><i class="el-icon-warning-outline"></i></el-button>
+                            <el-button slot="reference" type="info" size='mini' circle><i class="el-icon-info"></i></el-button>
                         </el-popover>
                     </template>
                 </el-table-column>
@@ -45,15 +45,15 @@
           </el-col>
         </el-row>
         <el-dialog :title="$t('pool.new')" :visible.sync="createpool" width="45%" :before-close="handleClose" :close-on-click-modal="false">
-            <el-form :model="poolform" :rules="poolrule" ref="poolform" label-width="30" class="demo-ruleForm">
+            <el-form :model="poolform" :rules="poolrule" ref="poolform" label-width="100px" label-position="left" class="demo-ruleForm">
                 <el-form-item :label="$t('pool.name')" prop='name'>
-                    <el-input v-model="poolform.name" :placeholder="$t('pool.input')" style="width:80%"></el-input>
+                    <el-input v-model="poolform.name" :placeholder="$t('pool.input')" ></el-input>
                 </el-form-item>
                 <el-form-item :label="$t('pool.disk')" prop="disks">
                     <el-transfer v-model="poolform.disks" :data="disks" :titles="[$t('pool.select'),$t('pool.alaway')]" ></el-transfer>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="poolsubmit('poolform')">{{$t('message.submit')}}</el-button>
+                    <el-button type="primary" @click="poolsubmit('poolform')" v-loading.fullscreen.lock="fullscreenLoading">{{$t('message.submit')}}</el-button>
                     <el-button @click="poolreset('poolform')">{{$t('message.reset')}}</el-button>
                 </el-form-item>
             </el-form>
@@ -64,7 +64,7 @@
                     <el-transfer v-model="poolform.adddisks" :data="disks" :titles="[$t('pool.select'),$t('pool.alaway')]" ></el-transfer>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="modifysubmit('poolform')">{{$t('message.submit')}}</el-button>
+                    <el-button type="primary" @click="modifysubmit('poolform')" v-loading.fullscreen.lock="fullscreenLoading">{{$t('message.submit')}}</el-button>
                     <el-button @click="poolreset('poolform')">{{$t('message.reset')}}</el-button>
                 </el-form-item>
             </el-form>
@@ -115,6 +115,7 @@ export default {
             currpage:1,
             pagesize:5,
             pooltarget:'',
+            fullscreenLoading:false,
             poolform:{
                 name:'',
                 disks:[],
@@ -195,22 +196,30 @@ export default {
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
+                    const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.5)'
+                    });
                     _this.$axios.post(this.$host+'pool',{name:_this.poolform.name,disks:_this.poolform.disks}).then(function(res){
                         _this.createpool=false
                         if(res.data.success){
+                            loading.close();
                             $('#success_tip').css({'display':'flex'})
                             setTimeout(function(){
                                 $('#success_tip').css({'display':'none'})
                             },3000)
                         }
                         else if(!res.data.success){
+                            loading.close();
                             $('#error_tip').css({'display':'flex'})
                             setTimeout(function(){
                                 $('#error_tip').css({'display':'none'})
                             },3000)
                         }
                         _this.getpool()
-                        _this.poolreset('userform')
+                        _this.poolreset('poolform')
                     }).catch(function(error){
                         console.log(error)
                     })
@@ -221,23 +230,30 @@ export default {
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
-                    console.log()
+                    const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.5)'
+                    });
                      _this.$axios.put(this.$host+'pool',{name:_this.pooltarget,disks:_this.poolform.adddisks}).then(function(res){
                         _this.poolmodify=false
                         if(res.data.success){
+                            loading.close();
                             $('#success_tip').css({'display':'flex'})
                             setTimeout(function(){
                                 $('#success_tip').css({'display':'none'})
                             },3000)
                         }
                         else if(!res.data.success){
+                            loading.close();
                             $('#error_tip').css({'display':'flex'})
                             setTimeout(function(){
                                 $('#error_tip').css({'display':'none'})
                             },3000)
                         }
                         _this.getpool()
-                        _this.poolreset('userform')
+                        _this.poolreset('poolform')
                     }).catch(function(error){
                         console.log(error)
                     })
@@ -261,7 +277,7 @@ export default {
                     },3000)
                 }
                 _this.getpool()
-                _this.poolreset('userform')
+                _this.poolreset('poolform')
             }).catch(error=>{
                 console.log(error)
             })

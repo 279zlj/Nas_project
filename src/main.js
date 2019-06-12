@@ -19,6 +19,10 @@ Vue.prototype.$axios = axios
 Vue.prototype.$echarts = echarts
 Vue.prototype.$host = 'http://14.18.153.83:5678/'
 Vue.prototype.ip = '192.168.5.33:8000'
+Vue.prototype.ceph = 'http://192.168.5.33:8001/'
+    // Vue.prototype.$host = 'http://' + location.hostname + ':8000/'
+    // Vue.prototype.ip = location.hostname + ':8000'
+    // Vue.prototype.ip = location.hostname + ':8001'
 
 router.beforeEach((to, from, next) => { // 路由守卫
     if (to.meta.requiresAuth) {

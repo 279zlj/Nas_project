@@ -16,7 +16,10 @@ const en = {
         'logical': 'Logical Volume',
         'raid': 'Raid Management',
         'sharing': 'Shared management',
+        'input': 'Please select a shared directory',
+        'external': 'External storage',
         'file': 'File sharing',
+        'share_file': 'Shared Directories',
         'block': 'Block-level',
         'change': 'Switch-lang',
         'cha': 'Chinese',
@@ -38,7 +41,11 @@ const en = {
         'expend': 'Expansion',
         'size': 'Size',
         'uint': 'Unit',
-        'management': 'Management'
+        'management': 'Management',
+        'service': 'Service',
+        'user': 'Users',
+        'open': 'Open',
+        'close': 'Close'
     },
     sys: {
         'basic': 'Basic information',
@@ -70,6 +77,8 @@ const en = {
         'sys': 'System users',
         'smb': 'SMB Users',
         'afp': 'AFP Users',
+        'ftp': 'FTP Users',
+        'sftp': 'SFTP Users',
         'modify': 'Modify a user',
         'old': 'Old Password',
         'cancel': 'Deleting a user',
@@ -222,6 +231,14 @@ const en = {
         'model2': 'Auto Standby mode',
         'model3': 'Balancing Load Mode',
         'delete': 'Confirm the solution'
+    },
+    rbd: {
+        'name': 'Name',
+        'pool': 'External Storage Pool',
+        'device': 'Mapping disks',
+        'target': 'Mount Catalog',
+        'map': 'Map',
+        'unmap': 'Unmap'
     },
     ...enLocale
 }

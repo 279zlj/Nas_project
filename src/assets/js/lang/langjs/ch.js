@@ -16,7 +16,10 @@ const cn = {
         'logical': '逻辑卷管理',
         'raid': '阵列管理',
         'sharing': '共享管理',
+        'input': '请选择共享目录',
+        'external': '外部存储管理',
         'file': '文件共享',
+        'share_file': '共享目录',
         'block': '块级存储',
         'change': '切换语言',
         'cha': '中文',
@@ -38,7 +41,11 @@ const cn = {
         'expend': '扩容',
         'size': '大小',
         'uint': '单位',
-        'management': '管理'
+        'management': '管理',
+        'service': '服务',
+        'user': '用户',
+        'open': '开',
+        'close': '关'
     },
     sys: {
         'basic': '基础信息',
@@ -71,6 +78,8 @@ const cn = {
         'sys': '系统用户',
         'smb': 'SMB用户',
         'afp': 'AFP用户',
+        'ftp': 'FTP用户',
+        'sftp': 'SFTP用户',
         'modify': '修改用户',
         'old': '旧密码',
         'cancel': '删除用户',
@@ -222,6 +231,14 @@ const cn = {
         'model2': '自动备援模式',
         'model3': '平衡负载模式',
         'delete': '确认解聚'
+    },
+    rbd: {
+        'name': '名称',
+        'pool': '外部存储池',
+        'device': '映射磁盘',
+        'target': '挂载目录',
+        'map': '映射',
+        'unmap': '解除映射'
     },
     ...zhLocale
 }

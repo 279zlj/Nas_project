@@ -21,7 +21,13 @@
                         <el-table-column :label="$t('raid.active')" prop='active_num'></el-table-column>
                         <el-table-column :label="$t('raid.working')" prop='working_num'></el-table-column>
                         <el-table-column :label="$t('raid.failed')" prop='failed_num'></el-table-column>
-                        <el-table-column :label="$t('message.state')" prop='state'></el-table-column>
+                        <el-table-column :label="$t('message.state')" prop='state'>
+                            <template slot-scope="scope">
+                                <el-tooltip :content="scope.row.state" placement="bottom">
+                                    <el-tag :type="scope.row.state === 'clean'? 'success':'warning' " disable-transitions>{{scope.row.state}}</el-tag>
+                                </el-tooltip>
+                            </template>
+                        </el-table-column>
                         <el-table-column :label="$t('message.oper')">
                             <template slot-scope='scope'>
                                 <el-tooltip :content="$t('message.delete')" placement="bottom"><el-button type="danger" icon="el-icon-delete" size='mini' @click='raiddelete(scope.row)'></el-button></el-tooltip>
@@ -39,7 +45,7 @@
               </el-col>
             </el-row>
             <el-dialog :title="$t('raid.new')" :visible.sync="createraid" width='45%' center :close-on-click-modal="false" top='5em' :before-close='handleClose'>
-                <el-form :model="raidform" :rules="raidrule" ref='raidform' label-width="30" class='demo-ruleForm'>
+                <el-form :model="raidform" :rules="raidrule" ref='raidform' label-width="100px" label-position="left" class='demo-ruleForm'>
                   <!-- <el-form-item label="名称" prop='name'>   
                         <el-input v-model="raidform.name" placeholder="请输入名称" style='width:80%'></el-input>
                   </el-form-item> -->

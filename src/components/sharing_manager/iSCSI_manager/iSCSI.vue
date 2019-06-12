@@ -35,9 +35,9 @@
           </el-col>
         </el-row>
         <el-dialog :title="$t('iscsi.new')" :visible.sync="createiscsi" width="45%" :before-close="handleClose" :close-on-click-modal="false">
-            <el-form :model="iscsiform" ref='iscsiform' :rules="iscsirule" label-width="30" class="rule-Form">
+            <el-form :model="iscsiform" ref='iscsiform' :rules="iscsirule" label-width="100px" label-position="left" class="rule-Form">
               <el-form-item label="IQN" prop='iname' >
-                  <el-input v-model="iscsiform.iname" :placeholder="$t('iscsi.input')" style='width:80%'>
+                  <el-input v-model="iscsiform.iname" :placeholder="$t('iscsi.input')" >
                       <template slot='prepend'>iqn.2016-08.com.wuzhou.</template>
                   </el-input>
               </el-form-item>
@@ -45,10 +45,10 @@
                   <el-input v-model="iscsiform.isign" type='number' placeholder="请输入LIO名称" style="width:80%"></el-input>
               </el-form-item> -->
               <el-form-item :label="$t('iscsi.gateway')" prop='ip'>
-                  <el-input v-model="iscsiform.ip" :placeholder="$t('iscsi.input1')" style='width:80%'></el-input>
+                  <el-input v-model="iscsiform.ip" :placeholder="$t('iscsi.input1')"></el-input>
               </el-form-item>
               <el-form-item label="Port" prop='port'>
-                  <el-input v-model="iscsiform.port" type='number' :placeholder="$t('iscsi.port')" style='width:80%'></el-input>
+                  <el-input v-model="iscsiform.port" type='number' :placeholder="$t('iscsi.port')" ></el-input>
               </el-form-item>
               <el-form-item :label="$t('iscsi.uint')" prop="itype">
                   <el-select v-model="iscsiform.itype" :placeholder="$t('iscsi.select')" @change="typechange(iscsiform)">
@@ -129,7 +129,7 @@ export default {
                 return callback(new Error('请输入端口'))
             }
             else {
-                if(val.length>6){
+                if(val.length>5){
                     return callback(new Error('请输入正确的端口'))
                 }
                 else
@@ -209,8 +209,8 @@ export default {
                 var pp=[]
                 for(let i=0;i<res.data.data.length;i++){
                     var pools={}
-                    console.log(res.data.data)
-                    pools.key=res.data.data[i].vg_name
+                    // console.log(res.data.data)
+                    pools.key=res.data.data[i].path
                     pools.label=res.data.data[i].path
                     // if(res.data.data[i].vg_status==1){
                     //     pools.disabled=false

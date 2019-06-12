@@ -33,16 +33,21 @@
               </el-col>
             </el-row>
             <el-dialog :title="$t('smb.new')" :visible.sync="createsmb" width="30%" center :before-close="handleClose" :close-on-click-modal="false">
-            <el-form :model="smbform" ref='smbform' :rules="smbrule" label-width="30" class="demo-ruleForm">
+            <el-form :model="smbform" ref='smbform' :rules="smbrule" label-width="100px" label-position="left" class="demo-ruleForm">
               <el-form-item :label="$t('smb.name')" prop='name'>
-                  <el-input v-model="smbform.name" :placeholder="$t('smb.input')" style='width:80%'></el-input>
+                  <el-input v-model="smbform.name" :placeholder="$t('smb.input')" ></el-input>
               </el-form-item>
               <el-form-item :label="$t('smb.p_name')" prop='path'>
-                  <el-input v-model="smbform.path" :placeholder="$t('smb.input1')" style='width:80%'></el-input>
+                  <el-input v-model="smbform.path" :placeholder="$t('smb.input1')" ></el-input>
               </el-form-item>
               <el-form-item :label="$t('smb.user')" prop='user' v-if="!gestsate">
                   <el-select v-model="smbform.user" :placeholder="$t('smb.input2')">
                     <el-option v-for="u in user" :key="u" :value="u">{{u}}</el-option>
+                  </el-select>
+              </el-form-item>
+              <el-form-item :label="$t('message.share_file')" prop='doc'>
+                  <el-select v-model="smbform.doc" :placeholder="$t('message.input')">
+                    <el-option v-for="i in docdata" :key="i.path" :value="i.path">{{i.name}}</el-option>
                   </el-select>
               </el-form-item>
               <!-- <el-form-item label="密码" prop='pwd' v-if="!gestsate">
@@ -106,6 +111,14 @@ export default {
                 callback()
             }
         }
+        var checkdoc=(rule,val,callback)=>{
+            if(!val){
+                return callback(new Error('请选择共享目录'))
+            }
+            else{
+                callback()
+            }
+        }
         // var pwdcheck=(rule,val,callback)=>{
         //     if(!val){
         //         return callback(new Error('请输入密码'))
@@ -117,6 +130,7 @@ export default {
         return{
             smbdata:[],
             user:[],
+            docdata:[],
             createsmb:false,
             smbremove:false,
             gestsate:'',
@@ -127,6 +141,7 @@ export default {
                 name:'',
                 path:'',
                 user:'',
+                doc:'',
                 rank:false,
                 // pwd:'',
                 gest:false
@@ -141,6 +156,9 @@ export default {
                 user:[
                     {validator:usercheck, trigger: 'blur'}
                 ],
+                doc:[
+                    {validator:checkdoc, trigger: 'blur'}
+                ]
                 // pwd:[
                 //     {validator:pwdcheck, trigger: 'blur'}
                 // ]
@@ -171,6 +189,11 @@ export default {
             }).catch(error=>{
                 console.log(error)
             })
+            this.$axios.get(this.$host+'vd').then(res=>{
+                _this.docdata=res.data.data
+            }).catch(error=>{
+                console.log(error)
+            })
             this.$axios.get(this.$host+'users').then(res=>{
                 var users=[]
                 for(let i=0;i<res.data.data.length;i++){
@@ -185,7 +208,7 @@ export default {
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
-                    _this.$axios.post(this.$host+'smb',{name:_this.smbform.name,user:_this.smbform.user,writable:_this.smbform.rank,path:_this.smbform.path,security:_this.smbform.gest}).then(res=>{
+                    _this.$axios.post(this.$host+'smb',{name:_this.smbform.name,user:_this.smbform.user,writable:_this.smbform.rank,path:_this.smbform.path,security:_this.smbform.gest,lvm:_this.smbform.doc}).then(res=>{
                         _this.createsmb=false
                         if(res.data.success){
                             $('#success_tip').css({'display':'flex'})

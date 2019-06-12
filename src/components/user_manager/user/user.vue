@@ -34,21 +34,23 @@
                 </el-col>
             </el-row>
             <el-dialog :title="$t('user.new')" :visible.sync="createuser" width="30%" center :before-close="handleClose" :close-on-click-modal='false'>
-                <el-form :model='userform' :rules="userrule" ref='userform' label-width="30" class='demo-ruleForm'>
+                <el-form :model='userform' :rules="userrule" ref='userform' label-width="100px" label-position="left" class='demo-ruleForm'>
                     <el-form-item :label="$t('user.name')" prop='username'>
-                        <el-input v-model="userform.username" :placeholder="$t('user.name')" style='width:80%'></el-input>
+                        <el-input v-model="userform.username" :placeholder="$t('user.name')" ></el-input>
                     </el-form-item>
                     <el-form-item :label="$t('user.new_pass')" prop='userpwd'>
-                        <el-input v-model="userform.userpwd" :placeholder="$t('user.input')" type="password" style='width:80%'></el-input>
+                        <el-input v-model="userform.userpwd" :placeholder="$t('user.input')" type="password" ></el-input>
                     </el-form-item>
                     <el-form-item :label="$t('user.confirm')" prop='userpwdt'>
-                        <el-input v-model="userform.userpwdt" :placeholder="$t('user.input2')" type="password" style='width:80%'></el-input>
+                        <el-input v-model="userform.userpwdt" :placeholder="$t('user.input2')" type="password" ></el-input>
                     </el-form-item>
                     <el-form-item :label="$t('user.u_type')" prop='usertype'>
                         <el-select v-model="userform.usertype" :placeholder="$t('user.input3')">
                           <el-option :label="$t('user.sys')" value='0'></el-option>
                           <el-option :label="$t('user.smb')" value='1'></el-option>
                           <el-option :label="$t('user.afp')" value='2'></el-option>
+                          <el-option :label="$t('user.ftp')" value='3'></el-option>
+                          <el-option :label="$t('user.sftp')" value='4'></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item>
@@ -58,15 +60,15 @@
                 </el-form>
             </el-dialog>
             <el-dialog :title="$t('user.modify')" :visible.sync="modifydialog" width="30%" :before-close="handleClose" center :close-on-click-modal='false'>
-                <el-form :model="userform" :rules="userrule" ref='userform' label-width="30" class='demo-ruleForm'>
+                <el-form :model="userform" :rules="userrule" ref='userform' label-width="100px" label-position="left" class='demo-ruleForm'>
                   <el-form-item :label="$t('user.old')" prop='oldpwd'>
-                      <el-input v-model="userform.oldpwd" type="password" :placeholder="$t('user.input4')" style='width:80%'></el-input>
+                      <el-input v-model="userform.oldpwd" type="password" :placeholder="$t('user.input4')" ></el-input>
                   </el-form-item>
                   <el-form-item :label="$t('user.new_pass')" prop='userpwd'>
-                    <el-input v-model="userform.userpwd" :placeholder="$t('user.input')" type="password" style='width:80%'></el-input>
+                    <el-input v-model="userform.userpwd" :placeholder="$t('user.input')" type="password" ></el-input>
                   </el-form-item>
                   <el-form-item :label="$t('user.confirm')" prop='userpwdt'>
-                    <el-input v-model="userform.userpwdt" :placeholder="$t('user.input2')" type="password" style='width:80%'></el-input>
+                    <el-input v-model="userform.userpwdt" :placeholder="$t('user.input2')" type="password" ></el-input>
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" @click="modifysubmit('userform')">{{$t('message.submit')}}</el-button>

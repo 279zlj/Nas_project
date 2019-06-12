@@ -32,16 +32,21 @@
               </el-col>
             </el-row>
             <el-dialog :title="$t('afp.new')" :visible.sync="createafp" width="30%" center :before-close="handleClose" :close-on-click-modal="false">
-            <el-form :model="afpform" ref='afpform' :rules="afprule" label-width="30" class="demo-ruleForm">
+            <el-form :model="afpform" ref='afpform' :rules="afprule" label-width="100px" label-position="left" class="demo-ruleForm">
               <el-form-item :label="$t('afp.name')" prop='name'>
-                  <el-input v-model="afpform.name" :placeholder="$t('afp.input')" style='width:80%'></el-input>
+                  <el-input v-model="afpform.name" :placeholder="$t('afp.input')" ></el-input>
               </el-form-item>
               <el-form-item :label="$t('afp.p_name')" prop='path'>
-                  <el-input v-model="afpform.path" :placeholder="$t('afp.input1')" style='width:80%'></el-input>
+                  <el-input v-model="afpform.path" :placeholder="$t('afp.input1')" ></el-input>
               </el-form-item>
               <el-form-item :label="$t('afp.user')" prop='user'>
                   <el-select v-model="afpform.user" :placeholder="$t('afp.input2')">
                     <el-option v-for="u in user" :key="u" :value="u">{{u}}</el-option>
+                  </el-select>
+              </el-form-item>
+              <el-form-item :label="$t('message.share_file')" prop='doc'>
+                  <el-select v-model="afpform.doc" :placeholder="$t('message.input')">
+                    <el-option v-for="i in docdata" :key="i.path" :value="i.path">{{i.name}}</el-option>
                   </el-select>
               </el-form-item>
               <!-- <el-form-item label="密码" prop='pwd'>
@@ -94,6 +99,14 @@ export default {
                 callback()
             }
         }
+        var checkdoc=(rule,val,callback)=>{
+            if(!val){
+                return callback(new Error('请选择共享目录'))
+            }
+            else{
+                callback()
+            }
+        }
         // var checkpwd=(rule,val,callback)=>{
         //     if(!val){
         //         return callback(new Error('请输入密码'))
@@ -110,10 +123,12 @@ export default {
             currpage:1,
             pagesize:5,
             user:[],
+            docdata:[],
             afpform:{
                 name:'',
                 path:'',
                 user:'',
+                doc:''
                 // pwd:''
             },
             afprule:{
@@ -126,6 +141,9 @@ export default {
                 user:[
                     {validator:checkuser, trigger:'blur'}
                 ],
+                doc:[
+                    {validator:checkdoc, trigger: 'blur'}
+                ]
                 // pwd:[
                 //     {validator:checkpwd, trigger:'blur'}
                 // ]
@@ -140,6 +158,11 @@ export default {
             var _this=this
             this.$axios.get(this.$host+'afp').then(res=>{
                 _this.afpdata=res.data.data
+            }).catch(error=>{
+                console.log(error)
+            })
+            this.$axios.get(this.$host+'vd').then(res=>{
+                _this.docdata=res.data.data
             }).catch(error=>{
                 console.log(error)
             })
@@ -165,7 +188,7 @@ export default {
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
-                    _this.$axios.post(this.$host+'afp',{name:_this.afpform.name,path:_this.afpform.path,user:_this.afpform.user}).then(res=>{
+                    _this.$axios.post(this.$host+'afp',{name:_this.afpform.name,path:_this.afpform.path,user:_this.afpform.user,lvm:_this.afpform.doc}).then(res=>{
                         _this.createafp=false
                         if(res.data.success){
                             $('#success_tip').css({'display':'flex'})

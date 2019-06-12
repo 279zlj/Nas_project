@@ -29,7 +29,7 @@
                 </el-col>
             </el-row>
             <el-dialog :title="$t('bond.netbond')" :visible.sync="bond" width="50%" center :before-close="handleClose" :close-on-click-modal="false">
-                <el-form :model="bondform" ref='bondform' :rules="bondrule" label-width="30" class="demo-Form">
+                <el-form :model="bondform" ref='bondform' :rules="bondrule" label-width="100px" label-position="left" class="demo-Form">
                   <el-form-item :label="$t('bond.select')" prop='bdata'>
                       <el-transfer v-model="bondform.bdata" :data="netdata" :titles="[$t('bond.select1'),$t('bond.select2')]"></el-transfer>
                   </el-form-item>
@@ -41,7 +41,7 @@
                       </el-select>
                   </el-form-item>
                   <el-form-item>
-                        <el-button type="primary" @click="bondsubmit('bondform')">{{$t('message.submit')}}</el-button>
+                        <el-button type="primary" @click="bondsubmit('bondform')" v-loading.fullscreen.lock="fullscreenLoading">{{$t('message.submit')}}</el-button>
                         <el-button @click="bondreset('bondform')">{{$t('message.reset')}}</el-button>
                   </el-form-item>
                 </el-form>
@@ -85,6 +85,7 @@ export default {
             bond:false,
             unbond:false,
             name:'',
+            ip:'',
             netdata:[],
             bondform:{
                 bdata:[],
@@ -112,29 +113,23 @@ export default {
                     var n ={}
                     var a = res.data.network[i].interface
                     n.key=res.data.network[i].interface
-                    n.label=res.data.network[i].interface
-                    if(a.indexOf('bond')==0){
-                        n.disabled=true
-                    }
-                    else if(res.data.network[i].bond==0){
+                    n.label=res.data.network[i].interface                    
+                    if(res.data.network[i].bond==0&&a.indexOf('bond')==-1){
                         n.disabled=false
                     }
                     else{
                         n.disabled=true
                     }
-                    nn.push(n)
-                }
-                for(let a=0;a<res.data.network.length;a++){
-                    if(res.data.network[a].bond==0){
-                        if(res.data.network[a].mac==undefined)
-                            res.data.network[a].mac='—'
-                        if(res.data.network[a].dns==undefined)
-                            res.data.network[a].dns='—'
-                        if(res.data.network[a].state==undefined)
-                            res.data.network[a].state='—'
-                        _this.bonddata.push(res.data.network[a])
+                    if(a.indexOf('bond')==0){
+                        if(res.data.network[i].mac==undefined)
+                            res.data.network[i].mac='—'
+                        if(res.data.network[i].dns==undefined)
+                            res.data.network[i].dns='—'
+                        if(res.data.network[i].state==undefined)
+                            res.data.network[i].state='—'
+                        _this.bonddata.push(res.data.network[i])
                     }
-                    
+                    nn.push(n)
                 }
                  _this.netdata=nn
             }).catch(error=>{
@@ -147,6 +142,7 @@ export default {
             if(this.multiplesletion.length==1){
                 this.unbondcan=false
                 this.name=val[0].interface
+                this.ip=val[0].addr
             }
             if(this.multiplesletion.length==0){
                 this.unbondcan=true
@@ -157,20 +153,29 @@ export default {
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
+                    const loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.5)'
+                    });
                     _this.$axios.post(this.$host+'bond',{iface:_this.bondform.bdata,type:_this.bondform.type}).then(res=>{
                         _this.bond=false
                         if(res.data.success){
+                            loading.close();
                             $('#success_tip').css({'display':'flex'})
                             setTimeout(function(){
                                 $('#success_tip').css({'display':'none'})
                             },3000)
                         }
                         else if(!res.data.success){
+                            loading.close();
                             $('#error_tip').css({'display':'flex'})
                             setTimeout(function(){
                                 $('#error_tip').css({'display':'none'})
                             },3000)
                         }
+                        _this.bonddata=[]
                         _this.netget()
                         _this.bondreset('bondform')
                     }).catch(function(error){
@@ -181,7 +186,7 @@ export default {
         },
         bdelete(){
             var _this=this
-            this.$axios.delete(this.$host+'bond',{data:{name:_this.name}}).then(res=>{
+            this.$axios.delete(this.$host+'bond',{data:{name:_this.name,ip:_this.ip}}).then(res=>{
                 _this.unbond=false
                 if(res.data.success){
                     $('#success_tip').css({'display':'flex'})
@@ -195,6 +200,7 @@ export default {
                         $('#error_tip').css({'display':'none'})
                     },3000)
                 }
+                _this.bonddata=[]
                 _this.netget()
                 _this.bondreset('bondform')
             }).catch(error=>{

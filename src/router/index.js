@@ -16,6 +16,8 @@ import smb from '@/components/sharing_manager/smb_manager/smb'
 import afp from '@/components/sharing_manager/afp_manager/afp'
 import pool from '@/components/storage_manager/pool/pool'
 import iscsi from '@/components/sharing_manager/iSCSI_manager/iSCSI'
+import rbd from '@/components/storage_manager/rbd/rbd'
+import ftp from '@/components/sharing_manager/ftp_manager/ftp'
 import Error from '@/components/common/Error'
 
 Vue.use(Router)
@@ -73,6 +75,15 @@ export default new Router({
             meta: { requiresAuth: true }
         },
         {
+            path: '/rbd',
+            name: 'rbd',
+            components: {
+                default: bar,
+                content: rbd
+            },
+            meta: { requiresAuth: true }
+        },
+        {
             path: '/raid',
             name: 'raid',
             components: {
@@ -105,6 +116,15 @@ export default new Router({
             components: {
                 default: bar,
                 content: lv
+            },
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/ftp',
+            name: 'ftp',
+            components: {
+                default: bar,
+                content: ftp,
             },
             meta: { requiresAuth: true }
         },
