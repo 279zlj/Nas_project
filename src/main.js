@@ -10,6 +10,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import '@/assets/css/icon/iconfont.css'
 import axios from 'axios'
 import echarts from 'echarts'
+
 import { Verify } from 'crypto';
 
 Vue.config.productionTip = false
@@ -17,12 +18,13 @@ Vue.use(Element)
 
 Vue.prototype.$axios = axios
 Vue.prototype.$echarts = echarts
-Vue.prototype.$host = 'http://14.18.153.83:5678/'
-Vue.prototype.ip = '192.168.5.33:8000'
-Vue.prototype.ceph = 'http://192.168.5.33:8001/'
-    // Vue.prototype.$host = 'http://' + location.hostname + ':8000/'
-    // Vue.prototype.ip = location.hostname + ':8000'
-    // Vue.prototype.ip = location.hostname + ':8001'
+Vue.prototype.$host = 'http://14.18.153.83:8111/'
+Vue.prototype.ip = '14.18.153.83:8111'
+Vue.prototype.ceph = 'http://192.168.5.7:8001/'
+
+// Vue.prototype.$host = 'http://' + location.hostname + ':8000/'
+// Vue.prototype.ip = location.hostname + ':8000'
+// Vue.prototype.ceph = location.hostname + ':8001'
 
 router.beforeEach((to, from, next) => { // 路由守卫
     if (to.meta.requiresAuth) {
@@ -42,7 +44,7 @@ router.beforeEach((to, from, next) => { // 路由守卫
         sessionStorage.removeItem('loginname')
         next('/')
     }
-});
+})
 
 /* eslint-disable no-new */
 new Vue({
@@ -53,4 +55,4 @@ new Vue({
     echarts,
     components: { App },
     template: '<App/>'
-})()
+});

@@ -1,15 +1,12 @@
 <template>
     <div class="content">
-        <headerBar></headerBar>
         <div>
             <div class="tip_bg">
                 <span class="tip">{{$t('message.external')}}</span>
             </div>
             <el-row class="other_table">
                 <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset="2">
-                    <el-alert type="error" :title="fails_tip" show-icon id='error_tip' :closable='false' center ></el-alert>
-                    <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
-                    <el-table :data='rbddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border class='table_cell' style="width:100%;min-height:310px;max-height:100%">
+                    <el-table :data='rbddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)"  class='table_cell' style="width:100%;min-height:310px;max-height:100%">
                       <el-table-column :label="$t('rbd.name')" prop="rbd"></el-table-column>
                       <el-table-column :label="$t('rbd.pool')" prop='pool'></el-table-column>
                       <el-table-column :label="$t('rbd.device')" prop="device"></el-table-column>
@@ -44,10 +41,8 @@
     </div>    
 </template>
 <script>
-import headerBar from '../../common/headerBar'
 export default {
     name:'rbd',
-    components:{headerBar},
     data(){
         return{
             rbddata:[],
@@ -55,6 +50,7 @@ export default {
             pagesize:5,
             r_mounted:false,
             r_unmount:false,
+            loading:true,
             mount_target:'',
             unmount_target:'',
             fails_tip:'',
@@ -69,6 +65,7 @@ export default {
             var _this=this
             this.$axios.get(this.$host+'rbd').then(res=>{
                 var data=res.data.rbd
+                this.loading=false
                 for(let i=0;i<data.length;i++){
                     if(data[i].device==''||data[i].device==undefined)
                         data[i].device='—'
@@ -98,19 +95,17 @@ export default {
                 _this.r_mounted=false
                 if(res.data.success){
                     loading.close()
-                    $('#success_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#success_tip').css({'display':'none'})
-                    },3000)
+                    _this.$message({
+                        message:this.$t('message.success'),
+                        type:'success',
+                        offset:''
+                    })
                     
                 }
                 else if(!res.data.success){
                     loading.close();
                     _this.fails_tip=res.data.state
-                    $('#error_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#error_tip').css({'display':'none'})
-                    },3000)
+                    _this.$message.error(res.data.msg)
                     
                 }
                 _this.getrbd()
@@ -128,20 +123,16 @@ export default {
                 _this.r_unmount=false
                 if(res.data.data.success){
                     loading.close();
-                    $('#success_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#success_tip').css({'display':'none'})
-                    },3000)
-                    loading.close();
+                    _this.$message({
+                        message:this.$t('message.success'),
+                        type:'success',
+                        offset:''
+                    })
                 }
                 else if(!res.data.data.success){
                     loading.close();
                     _this.fails_tip=res.data.data.res
-                    $('#error_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#error_tip').css({'display':'none'})
-                    },3000)
-                    loading.close();
+                    _this.$message.error(res.data.msg)
                 }
                 _this.getrbd()
             })

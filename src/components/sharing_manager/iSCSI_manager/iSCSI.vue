@@ -1,13 +1,10 @@
 <template>
     <div class='content'>
-        <headerBar></headerBar>
         <div class='tip_bg'>
             <span class='tip'>iSCSI {{$t('message.management')}}</span>
         </div>
         <el-row class='main_table'>
           <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-            <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
-            <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
             <el-row style='margin-bottom:.5em;float:right'>
                 <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createiscsi = true'></el-button></el-tooltip>
             </el-row>
@@ -30,25 +27,16 @@
             @current-change="handleCurrentChange"
             :page-sizes="[5, 10]"
             :page-size="pagesize"
-            :total="iscsidata.length" style="text-align: right;margin: 1em">
+            :total="pageTotal" style="text-align: right;margin: 1em">
             </el-pagination>
           </el-col>
         </el-row>
         <el-dialog :title="$t('iscsi.new')" :visible.sync="createiscsi" width="45%" :before-close="handleClose" :close-on-click-modal="false">
-            <el-form :model="iscsiform" ref='iscsiform' :rules="iscsirule" label-width="100px" label-position="left" class="rule-Form">
+            <el-form :model="iscsiform" ref='iscsiform' :rules="iscsirule" label-width="130px" label-position="left" class="rule-Form">
               <el-form-item label="IQN" prop='iname' >
                   <el-input v-model="iscsiform.iname" :placeholder="$t('iscsi.input')" >
                       <template slot='prepend'>iqn.2016-08.com.wuzhou.</template>
                   </el-input>
-              </el-form-item>
-              <!-- <el-form-item label="LIO名称" prop='isign'>
-                  <el-input v-model="iscsiform.isign" type='number' placeholder="请输入LIO名称" style="width:80%"></el-input>
-              </el-form-item> -->
-              <el-form-item :label="$t('iscsi.gateway')" prop='ip'>
-                  <el-input v-model="iscsiform.ip" :placeholder="$t('iscsi.input1')"></el-input>
-              </el-form-item>
-              <el-form-item label="Port" prop='port'>
-                  <el-input v-model="iscsiform.port" type='number' :placeholder="$t('iscsi.port')" ></el-input>
               </el-form-item>
               <el-form-item :label="$t('iscsi.uint')" prop="itype">
                   <el-select v-model="iscsiform.itype" :placeholder="$t('iscsi.select')" @change="typechange(iscsiform)">
@@ -74,66 +62,23 @@
     </div>  
 </template>
 <script>
-import headerBar from '../../common/headerBar'
+import {change} from '../../../assets/change_size'
 export default {
     name:'iSCSI',
-    components:{headerBar},
     data(){
         var chcekiname=(rule,val,callback)=>{
+            var reg = /^[0-9a-zA-Z]+$/
             if(!val){
-                return callback(new Error('请输入IQN'))
+                return callback(new Error(this.$t('iscsi.input')))
             }
             else{
                 if(val.length>7){
-                    return callback(new Error('请输入长度少于7的IQN'))
+                    return callback(new Error(this.$t('iscsi.input2')))
+                }
+                else if(!reg.test(val)){
+                    return callback(new Error(this.$t('user.reg')))
                 }
                 callback()
-            }
-        }
-        var checkitype=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请选择逻辑单元类型'))
-            }
-            else
-                callback()
-        }
-        // var checkisign=(rule,val,callback)=>{
-        //     if(!val){
-        //         return callback(new Error('请输入标识'))
-        //     }
-        //     else
-        //         callback()
-        // }
-        var checklogic=(rule,val,callback)=>{
-            if(val.length==0){
-                return callback(new Error('请选择逻辑单元'))
-            }
-            else
-                callback()
-        }
-        var checkip=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请输入ip地址'))
-            }
-            else{
-                var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-                if(!reg.test(val)){
-                    return callback(new Error('请输入正确的ip地址'))
-                }
-                else
-                    callback()
-            }
-        }
-        var checkport=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请输入端口'))
-            }
-            else {
-                if(val.length>5){
-                    return callback(new Error('请输入正确的端口'))
-                }
-                else
-                    callback()
             }
         }
         return{
@@ -141,6 +86,7 @@ export default {
             idelete:false,
             currpage:1,
             pagesize:5,
+            pageTotal:0,
             iscsidata:[],
             disks:[],
             pools:[],
@@ -148,30 +94,18 @@ export default {
             logictarget:'',
             iscsiform:{
                 iname:'',
-                // isign:'',
-                ip:'',
-                port:'',
                 itype:'',
                 logic:[]
             },
             iscsirule:{
                 iname:[
-                    {validator: chcekiname, trigger: 'blur'}
-                ],
-                // isign:[
-                //     {validator: checkisign, trigger: 'blur'}
-                // ],
-                ip:[
-                    {validator: checkip, trigger: 'blur'}
-                ],
-                port:[
-                    {validator: checkport, trigger: 'blur'}
+                    {required:true,validator: chcekiname, trigger: 'blur'}
                 ],
                 itype:[
-                    {validator: checkitype, trigger: 'blur'}
+                    {required:true,message:this.$t('iscsi.select'), trigger: 'blur'}
                 ],
                 logic:[
-                    {validator: checklogic, trigger: 'blur'}
+                    {required:true,message:this.$t('iscsi.select1'), trigger: 'blur'}
                 ]
             }
         }
@@ -179,10 +113,21 @@ export default {
     mounted(){
         this.getiscsi()
     },
+    watch:{
+      pageTotal(){
+        if(this.pageTotal==(this.currpage-1)*this.pagesize&& this.pageTotal!=0){
+          this.currpage-=1;
+        //   getuser(this);//获取列表数据
+        }
+      }
+    },
     methods:{
         getiscsi(){
             this.$axios.get(this.$host+'iscsi').then(res=>{
                 this.iscsidata=res.data.data
+                for(let i=0;i<this.iscsidata.length;i++)
+                    this.iscsidata[i].disk_size=change(this.iscsidata[i].disk_size)
+                this.pageTotal=this.iscsidata.length
             }).catch(error=>{
                 console.log(error)
             })
@@ -212,12 +157,6 @@ export default {
                     // console.log(res.data.data)
                     pools.key=res.data.data[i].path
                     pools.label=res.data.data[i].path
-                    // if(res.data.data[i].vg_status==1){
-                    //     pools.disabled=false
-                    // }
-                    // else{
-                    //     pools.disabled=true
-                    // }
                     pools.disabled=false
                     pp.push(pools)
                 }
@@ -232,19 +171,18 @@ export default {
             this.itarget=row
         },
         deletei(){
-            this.$axios.delete(this.$host+'iscsi',{data:{target:itarget.wwn,name:_this.itarget.disk_name,disk:_this.itarget.disk_path}}).then(res=>{
+            var _this=this
+            this.$axios.delete(this.$host+'iscsi',{data:{target:_this.itarget.wwn,name:_this.itarget.disk_name,disk:_this.itarget.disk_path}}).then(res=>{
                 _this.idelete=false
                 if(res.data.success){
-                    $('#success_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#success_tip').css({'display':'none'})
-                    },3000)
+                    _this.$message({
+                        message:this.$t('message.success'),
+                        type:'success',
+                        offset:''
+                    })
                 }
                 else if(!res.data.success){
-                    $('#error_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#error_tip').css({'display':'none'})
-                    },3000)
+                    _this.$message.error(res.data.msg)
                 }
                 _this.getiscsi()
                 _this.iscsireset('iscsiform')
@@ -256,19 +194,17 @@ export default {
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
-                    _this.$axios.post(this.$host+'iscsi',{iqn:_this.iscsiform.iname,disk_path:_this.iscsiform.logic,ip:_this.iscsiform.ip,port:_this.iscsiform.port}).then(res=>{
+                    _this.$axios.post(this.$host+'iscsi',{iqn:_this.iscsiform.iname,disk_path:_this.iscsiform.logic}).then(res=>{
                         _this.createiscsi=false
                         if(res.data.success){
-                            $('#success_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#success_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message({
+                                message:this.$t('message.success'),
+                                type:'success',
+                                offset:''
+                            })
                         }
                         else if(!res.data.success){
-                            $('#error_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#error_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message.error(res.data.msg)
                         }
                         _this.getiscsi()
                         _this.iscsireset('iscsiform')

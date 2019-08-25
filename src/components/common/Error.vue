@@ -17,7 +17,6 @@ export default {
     background:url('../../../static/images/bg.png') no-repeat;
     background-size:cover;
     background-color:#A6ECF9;
-    height:100%;
     width:100%;
     margin:0;
     padding:0;

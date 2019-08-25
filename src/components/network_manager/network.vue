@@ -1,31 +1,47 @@
 <template>
     <div class='content'>
-        <headerBar></headerBar>
         <div>
             <div class='tip_bg'>
                 <span class='tip'>{{$t('message.net_setting')}}</span>
             </div>
             <el-row class='other_table'>
                 <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-                <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
-                <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
-                <el-table :data='netdata' border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
-                    <el-table-column :label="$t('network.interface')" prop='interface'></el-table-column>
-                    <el-table-column :label="$t('network.ip')" prop='addr'></el-table-column>
-                    <el-table-column :label="$t('network.mask')" prop='netmask'></el-table-column>
-                    <el-table-column :label="$t('network.mac')" prop='mac'></el-table-column>
-                    <el-table-column :label="$t('network.dns')" prop='dns'></el-table-column>
+                <el-table :data='netdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
+                    <el-table-column :label="$t('network.interface')" prop='interface' width="120"></el-table-column>
+                    <el-table-column :label="$t('network.ip')" prop='addr'  :show-overflow-tooltip="true"></el-table-column>
+                    <el-table-column :label="$t('network.mask')" prop='netmask'  :show-overflow-tooltip="true"></el-table-column>
+                    <el-table-column :label="$t('gateway.port')" prop='bond_iface'  :show-overflow-tooltip="true">
+                        <template slot-scope="scope">
+                            <span v-for='(i,index) in scope.row.bond_iface' :key='index'>
+                                <span style="margin-right:.5em">{{i}}</span>
+                            </span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :label="$t('network.mac')" prop='link'>
+                        <template slot-scope="scope">
+                            <el-tag :type="scope.row.link === 'yes' ? 'success' : 'danger' " disable-transitions>{{scope.row.link}}</el-tag>
+                        </template>
+                    </el-table-column>
                     <el-table-column :label="$t('message.state')" prop='state'>
                         <template slot-scope="scope">
                             <el-tag :type="scope.row.state === 'UP' ? 'success' : 'warning'" disable-transitions>{{scope.row.state}}</el-tag>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="$t('message.oper')" width:='150'>
+                    <el-table-column :label="$t('network.Speed')" prop="speed" ></el-table-column>
+                    <el-table-column :label="$t('message.oper')" width='130'>
                         <template slot-scope='scope'>
                             <el-tooltip :content="$t('message.modify')" placement="bottom"><el-button type='warning' icon="el-icon-edit-outline" size='mini' @click='modifynet(scope.row)'></el-button></el-tooltip>
                         </template>
                     </el-table-column>
                 </el-table>
+                <el-pagination
+                    layout="total, sizes, prev, pager, next, jumper"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :page-sizes="[5, 10]"
+                    :page-size="pagesize"
+                    :total="pageTotal" style="text-align: right;margin: 1em">
+                    </el-pagination>
                 </el-col>
             </el-row>
             <el-dialog :title="$t('network.modify')" :before-close="handleClose" :visible.sync="modifyn" width="30%" :close-on-click-modal="false" center>
@@ -53,32 +69,30 @@
     
 </template>
 <script>
-import headerBar from '../common/headerBar'
 export default {
     name:'network',
-    components:{headerBar},
     data(){
-        var IPcheck=(rule,val,callbcak)=>{
+        var IPcheck=(rule,val,callback)=>{
             if(!val){
-                return callbcak(new Error('请输入IP地址'))
+                return callback(new Error(this.$t('bond.ip')))
             }
             else{
                 var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
                 if(!reg.test(val)){
-                    return callbcak(new Error('请输入正确的IP地址'))
+                    return callback(new Error(this.$t('network.input')))
                 }
                 else
-                    callbcak()
+                    callback()
             }
         }
         var maskcheck=(rule,val,callbcak)=>{
             if(!val){
-                return callbcak(new Error('请输入mask地址'))
+                return callbcak(new Error(this.$t('network.input1')))
             }
             else{
                 var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
                 if(!reg.test(val)){
-                    return callbcak(new Error('请输入正确的mask地址'))
+                    return callbcak(new Error(this.$t('network.input2')))
                 }
                 else
                     callbcak()
@@ -88,7 +102,7 @@ export default {
             if(val){
                 var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
                 if(!reg.test(val)){
-                    return callbcak(new Error('请输入正确的DNS地址'))
+                    return callbcak(new Error(this.$t('network.input3')))
                 }
                 else 
                     callbcak()
@@ -100,6 +114,7 @@ export default {
             netdata:[],
             pagesize: 5,
             currpage: 1,
+            pageTotal: 0,
             modifyn:false,
             rowdata:[],
             modifydata:{
@@ -109,10 +124,10 @@ export default {
             },
             netrule:{
                 IP:[
-                    {validator:IPcheck, trigger:'blur'},
+                    {required:true,validator:IPcheck, trigger:'blur'},
                 ],
                 mask:[
-                    {validator:maskcheck, trigger:'blur'},
+                    {required:true,validator:maskcheck, trigger:'blur'},
                 ],
                 DNS:[
                     {validator:DNScheck, trigger:'blur'}
@@ -122,6 +137,14 @@ export default {
     },
     mounted() {
         this.netget()
+    },
+    watch:{
+      pageTotal(){
+        if(this.pageTotal==(this.currpage-1)*this.pagesize&& this.pageTotal!=0){
+          this.currpage-=1;
+        //   getuser(this);//获取列表数据
+        }
+      }
     },
     methods: {
         netget(){
@@ -143,6 +166,7 @@ export default {
                         data[i].state='—'
                 }
                 _this.netdata=res.data.network
+                _this.pageTotal = _this.netdata.length
             }).catch(error=>{
                 console.log(error)
             })
@@ -157,22 +181,11 @@ export default {
                 if(valid){
                     _this.$axios.post(this.$host+'network',{iface:_this.rowdata.interface,addr:_this.modifydata.IP,netmask:_this.modifydata.mask,dns:_this.modifydata.DNS}).then(res=>{
                         _this.modifyn=false
-                        // if(res.data.success){
-                        //     $('#success_tip').css({'display':'flex'})
-                        //     setTimeout(function(){
-                        //         $('#success_tip').css({'display':'none'})
-                        //     },3000)
-                        // }
-                        // else if(!res.data.success){
-                        //     $('#error_tip').css({'display':'flex'})
-                        //     setTimeout(function(){
-                        //         $('#error_tip').css({'display':'none'})
-                        //     },3000)
-                        // }
-                        $('#success_tip').css({'display':'flex'})
-                        setTimeout(function(){
-                            $('#success_tip').css({'display':'none'})
-                        },3000)
+                        _this.$message({
+                            message:this.$t('message.success'),
+                            type:'success',
+                            offset:''
+                        })
                         _this.netget()
                         _this.netreset('modifydata')
                     }).catch(error=>{
@@ -187,6 +200,12 @@ export default {
         handleClose(done){
             done();
             this.$refs['modifydata'].resetFields();
+        },
+        handleCurrentChange(cpage) {
+          this.currpage = cpage;
+        },
+        handleSizeChange(psize) {
+          this.pagesize = psize;
         },
     },
 }

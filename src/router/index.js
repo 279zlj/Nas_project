@@ -1,24 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/components/Login'
 import bar from '@/components/common/bar'
-import system from '@/components/system_manager/system'
-import user from '@/components/user_manager/user/user'
-import network from '@/components/network_manager/network'
-import bond from '@/components/network_manager/bond'
-import disk from '@/components/storage_manager/disk'
-import raid from '@/components/raid_manager/raid'
-import group from '@/components/user_manager/group/group'
-import gateway from '@/components/network_manager/gateway/gateway'
-import lv from '@/components/storage_manager/lv_manager/lv'
-import nfs from '@/components/sharing_manager/nfs_manager/nfs'
-import smb from '@/components/sharing_manager/smb_manager/smb'
-import afp from '@/components/sharing_manager/afp_manager/afp'
-import pool from '@/components/storage_manager/pool/pool'
-import iscsi from '@/components/sharing_manager/iSCSI_manager/iSCSI'
-import rbd from '@/components/storage_manager/rbd/rbd'
-import ftp from '@/components/sharing_manager/ftp_manager/ftp'
-import Error from '@/components/common/Error'
+import headerBar from '@/components/common/headerBar'
+import { readFile } from 'fs';
 
 Vue.use(Router)
 
@@ -26,15 +10,18 @@ export default new Router({
     routes: [{
             path: '/',
             name: 'Login',
-            component: Login,
+            component: () =>
+                import ('../components/Login'),
             meta: { requiresAuth: true }
         },
         {
             path: '/system',
             name: 'system',
             components: {
-                default: bar,
-                content: system
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/system_manager/system.vue')
             },
             meta: { requiresAuth: true }
         },
@@ -42,8 +29,10 @@ export default new Router({
             path: '/user',
             name: 'user',
             components: {
-                default: bar,
-                content: user
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/user_manager/user/user.vue')
             },
             meta: { requiresAuth: true }
         },
@@ -51,8 +40,10 @@ export default new Router({
             path: '/network',
             name: 'network',
             components: {
-                default: bar,
-                content: network
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/network_manager/network.vue')
             },
             meta: { requiresAuth: true }
         },
@@ -60,17 +51,21 @@ export default new Router({
             path: '/bond',
             name: 'bond',
             components: {
-                default: bar,
-                content: bond
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/network_manager/bond.vue')
             },
             meta: { requiresAuth: true }
         },
         {
-            path: '/disk',
-            name: 'disk',
+            path: '/sysdisk',
+            name: 'sysdisk',
             components: {
-                default: bar,
-                content: disk
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/storage_manager/disk.vue')
             },
             meta: { requiresAuth: true }
         },
@@ -78,8 +73,10 @@ export default new Router({
             path: '/rbd',
             name: 'rbd',
             components: {
-                default: bar,
-                content: rbd
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/storage_manager/rbd/rbd.vue')
             },
             meta: { requiresAuth: true }
         },
@@ -87,8 +84,10 @@ export default new Router({
             path: '/raid',
             name: 'raid',
             components: {
-                default: bar,
-                content: raid
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/raid_manager/raid.vue')
             },
             meta: { requiresAuth: true }
         },
@@ -96,8 +95,10 @@ export default new Router({
             path: '/group',
             name: 'group',
             components: {
-                default: bar,
-                content: group
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/user_manager/group/group')
             },
             meta: { requiresAuth: true }
         },
@@ -105,8 +106,10 @@ export default new Router({
             path: '/gateway',
             name: 'gateway',
             components: {
-                default: bar,
-                content: gateway
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/network_manager/gateway/gateway')
             },
             meta: { requiresAuth: true }
         },
@@ -114,8 +117,10 @@ export default new Router({
             path: '/lv',
             name: 'lv',
             components: {
-                default: bar,
-                content: lv
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/storage_manager/lv_manager/lv')
             },
             meta: { requiresAuth: true }
         },
@@ -123,8 +128,10 @@ export default new Router({
             path: '/ftp',
             name: 'ftp',
             components: {
-                default: bar,
-                content: ftp,
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/sharing_manager/ftp_manager/ftp'),
             },
             meta: { requiresAuth: true }
         },
@@ -132,8 +139,10 @@ export default new Router({
             path: '/nfs',
             name: 'nfs',
             components: {
-                default: bar,
-                content: nfs
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/sharing_manager/nfs_manager/nfs')
             },
             meta: { requiresAuth: true }
         },
@@ -141,8 +150,10 @@ export default new Router({
             path: '/smb',
             name: 'smb',
             components: {
-                default: bar,
-                content: smb
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/sharing_manager/smb_manager/smb')
             },
             meta: { requiresAuth: true }
         },
@@ -150,8 +161,10 @@ export default new Router({
             path: '/afp',
             name: 'afp',
             components: {
-                default: bar,
-                content: afp
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/sharing_manager/afp_manager/afp')
             },
             meta: { requiresAuth: true }
         },
@@ -159,8 +172,10 @@ export default new Router({
             path: '/pool',
             name: 'pool',
             components: {
-                default: bar,
-                content: pool
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/storage_manager/pool/pool')
             },
             meta: { requiresAuth: true }
         },
@@ -168,15 +183,72 @@ export default new Router({
             path: '/iscsi',
             name: 'iscsi',
             components: {
-                default: bar,
-                content: iscsi
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/sharing_manager/iSCSI_manager/iSCSI')
             },
             meta: { requiresAuth: true }
         },
         {
+            path: '/raiddisk',
+            name: 'raiddisk',
+            components: {
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/hard_raid/raidMgr')
+            },
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/diskMgr',
+            name: 'diskMgr',
+            components: {
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/hard_raid/hard_disk')
+            },
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/back',
+            name: 'back',
+            components: {
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/backup/oracle/back')
+            },
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/rfile',
+            name: 'rfile',
+            components: {
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/backup/rfile/rfile')
+            }
+        },
+        {
+            path: '/myback',
+            name: 'myback',
+            components: {
+                top: headerBar,
+                aside: bar,
+                content: () =>
+                    import ('../components/backup/mysql/mysql')
+            }
+        },
+        {
             path: '*',
             name: '*',
-            component: Error
-        }
+            component: () =>
+                import ('../components/common/Error')
+        },
+
     ]
 })

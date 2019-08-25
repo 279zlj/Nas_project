@@ -1,16 +1,14 @@
 <template>
     <div class="content">
-        <headerBar></headerBar>
         <div>
             <div class="tip_bg">
-                <span class='tip'>{{$t('message.disk')}}</span>
+                <span class='tip'>{{$t('message.sysdisk')}}</span>
             </div>
             <el-row class='other_table'>
                 <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
                     <el-table :data='diskdata.slice((currpage - 1)*pagesize,currpage*pagesize)' border  v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
                         <el-table-column :label="$t('disk.name')" prop="path"></el-table-column>
                         <el-table-column :label="$t('disk.used')" prop='used'></el-table-column>
-                        <el-table-column :label="$t('disk.format')" prop='filesystem'></el-table-column>
                         <el-table-column :label="$t('disk.capacity')" prop='size'></el-table-column>
                         <el-table-column :label="$t('message.state')" prop='health'>
                             <template slot-scope="scope">
@@ -32,10 +30,9 @@
     </div>
 </template>
 <script>
-import headerBar from '../common/headerBar'
+import {change} from '../../assets/change_size'
 export default {
     name:'disk',
-    components:{headerBar},
     data(){
         return{
             diskdata:[],
@@ -57,9 +54,12 @@ export default {
                         data[i].health='unkown'
                     if(data[i].size==undefined)
                         data[i].size='—'
+                    if (data[i].path.indexOf('md') != -1)
+                        data[i].size=change(data[i].size)
                 }
                 this.diskdata=data
-
+                
+                    
             })
         },
         handleCurrentChange(cpage) {

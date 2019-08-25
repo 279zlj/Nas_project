@@ -1,119 +1,153 @@
 <template>
-    <div class='content'>
-        <headerBar></headerBar>
-        <div>
+    <div class="content">
             <div class='tip_bg'>
-                <span class='tip'>{{$t('message.system')}}</span>
+                <span class='tip'>{{$t('message.sysinfo')}}</span>
             </div>
-            <el-row class='main'>
+            <el-row class="main" style="margin-bottom:2em">
                 <el-col :xs='21' :sm='21' :md='10' :lg='10' :xl='10' :offset='1'>
-                    <el-card class='box-card'>
-                        <div slot='header' class='clearfix'>
-                            <i class='el-icon-setting'></i>
-                            <span>{{$t('sys.basic')}}</span>
-                        </div>
-                        <div>
-                            <p class='basic_info'>{{$t('sys.version')}}：<span>{{sysinfo.bannel}}</span></p>
-                            <p class='basic_info'>{{$t('sys.model')}}：<span>{{sysinfo.model}}</span></p>
-                            <p class='basic_info'>{{$t('sys.suppliers')}}：<span>{{sysinfo.vendor}}</span></p>
-                        </div>
-                    </el-card>
+                      <el-card class='box-card' style="height:27.5em">
+                          <div slot='header' class='clearfix titlebar'>
+                              <i class='el-icon-wangluo iconfont' style="font-size:20px"></i>
+                              <span>{{$t('message.net')}}</span>
+                          </div>
+                          <!-- <menorycharts></menorycharts> -->
+                          <el-row style='line-height:3em'>
+                            <el-col :span="8">
+                              <b>{{$t('network.interface')}}</b>
+                            </el-col>
+                            <el-col :span="8">
+                              <b>{{$t('message.sent')}}</b>
+                            </el-col>
+                            <el-col :span="8">
+                              <b>{{$t('message.recv')}}</b>
+                            </el-col>
+                          </el-row>
+                          <div style="height:18em;overflow-y:scroll">
+                          <el-row v-for="n in netdata" v-bind:key="n.id" style='line-height:2.5em;'>
+                            <el-col :span="8">
+                              {{n.iface}}
+                            </el-col>
+                            <el-col :span="8">
+                              <el-tag type="success">{{n.info.bytes_sent}}</el-tag>
+                            </el-col>
+                            <el-col :span="8">
+                              <el-tag type="danger">{{n.info.bytes_recv}}</el-tag>
+                            </el-col>
+                          </el-row>
+                          </div>
+                      </el-card>
                 </el-col>
                 <el-col :xs='21' :sm='21' :md='10' :lg='10' :xl='10' :offset='1'>
-                    <el-card class='box-card'>
-                        <div slot='header' class='clearfix'>
-                            <i class='el-icon-icon01 iconfont'></i>
-                            <span>{{$t('sys.hardware')}}</span>
+                    <el-card class='box-card'  style='height:27.5em'>
+                        <div slot='header' class='clearfix titlebar'>
+                            <i class='el-icon-cipan iconfont' style="font-size:20px"></i>
+                            <span>{{$t('message.dd')}}</span>
                         </div>
-                        <div>
-                            <!-- <el-alert type="error" title="操作失败" show-icon center :closable='false' style='display:none' id='error_tip'></el-alert>
-                            <el-alert type="success" title="操作成功" show-icon center :closable='false' style='display:none' id='success_tip'></el-alert>
-                            <el-form :model="timedata" :rules="timerule" ref='timedata' label-width="30" class='demo-form-inline' :inline="true">
-                              <el-form-item label="日期" prop='date'>
-                                  <el-date-picker v-model="timedata.date" placeholder="选择日期" type='datetime' value-format=" yyyy-MM-dd HH:mm" format="yyyy-MM-dd HH:mm"></el-date-picker>
-                              </el-form-item>
-                              <el-form-item>
-                                  <el-button type='primary' @click="datesave('timedata')">保存</el-button>
-                              </el-form-item>
-                            </el-form> -->
-                            <p class="basic_info">{{$t('sys.kernel')}}：<span>{{sysinfo.kernel}}</span></p>
-                            <p class="basic_info">{{$t('sys.board')}}：<span>{{sysinfo.board}}</span></p>
-                            <p class="basic_info">{{$t('sys.cpu')}}：<span>{{sysinfo.cpu_module}}</span></p>
-                        </div>
+                        <!-- <menorycharts></menorycharts> -->
+                          <el-row style="height:6em">
+                            <el-col :xs='18' :sm='18' :md='18' :lg='18' :xl='18'>
+                              <!-- <div :style="{width:'100%'}">
+                                <p><b>{{$t('message.read')}}：</b>{{read_bytes}}</p>
+                                <p><b>{{$t('message.write')}}：</b>{{write_bytes}}</p>
+                              </div> -->
+                              <div :style="{width:'100%'}" v-for='(d,index) in diskdata' v-show='target == index'>
+                                <p><b>{{$t('message.read')}}：</b>{{d.info.read_bytes}}</p>
+                                <p><b>{{$t('message.write')}}：</b>{{d.info.write_bytes}}</p>
+                              </div>
+                            </el-col>
+                            <el-col :xs='6' :sm='6' :md='6' :lg='6' :xl='6'>
+                              <el-row class="rightbar">
+                                  <p style="margin:0" v-for="(p,index) in diskdata" @click="changedisk(index,p)" :id='index' >{{p.path}}</p>
+                              </el-row>
+                            </el-col>
+                          </el-row>
+                          <hr style="border-top:1px solid #E4E4E4"></hr>
+                            <el-row>
+                              <el-col :span='6'>
+                                <p style="font-weight:700;font-size:1.1em">{{$t('message.diskuse')}}：</p>
+                              </el-col>
+                              <el-col :span='18'>
+                                <div id='diskstatus' :style="{width:'100%',height:'15em'}" ></div>
+                              </el-col>
+                            </el-row>
+                        
                     </el-card>
                 </el-col>
             </el-row>
-            <el-row class='main'>
+            <el-row class='main' style="margin-bottom:2em">
                 <el-col :xs='21' :sm='21' :md='10' :lg='10' :xl='10' :offset='1'>
-                    <el-card class='box-card'>
-                        <div slot='header' class='clearfix'>
+                    <el-card class='box-card' style="width:100%">
+                        <div slot='header' class='clearfix titlebar'>
                             <i class='el-icon-cpu iconfont'></i>
                             <span>{{$t('sys.cpu_used')}}(%)</span>
                         </div>
-                        <!-- <cpucharts v-bind:data="allnum"></cpucharts> -->
                         <div id='cpu'></div>
                     </el-card>
                 </el-col>
                 <el-col :xs='21' :sm='21' :md='10' :lg='10' :xl='10' :offset='1'>
-                    <el-card class='box-card'>
-                        <div slot='header' class='clearfix'>
+                    <el-card class='box-card' style="width:100%">
+                        <div slot='header' class='clearfix titlebar'>
                             <i class='el-icon-neicun iconfont' style="font-size:20px"></i>
                             <span>{{$t('sys.mem_used')}}(%)</span>
                         </div>
-                        <!-- <menorycharts></menorycharts> -->
                         <div id='menory'></div>
                     </el-card>
                 </el-col>
             </el-row>
-        </div>
+            
     </div>
 </template>
 <script>
 import 'echarts'
-import headerBar from '../common/headerBar'
-// import cpucharts from './charts/cpucharts'
-// import menorycharts from './charts/menorycharts'
+import {renderSize} from '../../assets/change_bytes'
+import 'echarts-liquidfill/src/liquidFill'
+import cpucharts from './charts/cpucharts'
+import menorycharts from './charts/menorycharts'
 export default {
     name:'syetem',
-    components:{headerBar},
+    components:{cpucharts,menorycharts},
     data(){
-        var datecheck=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请选择日期'))
-            }
-            else
-                callback()
-        }
         return{
-            timedata:{
-                date:''
-            },
-            timerule:{
-                date:[
-                    {validator:datecheck, trigger: 'blur'}
-                ]
-            },
             sysinfo:[],
             hardware:[],
-            allnum:[]
+            allnum:[],
+            netdata:[],
+            diskdata:[],
+            val:[],
+            read_bytes:'',
+            write_bytes:'',
+            usedata:[],
+            num:[],
+            alldisk:'',
+            target:0,
+            cpu:[],
+            mem:[],
+            date:[]
         }
     },
     mounted() {
         this.system_info()    
         this.initWebSocket()
+        var _this=this
+        setTimeout(function(){
+          _this.changedisk(0)
+        },100)
+        
     },
     destroyed(){
         this.websocketclose()
     },
     methods:{
-        initWebSocket() {
+      initWebSocket() {
         const wsurl = "ws://" + this.ip + "/ps";
         this.websock = new WebSocket(wsurl);
+        this.websock.onopen = this.websocketonopen;
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onclose = this.websocketclose;
       },
       websocketonopen() {
-        console.log('ok')
+        
+        console.log(this.websock.readyState)
         //console.log(JSON.parse(obj))
       },
       websocket() {
@@ -134,7 +168,7 @@ export default {
         this.websock.close()
       },
       draw(datanum){
-        //   console.log(datanum)
+          // console.log(datanum)
         var date = new Array()
         var cpu = new Array()
         var mem = new Array()
@@ -144,8 +178,43 @@ export default {
             cpu.push(data[i][1])
             mem.push(data[i][2]) 
         }
+        // this.cpu=cpu
+        // this.mem=mem
+        // this.date=date
+        this.diskdata = datanum.disks
+        this.netdata = datanum.nets
+        this.usedata = datanum.use
         this.draw_cpu(date,cpu)
         this.draw_mom(date,mem)
+        // console.log(this.diskdata)
+        for(let a = 0;a<this.netdata.length;a++){
+          this.netdata[a].info.bytes_sent=renderSize(this.netdata[a].info.bytes_sent)
+          this.netdata[a].info.bytes_recv=renderSize(this.netdata[a].info.bytes_recv)
+          if(this.netdata[a].iface == 'all')
+            this.netdata[a].iface = '总网速'
+          // console.log(this.netdata[a].info.bytes_sent,this.netdata[a].info.bytes_recv)
+        }
+        for(let a = 0;a<this.diskdata.length;a++){
+          this.diskdata[a].info.read_bytes=renderSize(this.diskdata[a].info.read_bytes)
+          this.diskdata[a].info.write_bytes=renderSize(this.diskdata[a].info.write_bytes)  
+          if(this.diskdata[a].path == 'all'){
+            
+            for(let b = 0;b<this.usedata.length;b++){
+              if(this.usedata[b].path == 'all'){
+                this.num = []
+                this.num = this.usedata[b].use / 100
+                
+                let da = []
+                da.push(this.num)
+                this.drawdisks(da)
+              }
+            }
+            this.diskdata[a].path = '总读写'
+          }
+          
+          // console.log(this.diskdata[a].info.read_bytes,this.diskdata[a].info.write_bytes)
+        }
+        
       },
         system_info(){
             var _this=this
@@ -155,8 +224,46 @@ export default {
                 console.log(error)
             })
         },
+        changedisk(key,val){
+            $("#"+key+"").addClass('now')
+            $("#"+key+"").siblings().removeClass('now')
+           
+        },
+        drawdisks(data){
+            var dom = this.$echarts.init(document.getElementById('diskstatus'))
+            dom.setOption({
+                series:[{
+                    type:'liquidFill',
+                    data: data,
+                    radius:'70%',
+                    itemStyle:{
+                        shadowBlur:0
+                    },
+                    outline:{
+                        borderDistance:0,
+                        itemStyle:{
+                            borderWidth: 3,
+                            borderColor: '#156ACF',
+                            shadowBlur: 1,
+                        }
+                    },
+                    label: {
+                    normal: {
+                        textStyle: {
+                        color: 'red',
+                        insideColor: 'yellow',
+                        fontSize: 48
+                        }
+                    }
+                    },
+                }],
+                tooltip: {
+                    show: true
+                }
+            })
+            window.addEventListener("resize", () => { dom.resize();});
+        },
         draw_cpu(time,data){
-            // console.log(time,data)          
             var cpu=this.$echarts.init(document.getElementById('cpu'))
             var option={
               color: ['#67C23A'],
@@ -196,9 +303,9 @@ export default {
               }]
             };
             cpu.setOption(option)
+            window.addEventListener("resize", () => { cpu.resize();});
         },
         draw_mom(time,data){
-            // console.log(time,data,'11111111111111111111') 
           var mom=this.$echarts.init(document.getElementById('menory'))
           var option={
             color: ['#F56C6C'],
@@ -237,6 +344,7 @@ export default {
             }]
           };
           mom.setOption(option)
+          window.addEventListener("resize", () => { mom.resize();});
         },
     }
 }
@@ -245,7 +353,17 @@ export default {
 .basic_info{
     font-weight:700;
 }
-#cpu,#menory{
-        width: 100%;height:300px;border-radius: .3em;
-    }
+
+.titlebar{
+    height:1.5em !important;
+}
+.rightbar{
+    height:5.5em;overflow-y:scroll;background-color:#EFF0F4;text-align:center;border-radius:.5em;line-height:2.5em
+}
+.rightbar p{
+    cursor: pointer;
+}
+.now{
+    background-color: white !important;
+}
 </style>

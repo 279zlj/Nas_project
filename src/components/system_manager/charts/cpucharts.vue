@@ -4,34 +4,26 @@
 <script>
 export default {
     name:'cpucharts',
-    props:['data'],
+    props:['alldata','time'],
     data(){
         return{
-            time:[],
-            cpu:[]
+            // alldata:[],
+            // time:[]
         }
     },
     mounted(){
-        this.donum(this.data)
+        this.draw_cpu(this.time,this.alldata)
     },
     watch:{
-      data(){
-        return this.data
+      alldata(){
+        this.draw_cpu(this.time,this.alldata)
+        return this.alldata
+      },
+      time(){
+        return this.time
       }
     },
     methods:{
-        donum(data){
-          console.log(data)
-          var time = data.map(function(item){
-            return item[0]
-          })
-          var cpu = data.map(function(item){
-            return item[1]
-          })
-          this.time=time
-          this.cpu=cpu
-          this.draw_cpu(this.time,this.cpu)
-        },
         draw_cpu(time,data){
             var cpu=this.$echarts.init(document.getElementById('cpu'))
             var option={
@@ -78,6 +70,9 @@ export default {
 </script>
 <style>
     #cpu{
-        width: 100%;height:250px;border-radius: .3em;
+        width:100%;height:300px;border-radius: .3em;
+    }
+    canvas{
+      width: 100% !important
     }
 </style>

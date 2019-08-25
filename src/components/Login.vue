@@ -1,54 +1,49 @@
 <template>
-  <el-row id="Login">
-    <el-col :span='10' :offset='7' id='login_form'>
+    <div id='Login'>
+      <video autoplay loop muted>
+        <source src='../../static/images/bg02.mp4' id='bg'></source>
+      </video>  
       <el-row>
-        <el-row>
-          <el-col :xs='8' :sm='8' :md='8' :lg='9' :xl='10' style='height:1em'></el-col>
-          <el-col :xs='8' :sm='8' :md='8' :lg='5' :xl='4' class='user_bg'>
-            <i class='el-icon-pingtaiguanli-yonghuguanli iconfont users'></i>
+          
+        <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' :offset='6' style="margin-top:8rem" >
+          <div>
+            <img src="../../static/images/logo02.png" style="height:3rem;margin-bottom:.5rem" />
+          </div>
+          <el-row  id='iform'>
+          <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' style="height:100%">
+            <img src='../../static/images/nas.gif' style="width:100%;padding:3rem 0;height:20rem" />
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' :offset='6'>
-            <el-form  :model="logindata" :rules="loginrule" ref="logindata" label-width="30" class="demo-ruleForm">
-              <el-form-item prop='username'>
+          <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' style="padding:10% 3rem 0rem 3rem">
+            <h2 style="color:#01968A">欢迎登录</h2>
+            <el-form :model="logindata" ref='logindata' :rules="loginrule" >
+              <el-form-item prop="username">
                 <el-input v-model="logindata.username" placeholder="请输入用户名" prefix-icon='el-icon-user-s iconfont' class="user_top" autofocus></el-input>
               </el-form-item>
-              <el-form-item prop='pwd'>
-                <el-input v-model="logindata.pwd" type='password' placeholder="请输入密码" prefix-icon='el-icon-ziyuan iconfont' @keyup.enter.native="login()"></el-input>
-                
+              <el-form-item prop="pwd">
+                <el-input v-model="logindata.pwd" placeholder="请输入密码" type="password" prefix-icon='el-icon-ziyuan iconfont' @keyup.enter.native="login('logindata')"></el-input>
               </el-form-item>
-              <el-form-item >
-                <el-alert type="error" :title="tipsmsg" show-icon id='error_tip' :closable='false' center style="width:100%"></el-alert>
-                <el-button type="success" round class='login_btn' @click='login()' >登 录</el-button>
+              <el-form-item>
+                <el-button round class='login_btn' @click="login('logindata')" >登录</el-button>
               </el-form-item>
             </el-form>
           </el-col>
-        </el-row>
+          </el-row>
+        </el-col>
+       
       </el-row>
-    </el-col>
-  </el-row>
+       <el-row id='footer'>
+            <el-col>
+                <span style="text-align: center;display:block;font-size:.8rem">浏览器推荐使用：谷歌（Chrome）、火狐（FireFox）、IE10（以上）版本，大于1440*900分辨率!</span>
+                <span style="text-align: center;display:block;font-size:.8rem">Copyright ® 2019 广州五舟科技股份有限公司.</span>
+            </el-col>
+        </el-row>
+    </div>
 </template>
 
 <script>
 export default {
   name: 'Login',
   data () {
-    var checkname=(rule,val,callback)=>{
-      if(!val){
-        return callback(new Error('请输入用户名'))
-      }
-      else{
-        callback()
-      }
-    }
-    var checkpwd=(rule,val,callback)=>{
-      if(!val){
-        return callback(new Error('请输入密码'))
-      }
-      else
-        callback()
-    }
     return {
       logindata:{
         username:'',
@@ -56,41 +51,39 @@ export default {
       },
       loginrule:{
         username:[
-          {validator:checkname, trigger:'blur'}
+          {required:true,message:'请输入用户名', trigger:'blur'}
         ],
         pwd:[
-          {validator:checkpwd, trigger:'blur'}
+          {required:true,message:'请输入密码', trigger:'blur'}
         ]
       },
-      tipsmsg:''
     }
   },
   methods: {
-    login(){
-      this.$axios.post(this.$host+'login',{username:this.logindata.username,password:this.logindata.pwd}).then(res=>{
-        if(res.data.success){
-          sessionStorage.setItem('loginname',this.logindata.username)
-          this.$router.push('system');
-        }
-        else if(!res.data.success){
-          if(res.data.data){
-            this.tipsmsg=res.data.data
-            $('#error_tip').css({'display':'flex'})
-            setTimeout(function(){
-                $('#error_tip').css({'display':'none'})
-            },2000)
+    login(name){
+      this.$refs[name].validate((valid)=>{
+        if(valid){
+          this.$axios.post(this.$host+'login',{username:this.logindata.username,password:this.logindata.pwd}).then(res=>{
+          if(res.data.success){
+            sessionStorage.setItem('loginname',this.logindata.username)
+            this.$router.push('system');
+            this.$notify({
+              title:'登录成功',
+              type:'success'
+            })
           }
-          else{
-            this.tipsmsg='账号密码不匹配！'
-            $('#error_tip').css({'display':'flex'})
-            setTimeout(function(){
-                $('#error_tip').css({'display':'none'})
-            },2000)
+          else if(!res.data.success){
+            this.$notify.error({
+              title:'账号、密码不匹配!',
+            })
           }
+          this.logindata.pwd=''
+        }).catch(error=>{
+          console.log(error)
+        })
         }
-      }).catch(error=>{
-        console.log(error)
       })
+      
     }
   },
 }
@@ -99,42 +92,43 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #Login{
-  background:url('../../static/images/bg.png') no-repeat;
-  background-size:cover;
-  background-color:#A6ECF9;
-  height:100%;
-  width:100%;
-  margin:0;
-  padding:0;
-}
-#login_form{
-  margin-top:10%;
-  background-color:#3E5D63;
-  height:50%;
-  border-radius:1em;
-  
-}
-.users{
-  color:#299FB5;
-  font-size:4em !important;
-  margin:.5em;
-  text-align:center;
-}
-.user_bg{
-  background-color:#FFF;
-  border-radius:50%;
-  margin-top:3em;
-}
-.user_top{
-  margin-top:3em;
-}
-.top{
-  margin-top:1.5em;
-}
-.login_btn{
-  width:100%;
-}
-/* #tip{
-  display:none;
-} */
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        /* z-index: -100; */
+        transition: 1s opacity;
+        margin: 0 ;
+        padding: 0 ;
+        bottom:0;
+        background: linear-gradient(to right, #01978D 20%, #089195 30%, #138AA2 50%,#1E7EB0 65%, #217DB2 70%,#356DC8 90%);
+    }
+    video{
+        position:absolute;
+        width: 100%;
+        height: 100%;
+        z-index: -100;
+    }
+    video #bg{
+        width: auto;
+        height: auto;
+        z-index: -100;
+        background-size: contain;
+    }
+    #iform{
+      background-color:white;
+      border-radius: .5rem;
+      box-shadow: 0px 3px 15px #303133;
+    }
+    .login_btn{
+      width:100%;
+      background-color: #01968A;
+      color:white;
+    }
+    #footer{
+        position:absolute;
+        width: 100%;
+        color:white;
+        bottom:1rem;
+        
+    }
 </style>

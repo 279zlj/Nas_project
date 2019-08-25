@@ -1,14 +1,11 @@
 <template>
     <div class="content">
-        <headerBar></headerBar>
         <div class="tip_bg">
             <span class="tip">FTP、SFTP {{$t('message.management')}}</span>
         </div>
         <div>
             <el-row class="other_table">
               <el-col :xs='20' :sm='20' :md='20' :lg="20" :xl='20' :offset="2">
-                    <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
-                    <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
                     <el-table :data='ftpdata' border class="table_cell" style="width:100%;min-height:310px;max-heigth:100%" >
                         <el-table-column :label="$t('message.service')" prop='service'></el-table-column>
                         <el-table-column :label="$t('message.user')" prop="user" >
@@ -30,10 +27,8 @@
     </div>    
 </template>
 <script>
-import headerBar from '../../common/headerBar'
 export default {
     name:'ftp',
-    components:{headerBar},
     data(){
         return{
             ftpdata:[]
@@ -64,11 +59,11 @@ export default {
                         sftp.push(res.data.data[i].username)
                 }
                 if(ftp_users.length == 0){
-                    ftp_users.push('请先创建用户')
+                    ftp_users.push('—')
                     this.ftpdata[0].operchange=true
                 }
                 if(sftp.length == 0){
-                    sftp.push('请先创建用户')
+                    sftp.push('—')
                     this.ftpdata[1].operchange=true
                 }
                 this.ftpdata[0].user = ftp_users
@@ -80,16 +75,14 @@ export default {
         changestate(row){
             this.$axios.post(this.$host+'ftp',{target:row.service,state:row.state}).then(res=>{
                 if(res.data.success){
-                    $('#success_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#success_tip').css({'display':'none'})
-                    },3000)
+                    this.$message({
+                        message:this.$t('message.success'),
+                        type:'success',
+                        offset:''
+                    })
                 }
                 else if(!res.data.success){
-                    $('#error_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#error_tip').css({'display':'none'})
-                    },3000)
+                    this.$message.error(res.data.msg)
                 }
                 this.getuser()
             }).catch(error=>{

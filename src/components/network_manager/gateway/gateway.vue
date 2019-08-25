@@ -1,32 +1,54 @@
 <template>
     <div class='content'>
-        <headerBar></headerBar>
         <div>
             <div class='tip_bg'>
                 <span class='tip'>{{$t('message.gateway')}}</span>
             </div>
-            <el-row class="other_table">
+            <el-row class="main_table">
               <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-                <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
-                <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
+                <el-row style='margin-bottom:.5em;float:right'>
+                    <el-button type='primary' @click='create_gw = true' size='small' icon="el-icon-circle-plus" ></el-button>
+                </el-row>
                 <el-table :data='gwdata'  border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
-                        <el-table-column :label="$t('gateway.interface')" prop='gw_face'></el-table-column>
-                        <el-table-column :label="$t('gateway.ip')" prop='gw'></el-table-column>
+                        <el-table-column :label="$t('gateway.interface')" prop='gw'></el-table-column>
+                        <el-table-column :label="$t('gateway.ip')" prop='gw_addr'></el-table-column>
                         <el-table-column :label="$t('message.oper')" width:='150'>
                             <template slot-scope='scope'>
                                 <el-tooltip :content="$t('message.modify')" placement="bottom"><el-button type='warning' icon="el-icon-edit-outline" size='mini' @click='modifygw(scope.row)'></el-button></el-tooltip>
+                                <el-tooltip :content="$t('message.delete')" placement="bottom"><el-button type="danger" icon="el-icon-delete" size="mini" @click="gwpool(scope.row)"></el-button></el-tooltip>
                             </template>
                         </el-table-column>
                     </el-table>
               </el-col>
             </el-row>
-            <el-dialog :title="$t('gateway.modify')" :visible.sync="gwdialog" width="30%" center :before-close="handleClose" :close-on-click-modal="false">
-                <el-form :model="modifydata" ref='modifydata' :rules='gwrule' label-width="30" class="demo-ruleForm">
-                  <el-form-item :label="$t('gateway.interface')">
-                    {{rowdata.gw_face}}
+            <el-dialog :title="$t('gateway.create')" :visible.sync="create_gw" width="30%" center :close-on-click-modal="false" :before-close="handleClose">
+                <el-form :model="modifydata" ref='modifydata' :rules="gwrule" label-width="100px" class="demo-rule"  label-position="left">
+                  <el-form-item :label="$t('gateway.ip')" prop='new_gw'>
+                      <el-input v-model="modifydata.new_gw" :placeholder="$t('gateway.input')" style="width:80%"></el-input>
+                  </el-form-item>
+                  <el-form-item :label="$t('gateway.interface')" prop="iface">
+                      <el-select v-model="modifydata.iface" :placeholder="$t('gateway.interface')">
+                        <el-option v-for="i in ifacedata" :key="i.interface" :value="i.interface">{{i.interface}}</el-option>
+                      </el-select>
+                  </el-form-item>
+                  <el-form-item>
+                      <el-button type="primary" @click="newsubmit('modifydata')">{{$t('message.submit')}}</el-button>
+                      <el-button @click="gwreset('modifydata')">{{$t('message.reset')}}</el-button>
+                  </el-form-item>
+                </el-form>
+            </el-dialog>
+            <el-dialog :title="$t('gateway.modify')" :visible.sync="gwdialog" width="35%" center :before-close="handleClose" :close-on-click-modal="false">
+                <el-form :model="modifydata" ref='modifydata' :rules='gwrule' label-width="160px" label-position="left" class="demo-ruleForm">
+                  <el-form-item :label="$t('gateway.iface')">
+                    {{rowdata.gw}}
+                  </el-form-item>
+                  <el-form-item :label="$t('gateway.interface')" prop="iface">
+                      <el-select v-model="modifydata.iface" :placeholder="$t('gateway.interface')">
+                        <el-option v-for="i in ifacedata" :key="i.interface" :value="i.interface">{{i.interface}}</el-option>
+                      </el-select>
                   </el-form-item>
                   <el-form-item :label="$t('gateway.ip')" prop='gwip'>
-                    <el-input v-model="modifydata.gwip" :placeholder='rowdata.gw' style='width:80%'></el-input>
+                    <el-input v-model="modifydata.gwip" :placeholder='rowdata.gw_addr' style='width:80%'></el-input>
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" @click="gwsubmit('modifydata')">{{$t('message.submit')}}</el-button>
@@ -38,19 +60,30 @@
     </div>
 </template>
 <script>
-import headerBar from '../../common/headerBar'
 export default {
     name:'gateway',
-    components:{headerBar},
     data(){
         var gwipcheck=(rule,val,callback)=>{
             if(!val){
-                return callback(new Error('请输入网关地址'))
+                return callback(new Error(this.$t('gateway.input')))
             }
             else{
                 var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
                 if(!reg.test(val)){
-                    return callback(new Error('请输入正确的网关地址'))
+                    return callback(new Error(this.$t('gateway.input1')))
+                }
+                else
+                    callback()
+            }
+        }
+        var checkgw=(rule,val,callback)=>{
+            if(!val){
+                return callback(new Error(this.$t('gateway.input')))
+            }
+            else{
+                var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+                if(!reg.test(val)){
+                    return callback(new Error(this.$t('gateway.input1')))
                 }
                 else
                     callback()
@@ -60,12 +93,22 @@ export default {
             gwdata:[],
             rowdata:[],
             gwdialog:false,
+            create_gw:false,
+            ifacedata:[],
             modifydata:{
-                gwip:''
+                gwip:'',
+                new_gw:'',
+                iface:''
             },
             gwrule:{
                 gwip:[
-                    {validator: gwipcheck, trigger: 'blur'}
+                    {required:true,validator: gwipcheck, trigger: 'blur'}
+                ],
+                new_gw:[
+                    {required:true,validator: checkgw, trigger: 'blur'}
+                ],
+                iface:[
+                    {required:true,message:this.$t('gateway.select'), trigger: 'blur'}
                 ]
             }
         }
@@ -77,7 +120,12 @@ export default {
         getgateway(){
             var _this=this
             this.$axios.get(this.$host+'gw').then(res=>{
-                _this.gwdata.push(res.data.data)
+                _this.gwdata=res.data.data
+            }).catch(error=>{
+                console.log(error)
+            })
+            this.$axios.get(this.$host+'network').then(res=>{
+                _this.ifacedata=res.data.network
             }).catch(error=>{
                 console.log(error)
             })
@@ -88,22 +136,68 @@ export default {
         },
         gwsubmit(formname){
             var _this=this
-            this.$axios.post(this.$host+'gw',{gw:_this.rowdata.gw,iface:_this.rowdata.gw_face}).then(res=>{
-                _this.gwdialog=false
-                if(res.data.success){
-                    $('#success_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#success_tip').css({'display':'none'})
-                    },3000)
+            this.$refs[formname].validate((valid)=>{
+                if(valid){
+                    this.$axios.post(this.$host+'gw',{gw:_this.modifydata.gwip,iface:_this.rowdata.gw,new_iface:_this.modifydata.iface}).then(res=>{
+                        _this.gwdialog=false
+                        if(res.data.success){
+                            _this.$message({
+                                message:this.$t('message.success'),
+                                type:'success',
+                                offset:''
+                            })
+                        }
+                        else if(!res.data.success){
+                            _this.$message.error(res.data.msg)
+                        }
+                        _this.getgateway()
+                        _this.gwreset('modifydata')
+                    })
                 }
-                else if(!res.data.success){
-                    $('#error_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#error_tip').css({'display':'none'})
-                    },3000)
+            })
+        },
+        newsubmit(formname){
+            var _this=this
+            this.$refs[formname].validate((valid)=>{
+                if(valid){
+                    this.$axios.post(this.$host+'gw',{gw:_this.modifydata.new_gw,iface:_this.modifydata.iface}).then(res=>{
+                        _this.gwdialog=false
+                        if(res.data.success){
+                            _this.$message({
+                                message:this.$t('message.success'),
+                                type:'success',
+                                offset:''
+                            })
+                        }
+                        else if(!res.data.success){
+                            _this.$message.error(res.data.msg)
+                        }
+                        _this.getgateway()
+                        _this.gwreset('modifydata')
+                    })
                 }
-                _this.getgateway()
-                _this.gwreset('modifydata')
+            })
+        },
+        gwpool(row){
+            this.$confirm('删除：'+'row.interface'+'？',$t('message.tips'),{
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type:'warning'
+            }).then(()=>{
+                this.$axios.delete(this.$host+'gw',{data:{name:row.interface}}).then(res=>{
+                    if(res.data.success){
+                        this.$message({
+                            type: 'success',
+                            message: '已完成'
+                        });
+                    }
+                    this.getdisk()
+                })
+            }).catch(()=>{
+                this.$message({
+                    type: 'info',
+                    message: this.$t('message.cancel')
+                })
             })
         },
         gwreset(formname){

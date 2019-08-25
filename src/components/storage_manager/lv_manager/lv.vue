@@ -1,31 +1,31 @@
 <template>
     <div class="content">
-        <headerBar></headerBar>
         <div>
             <div class="tip_bg">
                 <span class="tip">{{$t('message.logical')}}</span>
             </div>
             <el-row class="main_table">
                 <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-                    <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
-                    <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
                     <el-row style='margin-bottom:.5em;float:right'>
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createlv = true'></el-button></el-tooltip>
                     </el-row>
                     <el-table :data="lvdata.slice((currpage - 1)*pagesize,currpage * pagesize)" border  class="table_cell" style='width:100%;min-height:310px;max-height:100%' >
                         <el-table-column :label="$t('lv.name')" prop='name'></el-table-column>
                         <el-table-column :label="$t('lv.pool')" prop='vg_name'></el-table-column>
-                        <el-table-column :label="$t('message.state')" prop='state'>
-                            <template slot-scope="scope">
-                                <el-tag :type="scope.row.state === 'available' ? 'success' : 'warning'">{{scope.row.state}}</el-tag>
+                        <el-table-column prop='state'>
+                            <template slot="header" slot-scope="scope">
+                                <span>{{$t('message.state')}}</span>
                                 <el-popover
                                     placement="top-start"
                                     :title="$t('message.note')"
-                                    width="200"
                                     trigger="hover"
                                     content="unkonw:无法识别,available:可用,inactive:无效">
-                                    <el-button slot="reference" type="info" size='mini' circle><i class="el-icon-info"></i></el-button>
+                                    <el-button slot="reference" type="info" size='mini' circle style="margin-left:1em"><i class="el-icon-question" ></i></el-button>
                                 </el-popover>
+                            </template>
+                            <template slot-scope="scope">
+                                <el-tag :type="scope.row.state === 'available' ? 'success' : 'warning'">{{scope.row.state}}</el-tag>
+                                
                             </template>
                         </el-table-column>
                         <el-table-column :label="$t('lv.path')" prop='path' width="200"></el-table-column>
@@ -43,12 +43,12 @@
                     @current-change="handleCurrentChange"
                     :page-sizes="[5, 10]"
                     :page-size="pagesize"
-                    :total="lvdata.length" style="text-align: right;margin: 1em">
+                    :total="pageTotal" style="text-align: right;margin: 1em">
                     </el-pagination>
                 </el-col>
             </el-row>
-            <el-dialog :title="$t('lv.new')" :visible.sync="createlv" width="30%" center :close-on-click-modal="false" :before-close="headleClose">
-                <el-form :model="lvform" :rules='lvrule' ref='lvform' label-width="100px" label-position="left" class='demo-ruleForm'>
+            <el-dialog :title="$t('lv.new')" :visible.sync="createlv" width="35%" center :close-on-click-modal="false" :before-close="headleClose">
+                <el-form :model="lvform" :rules='lvrule' ref='lvform' label-width="140px" label-position="left" class='demo-ruleForm'>
                     <el-form-item :label="$t('lv.name')" prop='name'>
                         <el-input v-model="lvform.name" :placeholder="$t('lv.input')" ></el-input>
                     </el-form-item>
@@ -74,8 +74,8 @@
                     </el-form-item>
                 </el-form>
             </el-dialog>
-            <el-dialog :title="$t('message.expend')" :visible.sync="lvextend" width="30%" center :close-on-click-modal="false" :before-close="headleClose">
-                <el-form :model="lvform" :rules="lvrule" ref="lvform" label-width="30" class="demo-Form">
+            <el-dialog :title="$t('message.expend')" :visible.sync="lvextend" width="35%" center :close-on-click-modal="false" :before-close="headleClose">
+                <el-form :model="lvform" :rules="lvrule" ref="lvform" label-width="150px" label-position="left" class="demo-Form">
                   <el-form-item :label="$t('lv.now')">
                       {{rowdata}}
                   </el-form-item>
@@ -105,52 +105,23 @@
     </div>    
 </template>
 <script>
-import headerBar from '../../common/headerBar'
 export default {
     name:'lv',
-    components:{headerBar},
     data(){
         var namecheck=(rule,val,callback)=>{
+            var reg = /^[0-9a-zA-Z]+$/
             if(!val){
-                return callback(new Error('请输入名称'))
+                return callback(new Error(this.$t('pool.input')))
             }
             else{
                 if(val.length<3){
-                    return callback(new Error('请输入长度超过3的名称'))
+                    return callback(new Error(this.$t('pool.input1')))
+                }
+                else if(!reg.test(val)){
+                    return callback(new Error(this.$t('user.reg')))
                 }
                 else
                     callback()
-            }
-        }
-        var poolcheck=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请选择存储池'))
-            }
-            else{
-                callback()
-            }
-                
-        }
-        var sizecheck=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请输入逻辑卷大小'))
-            }
-            else
-                callback()
-        }
-        var unitcheck=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请选择单位'))
-            }
-            else
-                callback()
-        }
-        var expandcheck=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请输入扩容大小'))
-            }
-            else{
-                callback()
             }
         }
         return{
@@ -158,6 +129,7 @@ export default {
             lvdata:[],
             pagesize: 5,
             currpage: 1,
+            pageTotal: 0,
             pooldata:[],
             uintdata:['M','G','T'],
             lvform:{
@@ -170,22 +142,22 @@ export default {
             },
             lvrule:{
                 name:[
-                    {validator:namecheck, trigger: 'blur'},
+                    {required:true,validator:namecheck, trigger: 'blur'},
                 ],
                 pool:[
-                    {validator:poolcheck, trigger: 'blur'},
+                    {required:true,message:this.$t('lv.input1'), trigger: 'blur'},
                 ],
                 size:[
-                    {validator:sizecheck, trigger: 'blur'},
+                    {required:true,message:this.$t('lv.input2'), trigger: 'blur'},
                 ],
                 uint:[
-                    {validator:unitcheck, trigger: 'blur'}
+                    {required:true,message:this.$t('lv.input3'), trigger: 'blur'}
                 ],
                 expand:[
-                    {validator:expandcheck, trigger: 'blur'}
+                    {required:true,message:this.$t('lv.input4'), trigger: 'blur'}
                 ],
                 expanduint:[
-                    {validator:unitcheck, trigger: 'blur'}
+                    {required:true,message:this.$t('lv.input3'), trigger: 'blur'}
                 ]
             },
             rowdata:'',
@@ -199,11 +171,20 @@ export default {
     mounted(){
         this.getlv()
     },
+    watch:{
+      pageTotal(){
+        if(this.pageTotal==(this.currpage-1)*this.pagesize&& this.pageTotal!=0){
+          this.currpage-=1;
+        //   getuser(this);//获取列表数据
+        }
+      }
+    },
     methods:{
         getlv(){
             var _this=this
             this.$axios.get(this.$host+'vd').then(res=>{
                 _this.lvdata=res.data.data
+                _this.pageTotal = _this.lvdata.length
                 for (let i in _this.lvdata){
                     if(_this.lvdata[i].state==0){
                         _this.lvdata[i].state='unknow'
@@ -265,18 +246,16 @@ export default {
                     _this.$axios.post(this.$host+'vd',{name:_this.lvform.name,pool:_this.lvform.pool,size:allsize}).then(res=>{
                         _this.createlv=false
                         if(res.data.success){
-                            $('#success_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#success_tip').css({'display':'none'})
-                            },3000)
                             loading.close();
+                            _this.$message({
+                                message:this.$t('message.success'),
+                                type:'success',
+                                offset:''
+                            })
                         }
                         else if(!res.data.success){
-                            $('#error_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#error_tip').css({'display':'none'})
-                            },3000)
                             loading.close();
+                            _this.$message.error(res.data.msg)
                         }
                         _this.getlv()
                         _this.lvreset('lvform')
@@ -309,18 +288,16 @@ export default {
                     _this.$axios.put(this.$host+'vd',{pool:_this.lvtarget.vg_name,path:_this.lvtarget.path,size:expendsize}).then(res=>{
                          _this.lvextend=false
                         if(res.data.success){
-                            $('#success_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#success_tip').css({'display':'none'})
-                            },3000)
                             loading.close();
+                            _this.$message({
+                                message:this.$t('message.success'),
+                                type:'success',
+                                offset:''
+                            })
                         }
                         else if(!res.data.success){
-                            $('#error_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#error_tip').css({'display':'none'})
-                            },3000)
                             loading.close();
+                            _this.$message.error(res.data.msg)
                         }
                         _this.getlv()
                         _this.lvreset('lvform')
@@ -339,16 +316,14 @@ export default {
             this.$axios.delete(this.$host+'vd',{data:{name:_this.lvtarget}}).then(res=>{
                 _this.lvremove=false
                 if(res.data.success){
-                    $('#success_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#success_tip').css({'display':'none'})
-                    },3000)
+                    _this.$message({
+                        message:this.$t('message.success'),
+                        type:'success',
+                        offset:''
+                    })
                 }
                 else if(!res.data.success){
-                    $('#error_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#error_tip').css({'display':'none'})
-                    },3000)
+                    _this.$message.error(res.data.msg)
                 }
                 _this.getlv()
                 _this.lvreset('lvform')
@@ -356,6 +331,7 @@ export default {
                 console.log(error)
             })
         },
+        
         handleCurrentChange(cpage) {
           this.currpage = cpage;
         },
