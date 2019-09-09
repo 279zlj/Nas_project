@@ -12,7 +12,7 @@
                     <el-table :data='smbdata.slice((currpage - 1) * pagesize, currpage*pagesize)' border  class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
                         <el-table-column :label="$t('smb.name')" prop='name'></el-table-column>
                         <el-table-column :label="$t('smb.path')" prop='path'></el-table-column>
-                        <el-table-column :label="$t('smb.not')" prop='guest'></el-table-column>
+                        <el-table-column :label="$t('smb.not')" prop='guest' width="250px"></el-table-column>
                         <el-table-column :label="$t('smb.per')" prop="writable"></el-table-column>
                         <el-table-column :label="$t('message.oper')">
                             <template slot-scope="scope">
@@ -31,13 +31,13 @@
                     </el-pagination>
               </el-col>
             </el-row>
-            <el-dialog :title="$t('smb.new')" :visible.sync="createsmb" width="35%" center :before-close="handleClose" :close-on-click-modal="false">
-            <el-form :model="smbform" ref='smbform' :rules="smbrule" label-width="100px" label-position="left" class="demo-ruleForm">
+            <el-dialog :title="$t('smb.new')" :visible.sync="createsmb" width="40%" center :before-close="handleClose" :close-on-click-modal="false">
+            <el-form :model="smbform" ref='smbform' :rules="smbrule" label-width="130px" label-position="left" class="demo-ruleForm">
               <el-form-item :label="$t('smb.name')" prop='name'>
-                  <el-input v-model="smbform.name" :placeholder="$t('smb.input')" ></el-input>
+                  <el-input v-model="smbform.name" :placeholder="$t('smb.input')" clearable></el-input>
               </el-form-item>
               <el-form-item :label="$t('smb.p_name')" prop='path'>
-                  <el-input v-model="smbform.path" :placeholder="$t('smb.input1')" ></el-input>
+                  <el-input v-model="smbform.path" :placeholder="$t('smb.input1')" clearable ></el-input>
               </el-form-item>
               <el-form-item :label="$t('smb.user')" prop='user' v-if="!gestsate">
                   <el-select v-model="smbform.user" :placeholder="$t('smb.input2')">
@@ -67,7 +67,7 @@
         <el-dialog :title="$t('message.modify')" :visible.sync="smbmodi" width="30%" center :before-close="handleClose" :close-on-click-modal="false">
             <el-form :model="modifydata" ref='modifydata' :rules="smbrule" label-width="100px" label-position="left" class="demo-ruleFrom">
               <el-form-item :label="$t('smb.name')" prop="newname">
-                  <el-input v-model="modifydata.newname" :placeholder="modifydata.name"></el-input>
+                  <el-input v-model="modifydata.newname" :placeholder="modifydata.name" clearable></el-input>
               </el-form-item>
               <el-form-item :label="$t('smb.per')" prop="rank">
                   <el-switch :active-text="$t('smb.read')" v-model="modifydata.rank" :inactive-text="$t('smb.write')"></el-switch>
@@ -93,38 +93,6 @@
 export default {
     name:'smb',
     data(){
-        var namecheck=(rule,val,callback)=>{
-            var reg=/^[0-9a-zA-Z]+$/
-            if(!val){
-                return callback(new Error(this.$t('smb.input')))
-            }
-            else{
-                if(val.length<2){
-                    return callback(new Error(this.$t('smb.input3')))
-                }
-                else if(!reg.test(val)){
-                    return callback(new Error(this.$t('user.reg')))
-                }
-                else
-                    callback()
-            }
-        }
-        var pathcheck=(rule,val,callback)=>{
-            var reg=/^[0-9a-zA-Z]+$/
-            if(!val){
-                return callback(new Error(this.$t('smb.input1')))
-            }
-            else{
-                if(val.length<3){
-                    return callback(new Error(this.$t('smb.inout2')))
-                }
-                else if(!reg.test(val)){
-                    return callback(new Error(this.$t('user.reg')))
-                }
-                else
-                    callback()
-            }
-        }
         return{
             smbdata:[],
             user:[],
@@ -154,16 +122,23 @@ export default {
             },
             smbrule:{
                 name:[
-                    {required:true,validator:namecheck, trigger: 'blur'}
+                    {required:true,message:this.$t('smb.input'), trigger: 'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {min:2,message:this.$t('smb.input3'),trigger:'blur'}
                 ],
                 path:[
-                    {required:true,validator:pathcheck, trigger: 'blur'}
+                    {required:true,message:this.$t('smb.input1'), trigger: 'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {min:3,message:this.$t('smb.inout2'),trigger:'blur'}
                 ],
                 user:[
                     {required:true,message:this.$t('smb.input2'), trigger: 'blur'}
                 ],
                 doc:[
                     {required:true,message:this.$t('nfs.input6'), trigger: 'blur'}
+                ],
+                newname:[
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'}
                 ]
                 // pwd:[
                 //     {validator:pwdcheck, trigger: 'blur'}

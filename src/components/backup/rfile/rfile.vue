@@ -2,19 +2,12 @@
     <div class='content'>
         <div>
             <div class='tip_bg'>
-                <span class='tip'>文件备份</span>
+                <span class='tip'>{{this.$t('message.fileback')}}</span>
             </div>
             <el-row class="main_table">
               <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
                     <el-table :data='rfiledata' border class="table_cell" style="width:100%;min-height:150px;max-heigth:100%" >
                         <el-table-column :label="$t('message.service')" prop='service'></el-table-column>
-                        <el-table-column :label="$t('message.user')" prop="user" >
-                            <template slot-scope="scope">
-                                <span v-for='(i,index) in scope.row.user' :key='index'>
-                                    {{i}}
-                                </span>
-                            </template>
-                        </el-table-column>
                         <el-table-column :label="$t('message.oper')">
                             <template slot-scope="scope">
                                 <el-switch v-model="scope.row.status" :active-text="$t('message.open')" :inactive-text="$t('message.close')" @change="changestate(scope.row)" ></el-switch>
@@ -25,30 +18,33 @@
               <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset="2" style="margin-top:2rem">
                   <el-card class="box-card" style="height:30em">
                       <el-tabs v-model="tabname">
-                          <el-tab-pane label='客户端IP' name='back'>
-                                <Back></Back>
+                          <el-tab-pane :label="$t('message.fileback')" name='back'>
+                                <Back :userdd='user'></Back>
                           </el-tab-pane>
-                          <el-tab-pane label='文件恢复' key='recorey'>
+                          <el-tab-pane :label="$t('backup.filereco')" name='recorey'>
                               <el-row>
                                 <el-col :xs='24' :sm='24' :md='12' :lg='12' :xl='12'>
-                                    <span>服务器路径：{{target}}</span><el-button type="primary" size="mini" class='btnaa' @click="changeu = true">选择路径</el-button>
+                                    <span>{{$t('backup.filepath')}}：{{target}}</span><el-button type="primary" size="mini" class='btnaa' @click="changeu = true">{{$t('backup.select4')}}</el-button>
                                     <el-tree :props="props" :accordion='true' ref='treeForm' node-key="path" :load='loadNode' :check-strictly='true' lazy show-checkbox @check-change='changeselect' @node-click="nodeselect" class="tree" v-if='islinux'></el-tree>
                                 </el-col>
                                 <el-col :xs='24' :sm='24' :md='12' :lg='12' :xl='12'>
-                                    <span>客户端IP：{{pip}}</span><el-button type="primary" size="mini" class="btnaa" @click="changeip = true">客户端IP</el-button>
-                                    <el-tree :props="props" :accordion='true' ref='iptree'  node-key='path' :load='loadIP' lazy show-checkbox check-strictly @check-change='ichangeselect' @node-click="ipselect" class="tree" v-if="isative"></el-tree>
+                                    <span>{{$t('backup.fileclient')}}：{{pip}}</span><el-button type="primary" size="mini" class="btnaa" @click="changeip = true">{{$t('backup.fileclient')}}</el-button>
+                                    <el-tree :props="props" :accordion='true' ref='iptree'  node-key='path' :load='loadIP' :check-strictly='true' lazy show-checkbox @check-change='ichangeselect' @node-click="ipselect" class="tree" v-if="isative"></el-tree>
                                 </el-col>
                                 <el-col :span='2' :offset="22">
-                                    <el-button type='warning' size="small" style="margin-top:1rem" @click="getdata">恢复</el-button>
+                                    <el-button type='warning' size="small" style="margin-top:1rem" @click="getdata">{{$t('backup.renew')}}</el-button>
                                 </el-col>
                             </el-row>
                           </el-tab-pane>
+                          <el-tab-pane :label="$t('backup.del')" name='delfile'>
+                              <Delfile></Delfile>
+                          </el-tab-pane>
                       </el-tabs>
                   </el-card>
-                  <el-dialog title="选择路径" :visible.sync="changeu" width="30%" :before-close="handleClose">
+                  <el-dialog :title="$t('backup.select4')" :visible.sync="changeu" width="30%" :before-close="handleClose">
                       <el-form :model="userdata" :rules="userrule" ref="userdata" label-width="100px" label-position="left" class="demo-ruleForm" >
-                        <el-form-item label="路径" prop="user">
-                            <el-select v-model="userdata.user" placeholder="请选择路径">
+                        <el-form-item :label="$t('backup.path')" prop="user">
+                            <el-select v-model="userdata.user" :placeholder="$t('backup.select4')">
                               <el-option v-for="u in user" :key="u" :value="u" :label="u"></el-option>
                             </el-select>
                         </el-form-item>
@@ -58,10 +54,10 @@
                         </el-form-item>
                       </el-form>
                   </el-dialog>
-                  <el-dialog title="客户端IP" :visible.sync="changeip" width="30%" :before-close="handleClose">
+                  <el-dialog :title="$t('backup.fileclient')" :visible.sync="changeip" width="30%" :before-close="handleClose">
                       <el-form :model="userdata" :rules="userrule" ref="userdata" label-width="100px" label-position="left" class="demo-ruleForm" >
-                        <el-form-item label="客户端IP" prop="ip">
-                            <el-input v-model="userdata.ip" placeholder="请输入IP地址"></el-input>
+                        <el-form-item :label="$t('backup.fileclient')" prop="ip">
+                            <el-input v-model="userdata.ip" :placeholder="$t('bond.ip')" clearable ></el-input>
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="ipubmit('userdata')">{{$t('message.submit')}}</el-button>
@@ -76,23 +72,11 @@
 </template>
 <script>
 import Back from './fileback'
+import Delfile from './delfile'
 export default {
     name:'rfile',
-    components:{Back},
+    components:{Back,Delfile},
     data(){
-        var checkip=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请输入IP'))
-            }
-            else{
-                var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-                if(!reg.test(val)){
-                    return callback(new Error(this.$t('network.input')))
-                }
-                else
-                    callback()
-            }
-        }
         return{
             rfiledata:[],
             changeu:false,
@@ -118,10 +102,11 @@ export default {
             },
             userrule:{
                 user:[
-                    {required:true,message:'请选择路径',trigger:'blur'}
+                    {required:true,message:this.$t('backup.select4'),trigger:'blur'}
                 ],
                 ip:[
-                    {required:true,validator:checkip,trigger:'blur'}
+                    {required:true,message:this.$t('bond.ip'),trigger:'blur'},
+                    {pattern:/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/,message:this.$t('network.input'),trigger:'blur'}
                 ]
             },
             webss:'',
@@ -144,16 +129,16 @@ export default {
         ichangeselect(data, checked, indeterminate) {
             if(checked == true){
                 this.checkedip = data.path
-                this.$refs.iptree.setCheckedNodes([data.path])
+                this.$refs.iptree.setCheckedNodes([data])
             }
         },
         nodeselect(data,checked,node) {
             this.checkedid = data.path
-            this.$refs.treeForm.setCheckedKeys([data,path])
+            this.$refs.treeForm.setCheckedKeys([data.path])
         },
         ipselect(data,checked,node){
             this.checkedip = data.path
-            this.$refs.iptree.setCheckedNodes([data.path])
+            this.$refs.iptree.setCheckedNodes([data])
         },
         loadNode(node, resolve) {
             
@@ -164,7 +149,7 @@ export default {
             setTimeout(() => {
                 const wsurl = "ws://" + this.ip + "/choicepath";
                 this.websock  = new WebSocket(wsurl);
-                var a='{"username":"'+this.userdata.user+'"num":"0","localpath":"'+this.path+'"}'
+                var a='{"username":"'+this.userdata.user+'","num":"0","localpath":"'+this.path+'"}'
                 var _this=this
                 let data = []
                 this.websock.addEventListener('open', function () {
@@ -182,7 +167,6 @@ export default {
             if (node.level === 0) {
             return resolve(this.pcpath );
             }
-            console.log(node.data)
             this.ipath = node.data.path
             setTimeout(() => {
                 const wsurl = "ws://" + this.ip + "/choicepath";
@@ -194,9 +178,18 @@ export default {
                     _this.websocketsend(a)
                 });
                 this.websock.onmessage=function(e){
-                    data=JSON.parse(e.data).data
-                    console.log(JSON.parse(data))
-                    resolve(JSON.parse(data));
+                    if(JSON.parse(e.data).success){
+                        data=JSON.parse(e.data).data
+                        var aa= JSON.parse(data)
+                        for(let i = 0;i<aa.length;i++){
+                            if(aa[i].leaf){
+                            aa[i].leaf=Boolean(aa[i].leaf)
+                            }
+                        }
+                        resolve(aa);
+                    }
+                    else
+                        _this.$message.error(JSON.parse(e.data).msg)
                 }
                 // console.log(this.path)
             
@@ -204,9 +197,9 @@ export default {
         },
         getdata(){
             if(this.checkedid != '' && this.checkedid != undefined && this.checkedip != '' && this.checkedip != undefined){
-                this.$confirm('确认进行恢复','提示',{
-                    confirmButtonText:'确认',
-                    cancelButtonText:'取消',
+                this.$confirm(this.$t('backup.sure1'),this.$t('backup.tips'),{
+                    confirmButtonText:this.$t('message.sure'),
+                    cancelButtonText:this.$t('message.cancel'),
                     type:'warning'
                 }).then(()=>{
                     this.$axios.post(this.$host+'recoveryfile',{user:sessionStorage.getItem('loginname'),linuxname:this.target,linuxpath:this.checkedid,pc:this.pip,pcpath:this.checkedip}).then(res=>{
@@ -225,13 +218,13 @@ export default {
                 }).catch(()=>{
                     this.$message({
                         type:'info',
-                        message:'已取消'
+                        message:this.$t('message.cancel')
                     })
                 })
             }
             else{
                 this.$message.error({
-                    message:'请选择路径'
+                    message:this.$t('backup.select4')
                 })
             }
         },
@@ -270,12 +263,17 @@ export default {
                         _this.websocketsend(a)
                     });
                     this.websock.onmessage=function(e){
-                        data=JSON.parse(e.data).data
-                        // console.log(typeof(data),'111111111111111111')
-                        this.pcpath=JSON.parse(data)
-                        // _this.isative = false
-                        // _this.$nextTick(()=>(_this.isative=true))
-                        _this.state(this.pcpath)
+                        var recevie=JSON.parse(e.data)
+                        if(recevie.success){
+                            data=JSON.parse(e.data).data
+                            this.pcpath=JSON.parse(data)
+                            // _this.isative = false
+                            // _this.$nextTick(()=>(_this.isative=true))
+                            _this.state(this.pcpath)
+                        }
+                        else{
+                            _this.$message.error(recevie.msg)
+                        }
                     }
                     this.changeip=false
                     
@@ -328,13 +326,8 @@ export default {
             }).catch(error=>{
                 console.log(error)
             })
-            this.$axios.get(this.$host+'users').then(res=>{
-                var users=[]
-                for(let i=0;i<res.data.data.length;i++){
-                    if (res.data.data[i].last_name=='rsync')
-                        users.push(res.data.data[i].username)
-                }
-                _this.user = users
+            this.$axios.get(this.$host+'backuser').then(res=>{
+                _this.user = res.data.data
             }).catch(error=>{
                 console.log(error)
             })
@@ -369,6 +362,7 @@ export default {
                             message:res.data.msg,
                         })
                     }
+                    this.getrsync()
                 })
             }
             else{

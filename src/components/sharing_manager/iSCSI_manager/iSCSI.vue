@@ -31,10 +31,10 @@
             </el-pagination>
           </el-col>
         </el-row>
-        <el-dialog :title="$t('iscsi.new')" :visible.sync="createiscsi" width="45%" :before-close="handleClose" :close-on-click-modal="false">
-            <el-form :model="iscsiform" ref='iscsiform' :rules="iscsirule" label-width="130px" label-position="left" class="rule-Form">
+        <el-dialog :title="$t('iscsi.new')" :visible.sync="createiscsi" width="50%" :before-close="handleClose" :close-on-click-modal="false">
+            <el-form :model="iscsiform" ref='iscsiform' :rules="iscsirule" label-width="140px" label-position="left" class="rule-Form">
               <el-form-item label="IQN" prop='iname' >
-                  <el-input v-model="iscsiform.iname" :placeholder="$t('iscsi.input')" >
+                  <el-input v-model="iscsiform.iname" :placeholder="$t('iscsi.input')" clearable >
                       <template slot='prepend'>iqn.2016-08.com.wuzhou.</template>
                   </el-input>
               </el-form-item>
@@ -66,21 +66,6 @@ import {change} from '../../../assets/change_size'
 export default {
     name:'iSCSI',
     data(){
-        var chcekiname=(rule,val,callback)=>{
-            var reg = /^[0-9a-zA-Z]+$/
-            if(!val){
-                return callback(new Error(this.$t('iscsi.input')))
-            }
-            else{
-                if(val.length>7){
-                    return callback(new Error(this.$t('iscsi.input2')))
-                }
-                else if(!reg.test(val)){
-                    return callback(new Error(this.$t('user.reg')))
-                }
-                callback()
-            }
-        }
         return{
             createiscsi:false,
             idelete:false,
@@ -99,7 +84,9 @@ export default {
             },
             iscsirule:{
                 iname:[
-                    {required:true,validator: chcekiname, trigger: 'blur'}
+                    {required:true,message:this.$t('iscsi.input'), trigger: 'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {max:7,message:this.$t('iscsi.input2'),trigger:'blur'}
                 ],
                 itype:[
                     {required:true,message:this.$t('iscsi.select'), trigger: 'blur'}

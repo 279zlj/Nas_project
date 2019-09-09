@@ -234,16 +234,6 @@ export default new Router({
             }
         },
         {
-            path: '/myback',
-            name: 'myback',
-            components: {
-                top: headerBar,
-                aside: bar,
-                content: () =>
-                    import ('../components/backup/mysql/mysql')
-            }
-        },
-        {
             path: '*',
             name: '*',
             component: () =>

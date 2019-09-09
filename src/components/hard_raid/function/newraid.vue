@@ -1,6 +1,6 @@
 <template>
     <el-dialog :title="$t('raid.new')" :visible.sync="createraid" width="50%" center :before-close="handleClose" top='5em' :close-on-click-modal="false">
-        <el-form :model="newraid" ref="newraid" :rules="newrule" label-width="160px" label-position="left" class="demo-ruleForm">
+        <el-form :model="newraid" ref="newraid" :rules="newrule" label-width="165px" label-position="left" class="demo-ruleForm">
             <el-form-item :label="$t('raid.level')" prop='level'>
                 <el-select v-model="newraid.level" :placeholder="$t('raid.select')">
                 <el-option label="0" value="0"></el-option>

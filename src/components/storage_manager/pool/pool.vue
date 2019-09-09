@@ -46,7 +46,7 @@
         <el-dialog :title="$t('pool.new')" :visible.sync="createpool" width="45%" :before-close="handleClose" :close-on-click-modal="false">
             <el-form :model="poolform" :rules="poolrule" ref="poolform" label-width="100px" label-position="left" class="demo-ruleForm">
                 <el-form-item :label="$t('pool.name')" prop='name'>
-                    <el-input v-model="poolform.name" :placeholder="$t('pool.input')" ></el-input>
+                    <el-input v-model="poolform.name" :placeholder="$t('pool.input')" clearable ></el-input>
                 </el-form-item>
                 <el-form-item :label="$t('pool.disk')" prop="disks">
                     <el-transfer v-model="poolform.disks" :data="disks" :titles="[$t('pool.select'),$t('pool.alaway')]" ></el-transfer>
@@ -79,21 +79,6 @@
 export default {
     name:'pool',
     data(){
-        var checkname=(rule,val,callback)=>{
-            var reg = /^[0-9a-zA-Z]+$/
-            if(!val){
-                return callback(new Error(this.$t('pool.input')))
-            }
-            else{
-                if(val.length<3){
-                    return callback(new Error(this.$t('pool.input1')))
-                }
-                else if(!reg.test(val)){
-                    return callback(new Error(this.$t('user.reg')))
-                }
-                callback()
-            }
-        }
         return{
             createpool:false,
             poolmodify:false,
@@ -111,7 +96,9 @@ export default {
             },
             poolrule:{
                 name:[
-                    {required:true,validator:checkname, trigger: 'blur'},
+                    {required:true,message:this.$t('pool.input'), trigger: 'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {min:3,message:this.$t('pool.input1'),trigger:'blur'}
                 ],
                 disks:[
                     {required:true,message:this.$t('pool.select1'), trigger: 'blur'}

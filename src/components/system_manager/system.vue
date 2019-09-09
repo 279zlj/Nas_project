@@ -147,7 +147,7 @@ export default {
       },
       websocketonopen() {
         
-        console.log(this.websock.readyState)
+        // console.log(this.websock.readyState)
         //console.log(JSON.parse(obj))
       },
       websocket() {
@@ -161,7 +161,7 @@ export default {
       },
       websocketsend(Data) {
         // this.websock.send(1);
-        console.log(Data)
+        // console.log(Data)
       },
       websocketclose(e) {
         console.log('断开连接', e);

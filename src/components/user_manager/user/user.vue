@@ -34,14 +34,14 @@
             </el-row>
             <el-dialog :title="$t('user.new')" :visible.sync="createuser" width="35%" center :before-close="handleClose" :close-on-click-modal='false'>
                 <el-form :model='userform' :rules="userrule" ref='userform' label-width="150px" label-position="left" class='demo-ruleForm'>
-                    <el-form-item :label="$t('user.name')" prop='username'>
-                        <el-input v-model="userform.username" :placeholder="$t('user.name')" ></el-input>
+                    <el-form-item :label="$t('user.name')" prop='username' >
+                        <el-input v-model="userform.username" :placeholder="$t('user.name')" clearable></el-input>
                     </el-form-item>
                     <el-form-item :label="$t('user.new_pass')" prop='userpwd'>
-                        <el-input v-model="userform.userpwd" :placeholder="$t('user.input')" type="password" ></el-input>
+                        <el-input v-model="userform.userpwd" :placeholder="$t('user.input')" type="password" clearable ></el-input>
                     </el-form-item>
                     <el-form-item :label="$t('user.confirm')" prop='userpwdt'>
-                        <el-input v-model="userform.userpwdt" :placeholder="$t('user.input2')" type="password" ></el-input>
+                        <el-input v-model="userform.userpwdt" :placeholder="$t('user.input2')" type="password" clearable ></el-input>
                     </el-form-item>
                     <el-form-item :label="$t('user.u_type')" prop='usertype'>
                         <el-select v-model="userform.usertype" :placeholder="$t('user.input3')">
@@ -55,7 +55,7 @@
                     </el-form-item>
                     <el-form-item :label="$t('group.Attribution')" prop="gid">
                         <el-select v-model="userform.gid" :placeholder="$t('group.input')">
-                          <el-option v-for="g in groupdata" :key="g.gid" :value="g.gid" :label='g.name'></el-option>
+                          <el-option v-for="g in groupdata" :key="g.gid" :value="g.gid" :label='g.name' ></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('iscsi.logic')" prop='doc' v-if='userform.usertype == "3" || userform.usertype == "4" '>
@@ -74,14 +74,14 @@
                   <el-form-item :label="$t('user.name')" >
                       {{target.username}}
                   </el-form-item>
-                  <el-form-item :label="$t('user.old')" prop='oldpwd'>
-                      <el-input v-model="userform.oldpwd" type="password" :placeholder="$t('user.input4')" ></el-input>
+                  <el-form-item :label="$t('user.old')" prop='oldpwd' >
+                      <el-input v-model="userform.oldpwd" type="password" :placeholder="$t('user.input4')" clearable></el-input>
                   </el-form-item>
                   <el-form-item :label="$t('user.new_pass')" prop='userpwd'>
-                    <el-input v-model="userform.userpwd" :placeholder="$t('user.input')" type="password" ></el-input>
+                    <el-input v-model="userform.userpwd" :placeholder="$t('user.input')" type="password" clearable ></el-input>
                   </el-form-item>
                   <el-form-item :label="$t('user.confirm')" prop='userpwdt'>
-                    <el-input v-model="userform.userpwdt" :placeholder="$t('user.input2')" type="password" ></el-input>
+                    <el-input v-model="userform.userpwdt" :placeholder="$t('user.input2')" type="password" clearable ></el-input>
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" @click="modifysubmit('userform')">{{$t('message.submit')}}</el-button>
@@ -114,20 +114,6 @@
 export default {
     name:'user',
     data(){
-        var usernameval=(rule,val,callback)=>{
-            var reg = /^[0-9a-zA-Z]+$/
-            if(!val){
-                return callback(new Error(this.$t('pool.input')))
-            }
-            else if( val.length < 3 || val.length > 10){
-                return callback(new Error(this.$t('pool.input1')))
-            }
-            else if(!reg.test(val)){
-                return callback(new Error(this.$t('user.reg')))
-            }
-            else 
-                return callback()
-        }
         var pwdvali=(rule, val, callback)=>{
             if(!val){
                 return callback(new Error(this.$t('user.input')))
@@ -175,7 +161,9 @@ export default {
             },
             userrule:{
                 username:[
-                    {required:true, validator: usernameval, trigger: 'blur' }
+                    {required:true, message:this.$t('user.input'), trigger: 'blur' },
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {min:3,message:this.$t('pool.input1'),trigger:'blur'}
                 ],
                 usertype:[
                     {required:true, message:this.$t('user.input3'), trigger: 'blur' }

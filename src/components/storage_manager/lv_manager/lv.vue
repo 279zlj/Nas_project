@@ -50,7 +50,7 @@
             <el-dialog :title="$t('lv.new')" :visible.sync="createlv" width="35%" center :close-on-click-modal="false" :before-close="headleClose">
                 <el-form :model="lvform" :rules='lvrule' ref='lvform' label-width="140px" label-position="left" class='demo-ruleForm'>
                     <el-form-item :label="$t('lv.name')" prop='name'>
-                        <el-input v-model="lvform.name" :placeholder="$t('lv.input')" ></el-input>
+                        <el-input v-model="lvform.name" :placeholder="$t('lv.input')" clearable ></el-input>
                     </el-form-item>
                     <el-form-item :label="$t('lv.pool')" prop='pool'>
                         <el-select v-model="lvform.pool" :placeholder="$t('lv.input1')" @change="uintchange(lvform)">
@@ -58,7 +58,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('message.size')" prop='size' >
-                        <el-input v-model="lvform.size" type='number' :placeholder="$t('lv.input2')" ></el-input>
+                        <el-input v-model="lvform.size" type='number' :placeholder="$t('lv.input2')" clearable ></el-input>
                     </el-form-item>
                     <el-form-item :label="$t('message.uint')" prop="uint" >
                         <el-select v-model="lvform.uint" :placeholder="$t('lv.input3')" >
@@ -83,7 +83,7 @@
                       {{poolfree}}
                   </el-form-item>
                   <el-form-item :label="$t('lv.e_size')" prop="expand">
-                      <el-input v-model="lvform.expand" type='number' :placeholder="$t('lv.input4')" style='width:80%'></el-input>
+                      <el-input v-model="lvform.expand" type='number' :placeholder="$t('lv.input4')" style='width:80%' clearable ></el-input>
                   </el-form-item>
                   <el-form-item :label="$t('lv.e_uint')" prop='expanduint'>
                         <el-select v-model="lvform.expanduint" :placeholder="$t('lv.input5')" >
@@ -108,22 +108,6 @@
 export default {
     name:'lv',
     data(){
-        var namecheck=(rule,val,callback)=>{
-            var reg = /^[0-9a-zA-Z]+$/
-            if(!val){
-                return callback(new Error(this.$t('pool.input')))
-            }
-            else{
-                if(val.length<3){
-                    return callback(new Error(this.$t('pool.input1')))
-                }
-                else if(!reg.test(val)){
-                    return callback(new Error(this.$t('user.reg')))
-                }
-                else
-                    callback()
-            }
-        }
         return{
             createlv:false,
             lvdata:[],
@@ -142,7 +126,9 @@ export default {
             },
             lvrule:{
                 name:[
-                    {required:true,validator:namecheck, trigger: 'blur'},
+                    {required:true,message:this.$t('pool.input'), trigger: 'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {min:3,message:this.$t('pool.input1'),trigger:'blur'}
                 ],
                 pool:[
                     {required:true,message:this.$t('lv.input1'), trigger: 'blur'},

@@ -17,10 +17,10 @@
             <h2 style="color:#01968A">欢迎登录</h2>
             <el-form :model="logindata" ref='logindata' :rules="loginrule" >
               <el-form-item prop="username">
-                <el-input v-model="logindata.username" placeholder="请输入用户名" prefix-icon='el-icon-user-s iconfont' class="user_top" autofocus></el-input>
+                <el-input v-model="logindata.username" placeholder="请输入用户名" prefix-icon='el-icon-user-s iconfont' class="user_top" autofocus clearable ></el-input>
               </el-form-item>
               <el-form-item prop="pwd">
-                <el-input v-model="logindata.pwd" placeholder="请输入密码" type="password" prefix-icon='el-icon-ziyuan iconfont' @keyup.enter.native="login('logindata')"></el-input>
+                <el-input v-model="logindata.pwd" placeholder="请输入密码" type="password" prefix-icon='el-icon-ziyuan iconfont' clearable show-password @keyup.enter.native="login('logindata')"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button round class='login_btn' @click="login('logindata')" >登录</el-button>
@@ -33,8 +33,8 @@
       </el-row>
        <el-row id='footer'>
             <el-col>
-                <span style="text-align: center;display:block;font-size:.8rem">浏览器推荐使用：谷歌（Chrome）、火狐（FireFox）、IE10（以上）版本，大于1440*900分辨率!</span>
-                <span style="text-align: center;display:block;font-size:.8rem">Copyright ® 2019 广州五舟科技股份有限公司.</span>
+                <span class="bot">浏览器推荐使用：谷歌（Chrome）、火狐（FireFox）、IE10（以上）版本，大于1440*900分辨率!</span>
+                <span class="bot">Copyright ® 2019 广州五舟科技股份有限公司.</span>
             </el-col>
         </el-row>
     </div>
@@ -130,5 +130,8 @@ export default {
         color:white;
         bottom:1rem;
         
+    }
+    .bot{
+      text-align: center;display:block;font-size:.8rem
     }
 </style>

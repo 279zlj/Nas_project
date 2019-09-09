@@ -16,21 +16,21 @@
                 {{nowdata.sector_size}}
             </el-form-item>
             <el-form-item :label="$t('raid.read')" prop='readplot'>
-                <el-select v-model="modifyraid.readplot" :placeholder="$t('raid.select6')">
+                <el-select v-model="modifydata.readplot" :placeholder="$t('raid.select6')">
                 <el-option :label="$t('raid.ss')" value="0"></el-option>
                 <el-option :label="$t('raid.ss1')" value='1'></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item :label="$t('raid.write')" prop='writeplot'>
-                <el-select v-model="modifyraid.writeplot" :placeholder="$t('raid.select7')">
+                <el-select v-model="modifydata.writeplot" :placeholder="$t('raid.select7')">
                 <el-option :label="$t('raid.aa')" value="0"></el-option>
                 <el-option :label="$t('raid.aa1')" value='1'></el-option>
                 <el-option :label="$t('raid.aa2')" value='2'></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item >
-                <el-button type="primary" @click="modifysubmit('modifyraid')">{{$t('message.submit')}}</el-button>
-                <el-button @click="globalreset('modifyraid')">{{$t('message.reset')}}</el-button>
+                <el-button type="primary" @click="modifysubmit('modifydata')">{{$t('message.submit')}}</el-button>
+                <el-button @click="globalreset('modifydata')">{{$t('message.reset')}}</el-button>
             </el-form-item>
         </el-form>
     </el-dialog>

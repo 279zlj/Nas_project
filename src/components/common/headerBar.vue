@@ -23,7 +23,7 @@
                 <i class='el-icon-shouquanzhengpin iconfont btn'  @click="author=true" ></i>
             </el-tooltip>
 
-            <el-tooltip content="通知邮箱" placement="bottom" >
+            <el-tooltip :content="$t('message.notice')" placement="bottom" >
                 <i class='el-icon-message btn'  @click="email=true" ></i>
             </el-tooltip>
         
@@ -32,15 +32,15 @@
             </el-tooltip>
         </el-col>
         </el-row>
-        <el-dialog title="设置通知邮箱" :visible.sync="email" width="30%" :close-on-click-modal="false" :before-close="handleClose">
+        <el-dialog :title="$t('message.setemail')" :visible.sync="email" width="30%" :close-on-click-modal="false" :before-close="handleClose">
             <el-form :model="emaildata" ref='emaildata' label-width="120px" label-position="left" class=demo-dynamic>
-                <el-form-item label="邮箱" prop="email" :rules="
+                <el-form-item :label="$t('message.email')" prop="email" :rules="
                 [
-                { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-                { type: 'email', message: '请输入正确的邮箱地址',trigger: ['blur','change'] }
+                { required: true, message:$t('message.inpute'), trigger: 'blur' },
+                { type: 'email', message:$t('message.inpute1'),trigger: ['blur','change'] }
                 ]
                 ">
-                    <el-input v-model="emaildata.email" placeholder="请输入邮箱地址"></el-input>
+                    <el-input v-model="emaildata.email" :placeholder="$t('message.inpute')" clearable ></el-input>
                 </el-form-item>
                 <!-- <el-form-item label="授权码" prop="code" :rules="
                 [
@@ -109,6 +109,11 @@ export default {
             }).catch(error=>{
                 console.log(error)
             })
+            this.$axios.post(this.$host+'seleamil',{username:sessionStorage.getItem('loginname')}).then(res=>{
+                _this.emaildata.email=res.data.data
+            }).catch(error=>{
+                console.log(error)
+            })
         },
         startinfo(){
              this.$axios.get(this.$host+'lic').then(res=>{
@@ -150,6 +155,8 @@ export default {
                         else{
                             this.$message.error(res.data.msg)
                         }
+                        this.email=false
+                        this.system_info()
                     }).catch(error=>{
                         console.log(error)
                     })
@@ -168,7 +175,7 @@ export default {
         localStorage.setItem('lang',e);
         this.$i18n.locale = e;
         },
-        userreset(name){
+        emailreset(name){
             this.$refs[name].resetFields();
         }
     }  

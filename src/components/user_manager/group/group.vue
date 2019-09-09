@@ -28,10 +28,10 @@
                 </el-pagination>
                 </el-col>
             </el-row>
-            <el-dialog :title="$t('group.new')" width="20%" :close-on-click-modal="false" :visible.sync="creategroup" :before-close="handleClose">
+            <el-dialog :title="$t('group.new')" width="30%" :close-on-click-modal="false" :visible.sync="creategroup" :before-close="handleClose">
                 <el-form :model='groupform' :rules='grouprule' ref='groupform' label-width="30" class="demo-ruleForm">
                     <el-form-item :label="$t('group.name')" prop='groupname'>
-                        <el-input v-model="groupform.groupname" :placeholder="$t('group.input1')" style='width:80%'></el-input>
+                        <el-input v-model="groupform.groupname" :placeholder="$t('group.input1')" style='width:80%' clearable></el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="groupsubmit('groupform')">{{$t('message.submit')}}</el-button>
@@ -51,22 +51,6 @@
 export default {
     name:'group',
     data(){
-        var namecheck=(rule,val,callback)=>{
-            var reg = /^[0-9a-zA-Z]+$/
-            if(!val){
-                callback(new Error(this.$t('group.input1')))
-            }
-            else{
-                if(val.length<3){
-                    callback(new Error(this.$t('group.input2')))
-                }
-                else if(!reg.test(val)){
-                    callback(new Error(this.$t('user.reg')))
-                }
-                else
-                    callback()
-            }
-        }
         return{
             groupdata:[],
             creategroup:false,
@@ -78,7 +62,9 @@ export default {
             },
             grouprule:{
                 groupname:[
-                    {required:true,validator:namecheck,trigger: 'blur'}
+                    {required:true,message:this.$t('group.input1'),trigger: 'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {min:3,message:this.$t('group.input2'),trigger:'blur'}
                 ]
             },
             grouptarget:'',

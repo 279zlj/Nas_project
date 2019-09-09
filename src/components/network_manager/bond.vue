@@ -24,7 +24,7 @@
                         </el-table-column>
                         <el-table-column :label="$t('gateway.mode')" prop='mode' :show-overflow-tooltip="true"></el-table-column>
                         <el-table-column :label="$t('network.Speed')" prop="speed"  :show-overflow-tooltip="true"></el-table-column>
-                        <el-table-column :label="$t('network.mac')" prop='link'>
+                        <el-table-column :label="$t('network.mac')" prop='link' width="130px">
                             <template slot-scope="scope">
                                 <el-tag :type="scope.row.link === 'yes' ? 'success' : 'danger' " disable-transitions>{{scope.row.link}}</el-tag>
                             </template>
@@ -50,10 +50,10 @@
                       </el-select>
                   </el-form-item>
                   <el-form-item label="IP" prop="ip">
-                      <el-input v-model="bondform.ip" :placeholder="$t('bond.ip')" style='width:80%'></el-input>
+                      <el-input v-model="bondform.ip" :placeholder="$t('bond.ip')" style='width:80%' clearable></el-input>
                   </el-form-item>   
                   <el-form-item :label="$t('network.mask')" prop="mask">
-                      <el-input v-model="bondform.mask" :placeholder="$t('network.mask')" style='width:80%'></el-input>
+                      <el-input v-model="bondform.mask" :placeholder="$t('network.mask')" style='width:80%' clearable ></el-input>
                   </el-form-item> 
                   <el-form-item>
                         <el-button type="primary" @click="bondsubmit('bondform')" >{{$t('message.submit')}}</el-button>
@@ -83,30 +83,6 @@ export default {
             else
                 callback()
         }
-        var IPcheck=(rule,val,callbcak)=>{
-            if(val){
-                var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-                if(!reg.test(val)){
-                    return callbcak(new Error(this.$t('network.input')))
-                }
-                else
-                    callbcak()
-            }
-            else
-                callbcak()
-        }
-        var maskcheck=(rule,val,callbcak)=>{
-            if(val){
-                var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-                if(!reg.test(val)){
-                    return callbcak(new Error(this.$t('network.input2')))
-                }
-                else
-                    callbcak()
-            }
-            else
-                callbcak()
-        }
         return{
             bonddata:[],
             bondcan:true,
@@ -131,10 +107,10 @@ export default {
                     {required:true,message:this.$t('bond.select3'),trigger:'blur'}
                 ],
                 ip:[
-                    {validator:IPcheck,trigger:'blur'}
+                    {pattern:/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/,message:this.$t('network.input'),trigger:'blur'}
                 ],
                 mask:[
-                    {validator:maskcheck,trigger:'blur'}
+                    {pattern:/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/,message:this.$t('network.input2'),trigger:'blur'}
                 ]
             }
         }

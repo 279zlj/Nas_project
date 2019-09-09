@@ -32,7 +32,7 @@
         <el-dialog :title="$t('nfs.new')" :visible.sync="createnfs" width="45%" center :before-close="handleClose" :close-on-click-modal="false">
             <el-form :model="nfsform" ref='nfsform' :rules="nfsrule" label-width="190px" label-position="left" class="demo-ruleForm">
               <el-form-item :label="$t('nfs.path')" prop='path'>
-                  <el-input v-model="nfsform.path" :placeholder="$t('nfs.input')" ></el-input>
+                  <el-input v-model="nfsform.path" :placeholder="$t('nfs.input')" clearable ></el-input>
               </el-form-item>
               <el-form-item :label="$t('nfs.per')" prop='rank'>
                   <el-select v-model="nfsform.rank" :placeholder="$t('nfs.input1')">
@@ -41,7 +41,7 @@
                   </el-select>
               </el-form-item>
               <el-form-item :label="$t('nfs.reli')" prop='address'>
-                  <el-input v-model="nfsform.address" placeholder="x.x.x.x/x,x.x.x.x/x" ></el-input>
+                  <el-input v-model="nfsform.address" placeholder="x.x.x.x/x,x.x.x.x/x" clearable></el-input>
                   <p style='color:red'>({{$t('nfs.note')}})</p>
               </el-form-item>
               <el-form-item :label="$t('iscsi.logic')" prop='doc'>
@@ -64,7 +64,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('nfs.reli')" prop="newaddress">
-                    <el-input v-model="nfsform.newaddress" :placeholder="modifyreli.client"></el-input>
+                    <el-input v-model="nfsform.newaddress" :placeholder="modifyreli.client" clearable ></el-input>
                     <p style='color:red'>({{$t('nfs.note')}})</p>
                 </el-form-item>
                 <el-form-item>
@@ -84,22 +84,6 @@
 export default {
     name:'nfs',
     data(){
-        var pathcheck=(rule,val,callback)=>{
-            var reg = /^[0-9a-zA-Z]+$/
-            if(!val){
-                return callback(new Error(this.$t('nfs.input')))
-            }
-            else{
-                if(val.length<3){
-                    return callback(new Error(this.$t('nfs.input2')))
-                }
-                else if(!reg.test(val)){
-                    return callback(new Error(this.$t('user.reg')))
-                }
-                else
-                    callback()
-            }
-        }
         var addcheck=(rule,val,callback)=>{
             if (!val){
                 return callback(new Error(this.$t('nfs.input3')))
@@ -147,7 +131,9 @@ export default {
             },
             nfsrule:{
                 path:[
-                    {required:true,validator:pathcheck, trigger: 'blur'}
+                    {required:true,message:this.$t('nfs.input'), trigger: 'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {min:3,message:this.$t('nfs.input2'),trigger:'blur'}
                 ],
                 rank:[
                     {required:true,message:this.$t('nfs.input5'), trigger: 'blur'}

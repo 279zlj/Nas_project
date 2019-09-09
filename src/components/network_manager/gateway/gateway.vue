@@ -21,10 +21,10 @@
                     </el-table>
               </el-col>
             </el-row>
-            <el-dialog :title="$t('gateway.create')" :visible.sync="create_gw" width="30%" center :close-on-click-modal="false" :before-close="handleClose">
-                <el-form :model="modifydata" ref='modifydata' :rules="gwrule" label-width="100px" class="demo-rule"  label-position="left">
+            <el-dialog :title="$t('gateway.create')" :visible.sync="create_gw" width="40%" center :close-on-click-modal="false" :before-close="handleClose">
+                <el-form :model="modifydata" ref='modifydata' :rules="gwrule" label-width="145px" class="demo-rule"  label-position="left">
                   <el-form-item :label="$t('gateway.ip')" prop='new_gw'>
-                      <el-input v-model="modifydata.new_gw" :placeholder="$t('gateway.input')" style="width:80%"></el-input>
+                      <el-input v-model="modifydata.new_gw" :placeholder="$t('gateway.input')" style="width:80%" clearable ></el-input>
                   </el-form-item>
                   <el-form-item :label="$t('gateway.interface')" prop="iface">
                       <el-select v-model="modifydata.iface" :placeholder="$t('gateway.interface')">
@@ -48,7 +48,7 @@
                       </el-select>
                   </el-form-item>
                   <el-form-item :label="$t('gateway.ip')" prop='gwip'>
-                    <el-input v-model="modifydata.gwip" :placeholder='rowdata.gw_addr' style='width:80%'></el-input>
+                    <el-input v-model="modifydata.gwip" :placeholder='rowdata.gw_addr' style='width:80%' clearable ></el-input>
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" @click="gwsubmit('modifydata')">{{$t('message.submit')}}</el-button>
@@ -63,32 +63,6 @@
 export default {
     name:'gateway',
     data(){
-        var gwipcheck=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error(this.$t('gateway.input')))
-            }
-            else{
-                var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-                if(!reg.test(val)){
-                    return callback(new Error(this.$t('gateway.input1')))
-                }
-                else
-                    callback()
-            }
-        }
-        var checkgw=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error(this.$t('gateway.input')))
-            }
-            else{
-                var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-                if(!reg.test(val)){
-                    return callback(new Error(this.$t('gateway.input1')))
-                }
-                else
-                    callback()
-            }
-        }
         return{
             gwdata:[],
             rowdata:[],
@@ -102,10 +76,12 @@ export default {
             },
             gwrule:{
                 gwip:[
-                    {required:true,validator: gwipcheck, trigger: 'blur'}
+                    {required:true,message:this.$t('gateway.input'), trigger: 'blur'},
+                    {pattern:/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/,message:this.$t('gateway.input1'),trigger:'blur'}
                 ],
                 new_gw:[
-                    {required:true,validator: checkgw, trigger: 'blur'}
+                    {required:true,message:this.$t('gateway.input'), trigger: 'blur'},
+                    {pattern:/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/,message:this.$t('gateway.input1'),trigger:'blur'}
                 ],
                 iface:[
                     {required:true,message:this.$t('gateway.select'), trigger: 'blur'}

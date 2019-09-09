@@ -50,13 +50,13 @@
                     <span>{{rowdata.interface}}</span>
                   </el-form-item>
                   <el-form-item :label="$t('network.ip')" prop='IP'>
-                    <el-input v-model="modifydata.IP" :placeholder="rowdata.addr" ></el-input>
+                    <el-input v-model="modifydata.IP" :placeholder="rowdata.addr" clearable ></el-input>
                   </el-form-item>
                   <el-form-item :label="$t('network.mask')" prop='mask'>
-                    <el-input v-model="modifydata.mask" :placeholder="rowdata.netmask" ></el-input>
+                    <el-input v-model="modifydata.mask" :placeholder="rowdata.netmask" clearable ></el-input>
                   </el-form-item>
                   <el-form-item :label="$t('network.dns')" prop="DNS">
-                    <el-input v-model="modifydata.DNS" :placeholder="rowdata.dns" ></el-input>
+                    <el-input v-model="modifydata.DNS" :placeholder="rowdata.dns" clearable ></el-input>
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" @click="netsubmit('modifydata')">{{$t('message.submit')}}</el-button>
@@ -72,44 +72,6 @@
 export default {
     name:'network',
     data(){
-        var IPcheck=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error(this.$t('bond.ip')))
-            }
-            else{
-                var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-                if(!reg.test(val)){
-                    return callback(new Error(this.$t('network.input')))
-                }
-                else
-                    callback()
-            }
-        }
-        var maskcheck=(rule,val,callbcak)=>{
-            if(!val){
-                return callbcak(new Error(this.$t('network.input1')))
-            }
-            else{
-                var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-                if(!reg.test(val)){
-                    return callbcak(new Error(this.$t('network.input2')))
-                }
-                else
-                    callbcak()
-            }
-        }
-        var DNScheck=(rule,val,callbcak)=>{
-            if(val){
-                var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-                if(!reg.test(val)){
-                    return callbcak(new Error(this.$t('network.input3')))
-                }
-                else 
-                    callbcak()
-            }
-            else 
-                callbcak()
-        }
         return{
             netdata:[],
             pagesize: 5,
@@ -124,13 +86,15 @@ export default {
             },
             netrule:{
                 IP:[
-                    {required:true,validator:IPcheck, trigger:'blur'},
+                    {required:true,message:this.$t('bond.ip'), trigger:'blur'},
+                    {pattern:/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/,message:this.$t('network.input'),trigger:'blur'}
                 ],
                 mask:[
-                    {required:true,validator:maskcheck, trigger:'blur'},
+                    {required:true,message:this.$t('network.input1'), trigger:'blur'},
+                    {pattern:/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/,message:this.$t('network.input2'),trigger:'blur'}
                 ],
                 DNS:[
-                    {validator:DNScheck, trigger:'blur'}
+                    {pattern:/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/,message:this.$t('network.input3'), trigger:'blur'}
                 ]
             }
         }

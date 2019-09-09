@@ -28,13 +28,13 @@
                     </el-pagination>
               </el-col>
             </el-row>
-            <el-dialog :title="$t('afp.new')" :visible.sync="createafp" width="30%" center :before-close="handleClose" :close-on-click-modal="false">
-            <el-form :model="afpform" ref='afpform' :rules="afprule" label-width="100px" label-position="left" class="demo-ruleForm">
+            <el-dialog :title="$t('afp.new')" :visible.sync="createafp" width="35%" center :before-close="handleClose" :close-on-click-modal="false">
+            <el-form :model="afpform" ref='afpform' :rules="afprule" label-width="130px" label-position="left" class="demo-ruleForm">
               <el-form-item :label="$t('afp.name')" prop='name'>
-                  <el-input v-model="afpform.name" :placeholder="$t('afp.input')" ></el-input>
+                  <el-input v-model="afpform.name" :placeholder="$t('afp.input')" clearable  ></el-input>
               </el-form-item>
               <el-form-item :label="$t('afp.p_name')" prop='path'>
-                  <el-input v-model="afpform.path" :placeholder="$t('afp.input1')" ></el-input>
+                  <el-input v-model="afpform.path" :placeholder="$t('afp.input1')" clearable ></el-input>
               </el-form-item>
               <el-form-item :label="$t('afp.user')" prop='user'>
                   <el-select v-model="afpform.user" :placeholder="$t('afp.input2')">
@@ -67,34 +67,6 @@
 export default {
     name:'afp',
     data(){
-        var checkname=(rule,val,callback)=>{
-            var reg = /^[0-9a-zA-Z]+$/
-            if(!val){
-                return callback(new Error(this.$t('smb.input')))
-            }
-            else if(!reg.test(val)){
-                return callback(new Error(this.$t('user.reg')))
-            }
-            else
-                callback()
-        }
-        var checkpath=(rule,val,callback)=>{
-            var reg = /^[0-9a-zA-Z]+$/
-            if(!val){
-                return callback(new Error(this.$t('smb.input1')))
-            }
-            else{
-                if(val.length<2){
-                    return callback(new Error(this.$t('smb.input3')))
-                }
-                else if(!reg.test(val)){
-                    return callback(new Error(this.$t('user.reg')))
-                }
-                else
-                    callback()
-            }
-        }
-
         return{
             createafp:false,
             afpremove:false,
@@ -114,10 +86,13 @@ export default {
             },
             afprule:{
                 name:[
-                    {required:true,validator:checkname, trigger:'blur'}
+                    {required:true,message:this.$t('smb.input'), trigger:'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'}
                 ],
                 path:[
-                    {required:true,validator:checkpath, trigger:'blur'}
+                    {required:true,message:this.$t('smb.input1'), trigger:'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {min:2,message:this.$t('smb.input3'),trigger:'blur'}
                 ],
                 user:[
                     {required:true,message:this.$t('afp.input2'), trigger:'blur'}

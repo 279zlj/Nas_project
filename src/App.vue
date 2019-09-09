@@ -55,7 +55,6 @@ body,html{
 .content{
     width:100%;
     background-color:#E4E4E4;
-    height:100%;
 }
 .el-header{
   padding:0 !important;
@@ -63,6 +62,7 @@ body,html{
 }
 .el-main{
   padding: 0 !important;
+  background-color: #E4E4E4 !important;
 }
 .main{
     margin-top:2em;

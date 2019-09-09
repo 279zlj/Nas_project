@@ -1,6 +1,6 @@
 <template>
     <el-aside class='bg_color' style='heigh:auto'>
-        <el-menu :default-active="$route.path" class="el-menu-vertical-demo" background-color="#292A2F" text-color="#FFF" :unique-opened='true' style="height:100%;position:relative;">
+        <el-menu :default-active="$route.path" class="el-menu-vertical-demo" background-color="#292A2F" text-color="#FFF" :unique-opened='true' style="height:100%;position:relative;margin-bottom:3rem">
             <!-- <div class='header_bar'>
                 <img src='../../../static/images/wuzhou.png' class='header' />
             </div> -->
@@ -72,13 +72,12 @@
             <el-submenu index="8">
                 <template slot="title">
                     <i class='el-icon-dbsshujukubeifenDBS iconfont'></i>
-                    <span slot='title'>备份管理</span>
+                    <span slot='title'>{{$t('message.backup')}}</span>
                 </template>
-                <router-link :to="{name:'back'}"><el-menu-item index="/back"><i class="el-icon-oracle iconfont"></i>Oracle 数据库备份</el-menu-item></router-link>
-                <router-link :to="{name:'myback'}"><el-menu-item index="/myback"><i class="el-icon-mysql iconfont"></i>MySQL 数据库备份</el-menu-item></router-link>
-                <router-link :to="{name:'rfile'}"><el-menu-item index="/rfile"><i class="el-icon-beifenhuifu iconfont"></i>文件备份</el-menu-item></router-link>
+                <router-link :to="{name:'back'}"><el-menu-item index="/back"><i class="el-icon-shujuku iconfont"></i>{{$t('message.sqlback')}}</el-menu-item></router-link>
+                <router-link :to="{name:'rfile'}"><el-menu-item index="/rfile"><i class="el-icon-beifenhuifu iconfont"></i>{{$t('message.fileback')}}</el-menu-item></router-link>
             </el-submenu>
-            <div style="width:240px"><p style="position:fixed;bottom:0em;text-align:center;color:white;font-size:.8em;width:300px">技术支持：400-716-7160</p></div>
+            <div style="width:240px"><p style="position:fixed;bottom:0em;text-align:center;color:white;font-size:.8em;width:300px">{{$t('message.tech')}}：400-716-7160</p></div>
         </el-menu>
         
     </el-aside>

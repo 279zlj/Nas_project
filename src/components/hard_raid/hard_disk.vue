@@ -76,8 +76,7 @@ export default {
     data(){
         var checkraid=(rule,val,callback)=>{
             if(isNaN(val)){
-                console.log(val)
-                return callback(new Error('请选择阵列ID'))
+                return callback(new Error(this.$t('raid.select6')))
             }
             else
                 callback()
@@ -94,7 +93,7 @@ export default {
             },
             sparerule:{
                 type:[
-                    {required:true,message:'请选择热备类型', trigger:'blur'}
+                    {required:true,message:this.$t('raid.select7'), trigger:'blur'}
                 ],
                 raid:[
                     {validator:checkraid, trigger: 'blur'}
@@ -135,7 +134,7 @@ export default {
         },
         online(row){
             this.nowdata = row
-            this.$confirm('Make online',$t('message.tips'),{
+            this.$confirm('Make online',this.$t('message.tips'),{
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type:'warning'

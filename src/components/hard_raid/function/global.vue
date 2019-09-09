@@ -1,20 +1,20 @@
 <template>
-    <el-dialog :title="$t('raidMgr.global')" :visible.sync="globalset" width="40%" center :before-close="handleClose" :close-on-click-modal="false">
-        <el-form :model="setdata" ref="setdata" :rules="setrule" label-width="200px" label-position="left" class="demo-ruleForm">
+    <el-dialog :title="$t('raidMgr.global')" :visible.sync="globalset" width="45%" center :before-close="handleClose" :close-on-click-modal="false">
+        <el-form :model="setdata" ref="setdata" :rules="setrule" label-width="270px" label-position="left" class="demo-ruleForm">
             <p><b>{{$t('raidMgr.source')}}:</b></p>
-            <el-form-item label="磁盘重建（%）" prop="rebuild">
+            <el-form-item :label="$t('global.rebuild')" prop="rebuild">
                 <el-input v-model="setdata.rebuild" type="number"></el-input>
             </el-form-item>
-            <el-form-item label="磁盘检测（%）" prop="check">
+            <el-form-item :label="$t('global.check')" prop="check">
                 <el-input v-model="setdata.check" type="number"></el-input>
             </el-form-item>
-            <el-form-item label="RAID后台初始化（%）" prop="init">
+            <el-form-item :label="$t('global.init')" prop="init">
                 <el-input v-model="setdata.init" type="number"></el-input>
             </el-form-item>
-            <el-form-item label="RAID数据一致性检测" prop="consisten">
+            <el-form-item :label="$t('global.consisten')" prop="consisten">
                 <el-input v-model="setdata.consisten" type="number"></el-input>
             </el-form-item>
-            <el-form-item label="RAID数据重构（%）" prop="numrebuild">
+            <el-form-item :label="$t('global.num')" prop="numrebuild">
                 <el-input v-model="setdata.numrebuild" type="number"></el-input>
             </el-form-item>
             <el-form-item >
@@ -41,19 +41,19 @@ export default {
             },
             setrule:{
                 rebuild:[
-                    {required:true,message:this.$t('请输入磁盘重建资源占比'), trigger:'blur'},
+                    {required:true,message:this.$t('global.input1'), trigger:'blur'},
                 ],
                 check:[
-                    {required:true,message:this.$t('请输入磁盘检测资源占比'), trigger :'blur'}
+                    {required:true,message:this.$t('global.input2'), trigger :'blur'}
                 ],
                 init:[
-                    {required:true,message:this.$t('请输入后台初始化资源占比'), trigger: 'blur'}
+                    {required:true,message:this.$t('global.input3'), trigger: 'blur'}
                 ],
                 consisten:[
-                    {required:true,message:this.$t('请输入数据一致性检测资源占比'), trigger: 'blur'}
+                    {required:true,message:this.$t('global.input4'), trigger: 'blur'}
                 ],
                 numrebuild:[
-                    {required:true,message:this.$t('请输入数据重构资源占比') ,trigger: 'blur'}
+                    {required:true,message:this.$t('global.input5') ,trigger: 'blur'}
                 ]
             },
         }

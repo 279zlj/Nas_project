@@ -14,14 +14,14 @@
                         <el-tooltip :content="$t('raidMgr.global')" placement="bottom"><el-button type="primary" icon="el-icon-quanjushezhi iconfont" size="small" @click="gset = true"></el-button></el-tooltip>
                         <el-tooltip :content="$t('raidMgr.start')" placement="bottom"><el-button type="warning" icon="el-icon-zuoyebaojing iconfont" size="small" @click="startwarn"></el-button></el-tooltip>
                         <el-tooltip :content="$t('raidMgr.stop')" placement="bottom"><el-button type="danger" icon="el-icon-tianranqibaojingqi- iconfont" size="small" @click="stopwarn"></el-button></el-tooltip>
-                        <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='addraid = true'></el-button></el-tooltip>
+                        <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-tianjia iconfont" size='small' @click='addraid = true'></el-button></el-tooltip>
                         </el-col>
                   </el-row>
                   <el-table :data="raiddata.slice((currpage - 1)* pagesize, currpage *pagesize)" border class="table_cell" style="width:100%;min-height:310px;max-height:100%"  >
                     <el-table-column label="ID" prop="id" ></el-table-column>
                     <el-table-column :label="$t('raid.level')" prop="raid_level"></el-table-column>
                     <el-table-column :label="$t('disk.capacity')" prop="size"></el-table-column>
-                    <el-table-column :label="$t('raidMgr.check')" prop="parity_size"></el-table-column>
+                    <el-table-column :label="$t('raidMgr.check')" prop="parity_size" width="200px"></el-table-column>
                     <el-table-column :label="$t('raid.chunk')" prop="sector_size"></el-table-column>
                     <el-table-column :label="$t('message.state')" prop="state"></el-table-column>
                     <el-table-column :label="$t('raid.all')" prop="number_of_drives"></el-table-column>
