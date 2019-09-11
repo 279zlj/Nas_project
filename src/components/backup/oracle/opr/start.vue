@@ -38,11 +38,8 @@
               <el-option :label="$t('backup.month')" value="monthday"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="day" v-if="newback.time == 'day'">
-            <el-time-picker v-model="newback.day" :placeholder="$t('backup.input12')" value-format="HH" format="HH"></el-time-picker>
-          </el-form-item>
           <el-form-item prop="week" v-if="newback.time == 'week'">
-            <el-select v-model="newback.week" :placeholder="$t('backup.input13')">
+            <el-select v-model="newback.week" :placeholder="$t('backup.input13')" >
               <el-option :label="$t('backup.mon')" value="1"></el-option>
               <el-option :label="$t('backup.tues')" value="2"></el-option>
               <el-option :label="$t('backup.wed')" value="3"></el-option>
@@ -56,6 +53,9 @@
             <el-select v-model="newback.month" :placeholder="$t('backup.input11')" >
               <el-option v-for="i in timedata" :key="i.value" :label="i.label" :value="i.value"></el-option>
             </el-select>
+          </el-form-item>
+          <el-form-item prop="day" v-if="newback.time">
+            <el-time-picker v-model="newback.day" :placeholder="$t('backup.input12')" value-format="HH" format="HH"></el-time-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="startsubmit('newback')">{{$t('message.submit')}}</el-button>
@@ -82,15 +82,17 @@ export default {
                 day:'',
                 week:'',
                 month:'',
+                dot:''
             },
             backrules:{
-                filename:[{required:true,message:this.$t('backup.input7'),trigger:'bulr'},{pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'}],
+                filename:[{required:true,message:this.$t('backup.input7'),trigger:'bulr'},{pattern:/^[\u4e00-\u9fa5_0-9a-zA-Z]+$/,message:this.$t('user.reg1'),trigger:'blur'}],
                 func: [{ required: true, message: this.$t('backup.input10'), trigger: "blur" }],
                 plan: [{ required: true, message: this.$t('backup.select3'), trigger: "blur" }],
                 time: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
                 day: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
                 week: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
                 month: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
+                dot:[{required:true, message: this.$t('backup.input11'),trigger:'blur'}]
             },
             timedata:[
                 {value:'1',label:'1号'},

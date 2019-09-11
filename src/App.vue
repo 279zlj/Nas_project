@@ -1,14 +1,15 @@
 <template>
   <el-container id="app">
-
-    <keep-alive>
+            
+      
       <router-view />
+      <keep-alive>
       <el-container>
           <el-header>
             <router-view name='top'></router-view>
           </el-header>
           <el-container>
-            <el-aside>
+            <el-aside style="background-color:#292A2F">
               <router-view name='aside'></router-view>
             </el-aside>
             <el-main>
@@ -22,7 +23,7 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
 }
 </script>
 

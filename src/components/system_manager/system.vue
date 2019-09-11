@@ -164,8 +164,8 @@ export default {
         // console.log(Data)
       },
       websocketclose(e) {
-        console.log('断开连接', e);
         this.websock.close()
+        console.log('断开连接', e);
       },
       draw(datanum){
           // console.log(datanum)

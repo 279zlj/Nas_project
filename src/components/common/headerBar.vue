@@ -189,6 +189,10 @@ export default {
     margin:0;
     padding:0;
 }
+.header{
+      margin:.2em;
+      margin-left:6em;
+  }
 .outlogin{
     color:white;
     font-size:2em !important;

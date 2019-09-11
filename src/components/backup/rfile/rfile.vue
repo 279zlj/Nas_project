@@ -15,8 +15,8 @@
                         </el-table-column>
                     </el-table>
               </el-col>
-              <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset="2" style="margin-top:2rem">
-                  <el-card class="box-card" style="height:30em">
+              <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset="2" style="margin-top:1rem">
+                  <el-card class="box-card" style="height:32em">
                       <el-tabs v-model="tabname">
                           <el-tab-pane :label="$t('message.fileback')" name='back'>
                                 <Back :userdd='user'></Back>
@@ -197,7 +197,7 @@ export default {
         },
         getdata(){
             if(this.checkedid != '' && this.checkedid != undefined && this.checkedip != '' && this.checkedip != undefined){
-                this.$confirm(this.$t('backup.sure1'),this.$t('backup.tips'),{
+                this.$confirm(this.$t('backup.sure1'),this.$t('message.tips'),{
                     confirmButtonText:this.$t('message.sure'),
                     cancelButtonText:this.$t('message.cancel'),
                     type:'warning'

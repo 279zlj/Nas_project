@@ -21,7 +21,7 @@
             </el-form-item>
             <el-form-item :label="$t('backup.path')" prop="user" v-if='userdata.type=="0"'>
                 <el-select v-model="userdata.user" :placeholder="$t('backup.select5')">
-                    <el-option v-for="u in userdd" :key="u" :value="u" :label="u"></el-option>
+                    <el-option v-for="u in userd" :key="u" :value="u" :label="u"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item :label="$t('backup.path')" prop="newdoc" v-if='userdata.type=="1"'>
@@ -58,6 +58,7 @@ export default {
             serveri:false,
             isserver:true,
             isclient:true,
+            userd:this.userdd,
             props: {
                 label: 'name',
                 children: 'zones',
@@ -83,7 +84,7 @@ export default {
                 newdoc:[
                     {required:true,message:this.$t('backup.select4'),trigger:'blur'},
                     {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
-                    {min:3,max:10,message:this.$t('nfs.input3'),trigger:'blur'}
+                    {min:3,max:10,message:this.$t('nfs.input2'),trigger:'blur'}
                 ]
             },
             clientp:[],
@@ -91,7 +92,21 @@ export default {
             checkedip:''
         }
     },
+    watch:{
+        userdd(val){
+            this.userd=val
+            return this.userd
+        }
+    },
     methods:{
+        getuser(){
+            this.$axios.get(this.$host+'backuser').then(res=>{
+                console.log(res.data.data)
+                this.userd = res.data.data
+            }).catch(error=>{
+                console.log(error)
+            })
+        },
         clientchange(data, checked, indeterminate) {
             if(checked == true){
                 this.checkedip = data.path
@@ -151,6 +166,7 @@ export default {
                     _this.websocketsend(a)
                 });
                 this.websock.onmessage=function(e){
+                    // console.log(JSON.parse(e.data))
                     data=JSON.parse(e.data).data
                     resolve(data);
                 }
@@ -177,11 +193,13 @@ export default {
                         _this.websocketsend(a)
                     });
                     this.websock.onmessage=function(e){
+                        _this.userd=JSON.parse(e.data).allpath
                         dd=JSON.parse(e.data).data
                         this.serverp=dd
                         _this.lstate(this.serverp)
                     }
                     this.serveri=false
+                    _this.userreset('userdata')
                 }
                 
             })

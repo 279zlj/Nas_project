@@ -90,8 +90,11 @@
            <el-form-item :label="$t('backup.pass')" prop="dbpwd">
             <el-input v-model="newback.dbpwd" :placeholder="$t('backup.input6')" type="password"></el-input>
           </el-form-item>
-          <el-form-item label="SID" prop="sid">
+          <el-form-item label="SID" prop="sid" v-if='newback.type == "oracle"'>
             <el-input v-model="newback.sid" :placeholder="$t('backup.input4')"></el-input>
+          </el-form-item>
+          <el-form-item label="数据库名" prop="sqlname" v-else>
+            <el-input v-model="newback.sqlname" placeholder="请输入数据库名"></el-input>
           </el-form-item>
           <el-form-item :label="$t('backup.input5')" prop="orport">
             <el-input v-model="newback.orport" :placeholder="$t('backup.input5')" type="number"></el-input>
@@ -202,6 +205,7 @@ export default {
         dbpwd:'',
         sid:'',
         orport:'',
+        sqlname:''
       },
       backrule:{
         server:[
@@ -221,7 +225,10 @@ export default {
         orport: [
           {required: true,message: this.$t('backup.input5'),trigger: "blur"}
         ],
-        
+        sqlname:[
+          {required: true,message: '请输入数据库名',trigger:'blur'},
+          {pattern:/^[0-9a-zA-Z_]+$/,message:'请不要输入特殊字符，除下划线外',trigger:'blur'}
+        ]
       },
       smbset:{
           smbval:'',
@@ -304,7 +311,7 @@ export default {
     backsubmit(name){
       this.$refs[name].validate((valid)=>{
         if(valid){
-          this.$axios.post(this.$host+'orcl',{host:this.newback.server,user:this.newback.dbuser,pwd:this.newback.dbpwd,sid:this.newback.sid,type:this.newback.dbpwd,port:this.newback.orport}).then(res=>{
+          this.$axios.post(this.$host+'orcl',{host:this.newback.server,user:this.newback.dbuser,pwd:this.newback.dbpwd,sid:this.newback.sid,sqlname:this.newback.sqlname,type:this.newback.dbpwd,port:this.newback.orport}).then(res=>{
             if(res.data.success){
               this.$message({
                 message:this.$t('message.success'),

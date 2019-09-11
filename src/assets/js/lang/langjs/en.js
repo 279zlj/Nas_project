@@ -121,7 +121,8 @@ const en = {
         'input5': 'Inconsistent input password twice',
         'muser': 'Change Password',
         'mgroup': 'Modify the attribution group',
-        'reg': 'Please do not include special characters and Chinese, except for underscores'
+        'reg': 'Please do not include special characters and Chinese, except for underscores',
+        'reg1': 'Please do not include special characters, except for underscores'
     },
     gateway: {
         'interface': 'Gateway Interface',
@@ -438,7 +439,8 @@ const en = {
         'sure': 'Confirm backup',
         'sure1': 'Confirm recovery',
         'ff': 'File name',
-        'ff1': 'Backup time'
+        'ff1': 'Backup time',
+        'tips': 'This action will permanently delete the file, whether to continue'
     },
     ...enLocale
 }

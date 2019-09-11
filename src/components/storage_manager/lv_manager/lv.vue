@@ -181,6 +181,7 @@ export default {
                     else if(_this.pooldata[i].state==2){
                         _this.lvdata[i].state='inactive'
                     }
+                    _this.lvdata[i].size[0]=_this.lvdata[i].size[0].replace('<','')
                 }
             }).catch(error=>{
                 console.log(error)

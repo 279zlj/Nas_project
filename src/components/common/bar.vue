@@ -98,9 +98,9 @@ export default {
     },
 }
 </script>
-<style>
-.bg_color,.el-aside{
-    background-color:#292A2F;
+<style scoped>
+.bg_color{
+    background-color:#292A2F !important;
     height: initial;
 }
  aside{
@@ -123,10 +123,7 @@ export default {
       text-align:left;
       margin-bottom:1.5em;
   }
-  .header{
-      margin:.2em;
-      margin-left:6em;
-  }
+  
   .header_bar{
         background-color:#009588 !important;
         height:3.5em;

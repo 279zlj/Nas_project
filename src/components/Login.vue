@@ -13,7 +13,7 @@
           <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' style="height:100%">
             <img src='../../static/images/nas.gif' style="width:100%;padding:3rem 0;height:20rem" />
           </el-col>
-          <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' style="padding:10% 3rem 0rem 3rem">
+          <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' style="padding:8% 3rem 0rem 3rem">
             <h2 style="color:#01968A">欢迎登录</h2>
             <el-form :model="logindata" ref='logindata' :rules="loginrule" >
               <el-form-item prop="username">
@@ -100,7 +100,7 @@ export default {
         margin: 0 ;
         padding: 0 ;
         bottom:0;
-        background: linear-gradient(to right, #01978D 20%, #089195 30%, #138AA2 50%,#1E7EB0 65%, #217DB2 70%,#356DC8 90%);
+        background: linear-gradient(to right, #01978D 20%, #089195 30%, #138AA2 50%,#1E7EB0 65%, #217DB2 70%,#356DC8 90%) !important;
     }
     video{
         position:absolute;
@@ -115,6 +115,7 @@ export default {
         background-size: contain;
     }
     #iform{
+      z-index: 999;
       background-color:white;
       border-radius: .5rem;
       box-shadow: 0px 3px 15px #303133;
