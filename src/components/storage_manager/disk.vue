@@ -6,7 +6,7 @@
             </div>
             <el-row class='other_table'>
                 <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-                    <el-table :data='diskdata.slice((currpage - 1)*pagesize,currpage*pagesize)' border  v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
+                    <el-table :data='diskdata.slice((currpage - 1)*pagesize,currpage*pagesize)' border :header-cell-style="getRowClass" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
                         <el-table-column :label="$t('disk.name')" prop="path"></el-table-column>
                         <el-table-column :label="$t('disk.used')" prop='used'></el-table-column>
                         <el-table-column :label="$t('disk.capacity')" prop='size'></el-table-column>
@@ -35,6 +35,10 @@ export default {
     name:'disk',
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             diskdata:[],
             currpage:1,
             pagesize:5,

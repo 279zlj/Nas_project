@@ -3,7 +3,7 @@
         <div>
           <el-button type='primary' size="small" style='float:right;margin-bottom:.5em' @click="chosse = true">{{$t('backup.select4')}}</el-button>
         </div>
-        <el-table :data='deldata.slice((currpage - 1) * pagesize,currpage * pagesize)' border class="table_cell" style="width:100%;min-height:310px;max-height:100%">
+        <el-table :data='deldata.slice((currpage - 1) * pagesize,currpage * pagesize)' :header-cell-style="getRowClass" border class="table_cell" style="width:100%;min-height:310px;max-height:100%">
             <el-table-column :label="$t('backup.ff')" prop="file"></el-table-column>
             <el-table-column :label="$t('backup.ff1')" prop="time"></el-table-column>
             <el-table-column :label="$t('message.oper')">
@@ -40,6 +40,10 @@ export default {
     name:'delfile',
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             deldata:[],
             pagesize: 5,
             currpage: 1,
@@ -114,7 +118,7 @@ export default {
           })
         },
         delsure(name){
-            this.$confirm( this.$t('backup.tips'), this.$t('message.tips'), {
+            this.$confirm( this.$t('backup.tips1'), this.$t('message.tips'), {
               confirmButtonText: this.$t('message.sure'),
               cancelButtonText: this.$t('message.cancel'),
               type: 'warning'

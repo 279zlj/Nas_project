@@ -8,11 +8,11 @@
             <el-row style='margin-bottom:.5em;float:right'>
                 <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createpool = true'></el-button></el-tooltip>
             </el-row>
-            <el-table :data='pooldata.slice((currpage - 1)*pagesize,currpage*pagesize)' border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
+            <el-table :data='pooldata.slice((currpage - 1)*pagesize,currpage*pagesize)' :header-cell-style="getRowClass" border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
                 <el-table-column :label="$t('pool.name')" prop='vg_name'></el-table-column>
                 <el-table-column :label="$t('pool.capacity')" prop='vg_size'></el-table-column>
                 <el-table-column prop="vg_status">
-                    <template slot="header" slot-scope="scope">
+                    <template slot="header">
                         <span>{{$t('message.state')}}</span>
                         <el-popover
                             placement="top-start"
@@ -80,6 +80,10 @@ export default {
     name:'pool',
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             createpool:false,
             poolmodify:false,
             pooldelete:false,

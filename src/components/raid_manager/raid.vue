@@ -11,7 +11,7 @@
                     <el-row style='margin-bottom:.5em;float:right'>
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createraid = true'></el-button></el-tooltip>
                     </el-row>
-                    <el-table :data='raiddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
+                    <el-table :data='raiddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell" :header-cell-style="getRowClass" style='width:100%;min-height:310px;max-height:100%'>
                         <el-table-column :label="$t('raid.name')" prop='name' :show-overflow-tooltip="true"></el-table-column>
                         <el-table-column :label="$t('raid.level')" prop='level'></el-table-column>
                         <el-table-column :label="$t('raid.chunk')" prop='chunk' ></el-table-column>
@@ -85,7 +85,7 @@
                     <el-form-item class="ma" :label="$t('raid.level')">{{raidtarget.level}}</el-form-item>
                     <el-form-item class="ma" :label="$t('raid.chunk')">{{raidtarget.chunk}}</el-form-item>
                     <el-form-item class="ma" :label="$t('raid.all')">{{raidtarget.total}}</el-form-item>
-                    <el-form-item class="ma" :label="$t('raid.use')"><span v-for='r in raidtarget.device' style='display:block'>{{r.device}} — {{$t('message.state')}}： {{r.state}}</span></el-form-item>
+                    <el-form-item class="ma" :label="$t('raid.use')"><span v-for='(r,index) in raidtarget.device' style='display:block' :key="index">{{r.device}} — {{$t('message.state')}}： {{r.state}}</span></el-form-item>
                     <el-form-item class="ma" :label="$t('raid.spare')">{{raidtarget.spare_num}}</el-form-item>
                     <el-form-item class="ma" :label="$t('raid.active')">{{raidtarget.active_num}}</el-form-item>
                     <el-form-item class="ma" :label="$t('raid.working')">{{raidtarget.working_num}}</el-form-item>
@@ -103,6 +103,10 @@ export default {
     name:'raid',
     data(){        
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             raiddata:[],
             createraid:false,
             deletelog:false,

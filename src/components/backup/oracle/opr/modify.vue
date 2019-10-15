@@ -62,7 +62,7 @@ export default {
         modifysubmit(name){
             this.$refs[name].validate((valid)=>{
                 if(valid){
-                    this.$axios.put(this.$host+'orcl',{host:this.tar.id,orcl_user:this.tar.sys_user,new_user:this.modata.dbuser,orcl_pwd:this.modata.dbpwd,sid:this.modata.sid}).then(res=>{
+                    this.$axios.put(this.$host+'db',{host:this.tar.id,orcl_user:this.tar.sys_user,new_user:this.modata.dbuser,orcl_pwd:this.modata.dbpwd,sid:this.modata.sid}).then(res=>{
                         if(res.data.success){
                             this.$message({
                                 message: this.$t("message.success"),

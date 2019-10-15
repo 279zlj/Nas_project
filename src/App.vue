@@ -1,7 +1,5 @@
 <template>
   <el-container id="app">
-            
-      
       <router-view />
       <keep-alive>
       <el-container>
@@ -45,10 +43,20 @@ body,html{
   min-height: 100%;
 }
 .el-table thead {
-    background-color: #009588 !important
-}
-.el-card__header {
     background-color: #009588 !important;
+}
+.el-card__header,.el-table__header,.el-table__header-wrapper {
+    background-color: #009588 !important;
+    color:#fff;
+}
+.el-menu{
+  border-right: 0 !important;
+}
+.el-menu-item.is-active{
+  background-color: #66b1ff !important;
+  color: #fff !important;
+  border-radius: 2rem;
+  margin:3px;
 }
 #cpu,#menory{
         width: 100%;height:300px;border-radius: .3em;
@@ -77,7 +85,7 @@ body,html{
 .tip_bg{
     background-color:#FFF;
     height:3.5em;
-    box-shadow:10px 5px 10px grey;
+    box-shadow:0px 5px 10px grey;
 }
 .tip{
     display:block;

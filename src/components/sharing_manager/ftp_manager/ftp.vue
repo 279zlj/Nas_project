@@ -6,7 +6,7 @@
         <div>
             <el-row class="other_table">
               <el-col :xs='20' :sm='20' :md='20' :lg="20" :xl='20' :offset="2">
-                    <el-table :data='ftpdata' border class="table_cell" style="width:100%;min-height:310px;max-heigth:100%" >
+                    <el-table :data='ftpdata' border class="table_cell" :header-cell-style="getRowClass" style="width:100%;min-height:310px;max-heigth:100%" >
                         <el-table-column :label="$t('message.service')" prop='service'></el-table-column>
                         <el-table-column :label="$t('message.user')" prop="user" >
                             <template slot-scope="scope">
@@ -18,6 +18,7 @@
                         <el-table-column :label="$t('message.oper')">
                             <template slot-scope="scope">
                                 <el-switch v-model="scope.row.state" :active-text="$t('message.open')" :inactive-text="$t('message.close')" @change="changestate(scope.row)" :disabled="scope.row.operchange"></el-switch>
+                                <span style="font-size:small;color:red" v-show="scope.row.user.indexOf('—') === 0">（{{$t('user.nouser')}}）</span>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -31,6 +32,10 @@ export default {
     name:'ftp',
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             ftpdata:[]
         }
     },

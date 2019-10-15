@@ -26,6 +26,7 @@
           </el-row>
           <el-table
             :data="backdata.slice((currpage - 1) * pagesize, currpage * pagesize)"
+            :header-cell-style="getRowClass"
             boder
             class="table_cell"
             style="width:100%;min-height:310px;max-height:100%;"
@@ -49,9 +50,9 @@
                     <span @click="modifyback(scope.row)">
                       <el-dropdown-item>{{$t('message.modify')}}</el-dropdown-item>
                     </span>
-                    <span @click="recovery(scope.row)">
+                    <!-- <span @click="recovery(scope.row)">
                       <el-dropdown-item>{{$t('backup.renew')}}</el-dropdown-item>
-                    </span>
+                    </span> -->
                     <span @click="delfile(scope.row)">
                       <el-dropdown-item>{{$t('backup.del')}}</el-dropdown-item>
                     </span>
@@ -93,8 +94,8 @@
           <el-form-item label="SID" prop="sid" v-if='newback.type == "oracle"'>
             <el-input v-model="newback.sid" :placeholder="$t('backup.input4')"></el-input>
           </el-form-item>
-          <el-form-item label="数据库名" prop="sqlname" v-else>
-            <el-input v-model="newback.sqlname" placeholder="请输入数据库名"></el-input>
+          <el-form-item :label="$t('backup.dataname')" prop="sqlname" v-else>
+            <el-input v-model="newback.sqlname" :placeholder="$t('backup.input16')"></el-input>
           </el-form-item>
           <el-form-item :label="$t('backup.input5')" prop="orport">
             <el-input v-model="newback.orport" :placeholder="$t('backup.input5')" type="number"></el-input>
@@ -184,6 +185,10 @@ export default {
   components:{Backupmodify,Backupstart},
   data(){
     return{
+      getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
       createhost: false,
       modifyhost: false,
       startvisi:false,
@@ -257,7 +262,7 @@ export default {
       this.smbdata=[]
       this.netdata=[]
       this.$axios
-        .get(this.$host + "orcl")
+        .get(this.$host + "db")
         .then(res => {
           this.backdata = res.data.data;
           this.pageTotal = this.backdata.length
@@ -289,7 +294,7 @@ export default {
         }).catch(error=>{
           console.log(error)
         })
-        this.$axios.get(this.$host+'orcl_smb').then(res=>{
+        this.$axios.get(this.$host+'db_smb').then(res=>{
           this.smbset.net=res.data.data.host
           this.smbset.smbval=res.data.data.user
         }).catch(error=>{
@@ -311,7 +316,7 @@ export default {
     backsubmit(name){
       this.$refs[name].validate((valid)=>{
         if(valid){
-          this.$axios.post(this.$host+'orcl',{host:this.newback.server,user:this.newback.dbuser,pwd:this.newback.dbpwd,sid:this.newback.sid,sqlname:this.newback.sqlname,type:this.newback.dbpwd,port:this.newback.orport}).then(res=>{
+          this.$axios.post(this.$host+'db',{host:this.newback.server,user:this.newback.dbuser,pwd:this.newback.dbpwd,sid:this.newback.sid,sqlname:this.newback.sqlname,type:this.newback.type,port:this.newback.orport}).then(res=>{
             if(res.data.success){
               this.$message({
                 message:this.$t('message.success'),
@@ -321,12 +326,11 @@ export default {
             else{
               this.$message.error(res.data.msg)
             }
-            
+            this.getback()            
           }).catch(error=>{
             console.log(error)
           })
           this.createhost=false
-          this.getback()
           this.backreset('newback')
         }
       })
@@ -334,7 +338,7 @@ export default {
     smbsubmit(name){
       this.$refs[name].validate((valid)=>{
         if(valid){
-          this.$axios.post(this.$host+'orcl_smb',{smb:this.smbset.smbval,net:this.smbset.net}).then(res=>{
+          this.$axios.post(this.$host+'db_smb',{smb:this.smbset.smbval,net:this.smbset.net}).then(res=>{
             if(res.data.success){
               this.$message({
                 message:this.$t('message.success'),
@@ -344,12 +348,12 @@ export default {
             else{
               this.$message.error(res.data.msg)
             }
-            
+            this.getback()
           }).catch(error=>{
             console.log(error)
           })
           this.smbsetting = false;
-          this.getback()
+          
           this.backreset('smbset')
         }
       })
@@ -357,7 +361,7 @@ export default {
     dfilesubmit(name){
       this.$refs[name].validate((valid)=>{
         if(valid){
-          this.$axios.delete(this.$host+'orcl_restore',{data:{oid:this.smbset.recodoc}}).then(res=>{
+          this.$axios.delete(this.$host+'db_restore',{data:{oid:this.smbset.recodoc}}).then(res=>{
             if(res.data.success){
               this.$message({
                 message:this.$t('message.success'),
@@ -367,11 +371,12 @@ export default {
             else{
               this.$message.error(res.data.msg)
             }
+            this.getback()
           }).catch(error=>{
             console.log(error)
           })
           this.dfile = false;
-          this.getback()
+          
           this.backreset('smbset')
         }
       })
@@ -379,7 +384,7 @@ export default {
     recosubmit(name){
       this.$refs[name].validate((valid)=>{
         if(valid){
-          this.$axios.put(this.$host+'orcl_restore',{id:this.target.id,oid:this.smbset.recodoc}).then(res=>{
+          this.$axios.put(this.$host+'db_restore',{id:this.target.id,oid:this.smbset.recodoc}).then(res=>{
             if(res.data.success){
               this.$message({
                 message:this.$t('message.success'),
@@ -389,11 +394,12 @@ export default {
             else{
               this.$message.error(res.data.msg)
             }
+            this.getback();
           }).catch(error=>{
             console.log(error)
           })
           this.reco = false;
-          this.getback();
+          
           this.backreset('smbset')
         }
       })
@@ -402,9 +408,10 @@ export default {
       this.target = row;
       this.dfile = true;
       this.$axios
-        .post(this.$host + "orcl_restore", { id: row.id })
+        .post(this.$host + "db_restore", { id: row.id })
         .then(res => {
           this.docs = res.data.data;
+          this.getback()
         })
         .catch(error => {
           console.log(error);
@@ -414,9 +421,10 @@ export default {
       this.target = row;
       this.reco = true;
       this.$axios
-        .post(this.$host + "orcl_restore", { id: row.id })
+        .post(this.$host + "db_restore", { id: row.id })
         .then(res => {
           this.docs = res.data.data;
+          this.getback()
         })
         .catch(error => {
           console.log(error);
@@ -431,7 +439,7 @@ export default {
       })
         .then(() => {
           this.$axios
-            .delete(this.$host + "orcl", { data: { sid: this.target.id } })
+            .delete(this.$host + "db", { data: { sid: this.target.id } })
             .then(res => {
               if (res.data.success) {
                 this.$message({
@@ -439,6 +447,7 @@ export default {
                   message: this.$t('message.success')
                 });
               }
+              this.getback()
             });
         })
         .catch(() => {

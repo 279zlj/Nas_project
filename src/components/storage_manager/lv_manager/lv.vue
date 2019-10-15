@@ -9,11 +9,11 @@
                     <el-row style='margin-bottom:.5em;float:right'>
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createlv = true'></el-button></el-tooltip>
                     </el-row>
-                    <el-table :data="lvdata.slice((currpage - 1)*pagesize,currpage * pagesize)" border  class="table_cell" style='width:100%;min-height:310px;max-height:100%' >
+                    <el-table :data="lvdata.slice((currpage - 1)*pagesize,currpage * pagesize)" border :header-cell-style="getRowClass" class="table_cell" style='width:100%;min-height:310px;max-height:100%' >
                         <el-table-column :label="$t('lv.name')" prop='name'></el-table-column>
                         <el-table-column :label="$t('lv.pool')" prop='vg_name'></el-table-column>
                         <el-table-column prop='state'>
-                            <template slot="header" slot-scope="scope">
+                            <template slot="header" >
                                 <span>{{$t('message.state')}}</span>
                                 <el-popover
                                     placement="top-start"
@@ -109,6 +109,10 @@ export default {
     name:'lv',
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             createlv:false,
             lvdata:[],
             pagesize: 5,

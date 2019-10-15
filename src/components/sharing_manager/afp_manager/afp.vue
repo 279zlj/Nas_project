@@ -9,8 +9,8 @@
                     <el-row style='margin-bottom:.5em;float:right'>
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createafp = true'></el-button></el-tooltip>
                     </el-row>
-                    <el-table :data='afpdata.slice((currpage - 1) * pagesize, currpage*pagesize)' border  class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
-                        <el-table-column :label="$t('afp.name')" prop='name'></el-table-column>
+                    <el-table :data='afpdata.slice((currpage - 1) * pagesize, currpage*pagesize)' border :header-cell-style="getRowClass" class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
+                        <el-table-column :label="$t('afp.name')" prop='name'></el-table-column> 
                         <el-table-column :label="$t('afp.path')" prop='path'></el-table-column>
                         <el-table-column :label="$t('message.oper')">
                             <template slot-scope="scope">
@@ -46,9 +46,6 @@
                     <el-option v-for="i in docdata" :key="i.path" :value="i.path">{{i.name}}</el-option>
                   </el-select>
               </el-form-item>
-              <!-- <el-form-item label="密码" prop='pwd'>
-                  <el-input v-model="afpform.pwd" type='password' placeholder="请输入密码" style="width:80%"></el-input>
-              </el-form-item> -->
               <el-form-item>
                       <el-button type="primary" @click="afpsubmit('afpform')">{{$t('message.submit')}}</el-button>
                       <el-button @click="afpreset('afpform')">{{$t('message.reset')}}</el-button>
@@ -68,6 +65,10 @@ export default {
     name:'afp',
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             createafp:false,
             afpremove:false,
             afpdata:[],

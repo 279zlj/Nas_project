@@ -2,7 +2,7 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN' //引入element语言包
 const cn = {
     message: {
         'Welcome': '欢迎使用！',
-        'sysname': '五舟NAS存储系统',
+        'sysname': '五舟 PextSan',
         'system': '关于我们',
         'sysinfo': '系统信息',
         'account': '账号管理',
@@ -24,8 +24,8 @@ const cn = {
         'write': '写速度',
         'disk': '磁盘',
         'logical': '逻辑卷管理',
-        'softraid': '软阵列管理',
-        'hardraid': '硬阵列管理',
+        'softraid': 'Raid管理',
+        'hardraid': '阵列卡管理',
         'diskMgr': '阵列管理',
         'sharing': '共享管理',
         'input': '请选择共享目录',
@@ -75,7 +75,10 @@ const cn = {
         'backup': '备份管理',
         'sqlback': '数据库备份',
         'fileback': '文件备份',
-
+        'timing': '定时备份列表',
+        'taskname': '文件名称',
+        'create': '创建时间',
+        'backtype': '备份类型'
     },
     sys: {
         'basic': '基础信息',
@@ -124,7 +127,8 @@ const cn = {
         'muser': '修改密码',
         'mgroup': '修改归属组',
         'reg': '请不要包含特殊字符和中文,下划线除外',
-        'reg1': '请不要包含特殊字符,下划线除外'
+        'reg1': '请不要包含特殊字符,下划线除外',
+        'nouser': '无用户无法使用'
     },
     gateway: {
         'interface': '网关接口',
@@ -395,9 +399,9 @@ const cn = {
         'func': '备份形式',
         'fzl': '非增量',
         'zl': '增量',
-        'plan': '计划任务',
-        'plana': '即时任务',
-        'planb': '定时任务',
+        'plan': '备份计划',
+        'plana': '即时备份',
+        'planb': '定时备份',
         'time': '时间',
         'day': '每日',
         'week': '每周',
@@ -441,7 +445,9 @@ const cn = {
         'sure1': '确认进行恢复',
         'ff': '文件名',
         'ff1': '备份时间',
-        'tips': '此操作将永久删除该文件, 是否继续'
+        'tips1': '此操作将永久删除该文件, 是否继续',
+        'dataname': '数据库名',
+        'input16':'请输入数据库名'
     },
     ...zhLocale
 }

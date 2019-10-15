@@ -44,32 +44,33 @@
                             <span>{{$t('message.dd')}}</span>
                         </div>
                         <!-- <menorycharts></menorycharts> -->
-                          <el-row style="height:6em">
-                            <el-col :xs='18' :sm='18' :md='18' :lg='18' :xl='18'>
-                              <!-- <div :style="{width:'100%'}">
-                                <p><b>{{$t('message.read')}}：</b>{{read_bytes}}</p>
-                                <p><b>{{$t('message.write')}}：</b>{{write_bytes}}</p>
-                              </div> -->
-                              <div :style="{width:'100%'}" v-for='(d,index) in diskdata' v-show='target == index'>
-                                <p><b>{{$t('message.read')}}：</b>{{d.info.read_bytes}}</p>
-                                <p><b>{{$t('message.write')}}：</b>{{d.info.write_bytes}}</p>
-                              </div>
-                            </el-col>
-                            <el-col :xs='6' :sm='6' :md='6' :lg='6' :xl='6'>
-                              <el-row class="rightbar">
-                                  <p style="margin:0" v-for="(p,index) in diskdata" @click="changedisk(index,p)" :id='index' >{{p.path}}</p>
-                              </el-row>
-                            </el-col>
-                          </el-row>
-                          <hr style="border-top:1px solid #E4E4E4"></hr>
                             <el-row>
                               <el-col :span='6'>
                                 <p style="font-weight:700;font-size:1.1em">{{$t('message.diskuse')}}：</p>
                               </el-col>
                               <el-col :span='18'>
-                                <div id='diskstatus' :style="{width:'100%',height:'15em'}" ></div>
+                                <div id='diskstatus' :style="{width:'100%',height:'9em'}" ></div>
                               </el-col>
                             </el-row>
+
+                            <hr style="border-top:1px solid #E4E4E4"></hr>
+
+                            <el-row style="height:6em">
+                            <el-col :span="24">
+                              <div :style="{width:'100%'}" v-for='(d,index) in diskdata' v-show='target == index'>
+                                <span style="margin-right:2rem"><b>{{$t('message.read')}}：</b>{{d.info.read_bytes}}</span>
+                                <span><b>{{$t('message.write')}}：</b>{{d.info.write_bytes}}</span>
+                              </div>
+                            </el-col>
+                            <el-col :span="24">
+                              <div class="rightbar">
+                                <div class="disk" v-for="(p,index) in diskdata" @click="changedisk(index,p)" :id='diskid(index)' :class="target === index?'now':''" >
+                                  <img src='../../../static/images/u130.png' class="diskimg"/>
+                                  <span class="diskfont">{{p.path}}</span>
+                                </div>
+                              </div>
+                            </el-col>
+                          </el-row>
                         
                     </el-card>
                 </el-col>
@@ -128,16 +129,14 @@ export default {
     mounted() {
         this.system_info()    
         this.initWebSocket()
-        var _this=this
-        setTimeout(function(){
-          _this.changedisk(0)
-        },100)
-        
     },
     destroyed(){
         this.websocketclose()
     },
     methods:{
+      diskid(val){
+        return 'disk'+val
+      },
       initWebSocket() {
         const wsurl = "ws://" + this.ip + "/ps";
         this.websock = new WebSocket(wsurl);
@@ -168,7 +167,6 @@ export default {
         console.log('断开连接', e);
       },
       draw(datanum){
-          // console.log(datanum)
         var date = new Array()
         var cpu = new Array()
         var mem = new Array()
@@ -178,21 +176,16 @@ export default {
             cpu.push(data[i][1])
             mem.push(data[i][2]) 
         }
-        // this.cpu=cpu
-        // this.mem=mem
-        // this.date=date
         this.diskdata = datanum.disks
         this.netdata = datanum.nets
         this.usedata = datanum.use
         this.draw_cpu(date,cpu)
         this.draw_mom(date,mem)
-        // console.log(this.diskdata)
         for(let a = 0;a<this.netdata.length;a++){
           this.netdata[a].info.bytes_sent=renderSize(this.netdata[a].info.bytes_sent)
           this.netdata[a].info.bytes_recv=renderSize(this.netdata[a].info.bytes_recv)
           if(this.netdata[a].iface == 'all')
             this.netdata[a].iface = '总网速'
-          // console.log(this.netdata[a].info.bytes_sent,this.netdata[a].info.bytes_recv)
         }
         for(let a = 0;a<this.diskdata.length;a++){
           this.diskdata[a].info.read_bytes=renderSize(this.diskdata[a].info.read_bytes)
@@ -212,7 +205,6 @@ export default {
             this.diskdata[a].path = '总读写'
           }
           
-          // console.log(this.diskdata[a].info.read_bytes,this.diskdata[a].info.write_bytes)
         }
         
       },
@@ -225,9 +217,7 @@ export default {
             })
         },
         changedisk(key,val){
-            $("#"+key+"").addClass('now')
-            $("#"+key+"").siblings().removeClass('now')
-           
+            this.target= key
         },
         drawdisks(data){
             var dom = this.$echarts.init(document.getElementById('diskstatus'))
@@ -235,7 +225,7 @@ export default {
                 series:[{
                     type:'liquidFill',
                     data: data,
-                    radius:'70%',
+                    radius:'80%',
                     itemStyle:{
                         shadowBlur:0
                     },
@@ -358,12 +348,18 @@ export default {
     height:1.5em !important;
 }
 .rightbar{
-    height:5.5em;overflow-y:scroll;background-color:#EFF0F4;text-align:center;border-radius:.5em;line-height:2.5em
+    height:9rem;background-color:#EFF0F4 !important;margin-top:.5rem;overflow-y:scroll
 }
-.rightbar p{
-    cursor: pointer;
+.disk{
+  display:inline-block;margin:.5rem 0 0 .5rem;width:5rem;height:1.5rem;background-color:#B3B3B3;border-radius:5px;text-align:right;overflow: hidden;white-space: nowrap;text-overflow: ellipsiss;cursor: pointer;
+}
+.diskimg{
+  margin-right:1rem;margin-left:.5rem
+}
+.diskfont{
+  font-size:.8rem;margin-right:.5rem;color:white
 }
 .now{
-    background-color: white !important;
+    background-color: #019589 !important;
 }
 </style>

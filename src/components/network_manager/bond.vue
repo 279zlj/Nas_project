@@ -7,10 +7,10 @@
             <el-row class='main_table'>
                 <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
                     <el-row style='margin-bottom:.5em;float:right'>
-                        <el-button type='primary' @click='bond = true' size='medium'>{{$t('bond.bond')}}</el-button>
-                        <el-button type='warning' @click='unbond = true' :disabled="unbondcan" size='medium'>{{$t('bond.unbond')}}</el-button>
+                        <el-button type='primary' @click='bond = true' size='small'>{{$t('bond.bond')}}</el-button>
+                        <el-button type='warning' @click='unbond = true' :disabled="unbondcan" size='small'>{{$t('bond.unbond')}}</el-button>
                     </el-row>
-                    <el-table ref='multipleTable' :data='bonddata' tooltip-effect="dark" border class="table_cell" style="width:100%;min-height:310px;max-height:100%" @selection-change="selectrow">
+                    <el-table ref='multipleTable' :data='bonddata' :header-cell-style="getRowClass" tooltip-effect="dark" border class="table_cell" style="width:100%;min-height:310px;max-height:100%" @selection-change="selectrow">
                         <el-table-column type='selection' width="55"></el-table-column>
                         <el-table-column :label="$t('network.interface')" prop='interface' :show-overflow-tooltip="true"></el-table-column>
                         <el-table-column :label="$t('network.ip')" prop='addr' :show-overflow-tooltip="true"></el-table-column>
@@ -84,6 +84,10 @@ export default {
                 callback()
         }
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             bonddata:[],
             bondcan:true,
             unbondcan:true,

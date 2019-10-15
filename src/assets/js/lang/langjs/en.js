@@ -2,7 +2,7 @@ import enLocale from 'element-ui/lib/locale/lang/en' //引入element语言包
 const en = {
     message: {
         'Welcome': 'Welcome to use！',
-        'sysname': 'Penta Nas',
+        'sysname': 'PextSan',
         'system': 'About us',
         'sysinfo': 'System message',
         'account': 'Account Management',
@@ -24,8 +24,8 @@ const en = {
         'write': 'Write speed',
         'disk': 'Disk',
         'logical': 'Logical Volume',
-        'softraid': 'Soft array management',
-        'hardraid': 'Hard array management',
+        'softraid': 'Raid management',
+        'hardraid': 'Array card management',
         'diskMgr': 'Array management',
         'sharing': 'Shared management',
         'input': 'Please select a shared directory',
@@ -75,6 +75,10 @@ const en = {
         'backup': 'Backup management',
         'sqlback': 'Database backup',
         'fileback': 'File backup',
+        'timing': 'Scheduled backup list',
+        'taskname': 'File name',
+        'create': 'Creation time',
+        'backtype': 'Backup type'
     },
     sys: {
         'basic': 'Basic information',
@@ -122,7 +126,8 @@ const en = {
         'muser': 'Change Password',
         'mgroup': 'Modify the attribution group',
         'reg': 'Please do not include special characters and Chinese, except for underscores',
-        'reg1': 'Please do not include special characters, except for underscores'
+        'reg1': 'Please do not include special characters, except for underscores',
+        'nouser': "No users can't use"
     },
     gateway: {
         'interface': 'Gateway Interface',
@@ -394,9 +399,9 @@ const en = {
         'func': 'Backup form',
         'fzl': 'Non incremental',
         'zl': 'Increment',
-        'plan': 'Scheduled Tasks',
-        'plana': 'Instant task',
-        'planb': 'Timed task',
+        'plan': 'Backup plan',
+        'plana': 'Instant backup',
+        'planb': 'Scheduled backup',
         'time': 'Time',
         'day': 'Daily',
         'week': 'Weekly',
@@ -440,7 +445,9 @@ const en = {
         'sure1': 'Confirm recovery',
         'ff': 'File name',
         'ff1': 'Backup time',
-        'tips': 'This action will permanently delete the file, whether to continue'
+        'tips': 'This action will permanently delete the file, whether to continue',
+        'dataname': 'Data storage name',
+        'input16':'Please enter the database name'
     },
     ...enLocale
 }

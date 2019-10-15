@@ -9,7 +9,7 @@
                     <el-row style='margin-bottom:.5em;float:right'>
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createsmb = true'></el-button></el-tooltip>
                     </el-row>
-                    <el-table :data='smbdata.slice((currpage - 1) * pagesize, currpage*pagesize)' border  class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
+                    <el-table :data='smbdata.slice((currpage - 1) * pagesize, currpage*pagesize)' border :header-cell-style="getRowClass" class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
                         <el-table-column :label="$t('smb.name')" prop='name'></el-table-column>
                         <el-table-column :label="$t('smb.path')" prop='path'></el-table-column>
                         <el-table-column :label="$t('smb.not')" prop='guest' width="250px"></el-table-column>
@@ -49,9 +49,6 @@
                     <el-option v-for="i in docdata" :key="i.path" :value="i.path">{{i.name}}</el-option>
                   </el-select>
               </el-form-item>
-              <!-- <el-form-item label="密码" prop='pwd' v-if="!gestsate">
-                  <el-input v-model="smbform.pwd" type="password" placeholder="请输入密码" style="width:80%"></el-input>
-              </el-form-item> -->
               <el-form-item :label="$t('smb.per')" prop='rank'>
                   <el-switch :active-text="$t('smb.read')" v-model="smbform.rank" :inactive-text="$t('smb.write')" ></el-switch>
               </el-form-item>
@@ -94,6 +91,10 @@ export default {
     name:'smb',
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             smbdata:[],
             user:[],
             docdata:[],

@@ -9,7 +9,7 @@
                 <el-row style='margin-bottom:.5em;float:right'>
                     <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='creategroup = true'></el-button></el-tooltip>
                 </el-row>
-                <el-table :data='groupdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
+                <el-table :data='groupdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border :header-cell-style="getRowClass"  class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
                     <el-table-column :label="$t('group.name')" prop='name'></el-table-column>
                     <el-table-column :label="$t('group.id')" prop='id'></el-table-column>
                     <el-table-column :label="$t('message.oper')" width:='150'>
@@ -52,6 +52,10 @@ export default {
     name:'group',
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             groupdata:[],
             creategroup:false,
             pagesize: 5,

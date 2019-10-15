@@ -6,7 +6,7 @@
             </div>
             <el-row class='other_table'>
                 <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-                <el-table :data='netdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
+                <el-table :data='netdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border :header-cell-style="getRowClass" class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
                     <el-table-column :label="$t('network.interface')" prop='interface' width="120"></el-table-column>
                     <el-table-column :label="$t('network.ip')" prop='addr'  :show-overflow-tooltip="true"></el-table-column>
                     <el-table-column :label="$t('network.mask')" prop='netmask'  :show-overflow-tooltip="true"></el-table-column>
@@ -73,6 +73,10 @@ export default {
     name:'network',
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             netdata:[],
             pagesize: 5,
             currpage: 1,

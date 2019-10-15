@@ -6,7 +6,7 @@
             </div>
             <el-row class="main_table">
               <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-                    <el-table :data='rfiledata' border class="table_cell" style="width:100%;min-height:150px;max-heigth:100%" >
+                    <el-table :data='rfiledata' border class="table_cell" :header-cell-style="getRowClass" style="width:100%;min-height:150px;max-heigth:100%" >
                         <el-table-column :label="$t('message.service')" prop='service'></el-table-column>
                         <el-table-column :label="$t('message.oper')">
                             <template slot-scope="scope">
@@ -19,7 +19,7 @@
                   <el-card class="box-card" style="height:32em">
                       <el-tabs v-model="tabname">
                           <el-tab-pane :label="$t('message.fileback')" name='back'>
-                                <Back :userdd='user'></Back>
+                                <Back ></Back>
                           </el-tab-pane>
                           <el-tab-pane :label="$t('backup.filereco')" name='recorey'>
                               <el-row>
@@ -78,6 +78,10 @@ export default {
     components:{Back,Delfile},
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             rfiledata:[],
             changeu:false,
             changeip:false,

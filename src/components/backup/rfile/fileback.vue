@@ -5,7 +5,7 @@
             <el-tree :props="props" :accordion='true' node-key="path" ref='clirnttree' :load='loadclient' lazy check-strictly show-checkbox @check-change='clientchange' @node-click="clientselect" class="tree" v-if="isclient"></el-tree>
         </el-col>
         <el-col :xs='24' :sm='24' :md='12' :lg='12' :xl='12'>
-            <span>{{$t('backup.filepath')}}：{{serverip}}</span><el-button type="primary" size="mini" class="btnaa" @click="serveri = true">{{$t('backup.filepath')}}</el-button>
+            <span>{{$t('backup.filepath')}}：{{serverip}}</span><el-button type="primary" size="mini" class="btnaa" @click="serverpath">{{$t('backup.filepath')}}</el-button>
             <el-tree :props="props" :accordion='true' :load='loadserver' :check-strictly='true' lazy  class="tree" v-if='isserver'></el-tree>
         </el-col>
         <el-col :span='2' :offset="22">
@@ -21,7 +21,7 @@
             </el-form-item>
             <el-form-item :label="$t('backup.path')" prop="user" v-if='userdata.type=="0"'>
                 <el-select v-model="userdata.user" :placeholder="$t('backup.select5')">
-                    <el-option v-for="u in userd" :key="u" :value="u" :label="u"></el-option>
+                    <el-option v-for="u in user" :key="u" :value="u" :label="u"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item :label="$t('backup.path')" prop="newdoc" v-if='userdata.type=="1"'>
@@ -44,12 +44,51 @@
             </el-form-item>
             </el-form>
         </el-dialog>
+        <el-dialog :title="$t('message.fileback')" :visible.sync="backvisi" width="40%" :before-close="backhandle">
+            <el-form :model="backdata" :rules="backrules" ref="backdata" label-width="140px" label-position="left" class="demo-ruleForm">
+                <el-form-item :label="$t('backup.plan')" prop="plan">
+                    <el-radio-group v-model="backdata.plan">
+                    <el-radio label="0">{{$t('backup.plana')}}</el-radio>
+                    <el-radio label="1">{{$t('backup.planb')}}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item :label="$t('backup.time')" prop="type" v-if="backdata.plan == 1">
+                    <el-select :placeholder="$t('backup.input11')" v-model="backdata.type" >
+                    <el-option :label="$t('backup.day')" value="day"></el-option>
+                    <el-option :label="$t('backup.week')" value="week"></el-option>
+                    <el-option :label="$t('backup.month')" value="monthday"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item prop="week" v-if="backdata.type == 'week' && backdata.plan == 1">
+                    <el-select v-model="backdata.week" :placeholder="$t('backup.input13')" >
+                    <el-option :label="$t('backup.mon')" value="1"></el-option>
+                    <el-option :label="$t('backup.tues')" value="2"></el-option>
+                    <el-option :label="$t('backup.wed')" value="3"></el-option>
+                    <el-option :label="$t('backup.thur')" value="4"></el-option>
+                    <el-option :label="$t('backup.fri')" value="5"></el-option>
+                    <el-option :label="$t('backup.sat')" value="6"></el-option>
+                    <el-option :label="$t('backup.sun')" value="7"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item prop="month" v-if="backdata.type == 'monthday' && backdata.plan == 1">
+                    <el-select v-model="backdata.month" :placeholder="$t('backup.input11')" >
+                    <el-option v-for="i in timedata" :key="i.value" :label="i.label" :value="i.value"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item prop="day" v-if="backdata.type && backdata.plan == 1">
+                    <el-time-picker v-model="backdata.day" :placeholder="$t('backup.input12')" value-format="HH" format="HH"></el-time-picker>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="backsubmit('backdata')">{{$t('message.submit')}}</el-button>
+                    <el-button @click="userreset('backdata')">{{$t('message.reset')}}</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
     </el-row>
 </template>
 <script>
 export default {
     name:'fileback',
-    props:['userdd'],
     data(){
         return{
             clientip:'',
@@ -58,7 +97,22 @@ export default {
             serveri:false,
             isserver:true,
             isclient:true,
-            userd:this.userdd,
+            backvisi:false,
+            backdata:{
+                plan:'',
+                type:'',
+                day:'',
+                week:'',
+                month:''
+            },
+            backrules:{
+                plan: [{ required: true, message: this.$t('backup.select3'), trigger: "blur" }],
+                type: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
+                day: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
+                week: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
+                month: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
+            },
+            user:[],
             props: {
                 label: 'name',
                 children: 'zones',
@@ -89,23 +143,58 @@ export default {
             },
             clientp:[],
             serverp:[],
-            checkedip:''
+            checkedip:'',
+            flag:false,
+            timedata:[
+                {value:'1',label:'1号'},
+                {value:'2',label:'2号'},
+                {value:'3',label:'3号'},
+                {value:'4',label:'4号'},
+                {value:'5',label:'5号'},
+                {value:'6',label:'6号'},
+                {value:'7',label:'7号'},
+                {value:'8',label:'8号'},
+                {value:'9',label:'9号'},
+                {value:'10',label:'10号'},
+                {value:'11',label:'11号'},
+                {value:'12',label:'12号'},
+                {value:'13',label:'13号'},
+                {value:'14',label:'14号'},
+                {value:'15',label:'15号'},
+                {value:'16',label:'16号'},
+                {value:'17',label:'17号'},
+                {value:'18',label:'18号'},
+                {value:'19',label:'19号'},
+                {value:'20',label:'20号'},
+                {value:'21',label:'21号'},
+                {value:'22',label:'22号'},
+                {value:'23',label:'23号'},
+                {value:'24',label:'24号'},
+                {value:'25',label:'25号'},
+                {value:'26',label:'26号'},
+                {value:'27',label:'27号'},
+                {value:'28',label:'28号'},
+            ],
         }
     },
-    watch:{
-        userdd(val){
-            this.userd=val
-            return this.userd
-        }
+    mounted(){
+        this.selectuser()
     },
     methods:{
-        getuser(){
-            this.$axios.get(this.$host+'backuser').then(res=>{
-                console.log(res.data.data)
-                this.userd = res.data.data
+        changetime(val){
+            console.log(val)
+        },
+        selectuser(){
+            var _this=this
+             this.$axios.get(this.$host+'backuser').then(res=>{
+                _this.user = res.data.data
             }).catch(error=>{
                 console.log(error)
             })
+        },
+        serverpath(){
+            this.serveri = true
+            this.selectuser()
         },
         clientchange(data, checked, indeterminate) {
             if(checked == true){
@@ -116,6 +205,29 @@ export default {
         clientselect(data,checked,node){
             this.checkedip = data.path
             this.$refs.clirnttree.setCheckedNodes([data])
+        },
+        backsubmit(name){
+            this.$refs[name].validate((valid)=>{
+                if(valid){
+                    this.$axios.post(this.$host+'backfileup',{user:sessionStorage.getItem('loginname'),client:this.clientip,clientpath:this.checkedip,server:this.serverip,
+                    plan:this.backdata.plan,type:this.backdata.type,hour:this.backdata.day,day:this.backdata.month,day_of_week:this.backdata.week}).then(res=>{
+                        if(res.data.success){
+                            this.$message({
+                                message:res.data.msg,
+                                type:'success',
+                            })
+                            var date = new Date()
+                            this.resetSetItem('backup',date.toLocaleString().replace('上午','').replace('下午',''))
+                        }
+                        else {
+                            this.$message.error(res.data.msg)
+                        }
+                    }).catch(error=>{
+                        console.log(error)
+                    })
+                    this.backvisi = false
+                }
+            })
         },
         loadclient(node,resolve){
             if (node.level === 0) {
@@ -128,6 +240,7 @@ export default {
                 var a='{"client":"'+this.userdata.ip+'","num":"2","localpath":"'+this.path+'"}'
                 var _this=this
                 let data = []
+                let mutildata = []
                 this.websock.addEventListener('open', function () {
                     _this.websocketsend(a)
                 });
@@ -138,14 +251,12 @@ export default {
                         for(let i = 0;i<aa.length;i++){
                             if(aa[i].leaf){
                             aa[i].leaf=Boolean(aa[i].leaf)
-                            console.log(aa[i].leaf)
                             }
                         }
                         resolve(aa);
                     }
-                    else{
+                    else
                         _this.$message.error(JSON.parse(e.data).msg)
-                    }
                 }
                 // console.log(this.path)
             
@@ -162,13 +273,24 @@ export default {
                 var a='{"server":"'+this.userdata.user+'","num":"3","localpath":"'+this.path+'"}'
                 var _this=this
                 let data = []
+                let mutildata = []
                 this.websock.addEventListener('open', function () {
                     _this.websocketsend(a)
                 });
                 this.websock.onmessage=function(e){
-                    // console.log(JSON.parse(e.data))
-                    data=JSON.parse(e.data).data
-                    resolve(data);
+                    if(JSON.parse(e.data).success){
+                        data=JSON.parse(e.data).data
+                        var aa= data
+                        console.log(aa)
+                        for(let i = 0;i<aa.length;i++){
+                            if(aa[i].leaf){
+                            aa[i].leaf=Boolean(aa[i].leaf)
+                            }
+                        }
+                        resolve(aa);
+                    }
+                    else
+                        _this.$message.error(JSON.parse(e.data).msg)
                 }
                 // console.log(this.path)
             
@@ -236,31 +358,8 @@ export default {
             _this.pcpath = data
         },
         getback(){
-            if(this.userdata.ip != '' && this.userdata.ip != undefined && this.checkedip != '' && this.checkedip != undefined && this.serverip  !='' && this.serverip != undefined){
-                this.$confirm(this.$t('backup.sure'),this.$t('message.tips'),{
-                    confirmButtonText:this.$t('message.sure'),
-                    cancelButtonText:this.$t('message.cancel'),
-                    type:'warning'
-                }).then(()=>{
-                    this.$axios.post(this.$host+'backfileup',{user:sessionStorage.getItem('loginname'),client:this.clientip,clientpath:this.checkedip,server:this.serverip}).then(res=>{
-                        if(res.data.success){
-                            this.$message({
-                                message:res.data.msg,
-                                type:'success',
-                            })
-                        }
-                        else {
-                            this.$message.error(res.data.msg)
-                        }
-                    }).catch(error=>{
-                        console.log(error)
-                    })
-                }).catch(()=>{
-                    this.$message({
-                        type:'info',
-                        message:this.$t('message.cancel')
-                    })
-                })
+            if(!!this.userdata.ip && !!this.checkedip && !!this.serverip ){
+                this.backvisi = true
             }
             else{
                 this.$message.error({
@@ -312,6 +411,10 @@ export default {
             done();
             this.$refs['userdata'].resetFields();
         },
+        backhandle(done){
+            done();
+            this.$refs['backdata'].resetFields();
+        }
     }
 }
 </script>

@@ -9,7 +9,7 @@
                 <el-row style='margin-bottom:.5em;float:right'>
                     <el-button type='primary' @click='create_gw = true' size='small' icon="el-icon-circle-plus" ></el-button>
                 </el-row>
-                <el-table :data='gwdata'  border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
+                <el-table :data='gwdata'  border  class="table_cell" :header-cell-style="getRowClass" style='width:100%;min-height:310px;max-height:100%'>
                         <el-table-column :label="$t('gateway.interface')" prop='gw'></el-table-column>
                         <el-table-column :label="$t('gateway.ip')" prop='gw_addr'></el-table-column>
                         <el-table-column :label="$t('message.oper')" width:='150'>
@@ -64,6 +64,10 @@ export default {
     name:'gateway',
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             gwdata:[],
             rowdata:[],
             gwdialog:false,

@@ -31,14 +31,14 @@
               <el-radio label="1">{{$t('backup.planb')}}</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item :label="$t('backup.time')" prop="time" v-if="newback.plan == 1">
-            <el-select :placeholder="$t('backup.input11')" v-model="newback.time">
+          <el-form-item :label="$t('backup.time')" prop="type" v-if="newback.plan == 1">
+            <el-select :placeholder="$t('backup.input11')" v-model="newback.type">
               <el-option :label="$t('backup.day')" value="day"></el-option>
               <el-option :label="$t('backup.week')" value="week"></el-option>
               <el-option :label="$t('backup.month')" value="monthday"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="week" v-if="newback.time == 'week'">
+          <el-form-item prop="week" v-if="newback.type == 'week'">
             <el-select v-model="newback.week" :placeholder="$t('backup.input13')" >
               <el-option :label="$t('backup.mon')" value="1"></el-option>
               <el-option :label="$t('backup.tues')" value="2"></el-option>
@@ -49,12 +49,12 @@
               <el-option :label="$t('backup.sun')" value="7"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="month" v-if="newback.time == 'monthday'">
+          <el-form-item prop="month" v-if="newback.type == 'monthday'">
             <el-select v-model="newback.month" :placeholder="$t('backup.input11')" >
               <el-option v-for="i in timedata" :key="i.value" :label="i.label" :value="i.value"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="day" v-if="newback.time">
+          <el-form-item prop="day" v-if="newback.type">
             <el-time-picker v-model="newback.day" :placeholder="$t('backup.input12')" value-format="HH" format="HH"></el-time-picker>
           </el-form-item>
           <el-form-item>
@@ -78,7 +78,7 @@ export default {
                 tabback:'',
                 func:'',
                 plan:'',
-                time:'',
+                type:'',
                 day:'',
                 week:'',
                 month:'',
@@ -88,7 +88,7 @@ export default {
                 filename:[{required:true,message:this.$t('backup.input7'),trigger:'bulr'},{pattern:/^[\u4e00-\u9fa5_0-9a-zA-Z]+$/,message:this.$t('user.reg1'),trigger:'blur'}],
                 func: [{ required: true, message: this.$t('backup.input10'), trigger: "blur" }],
                 plan: [{ required: true, message: this.$t('backup.select3'), trigger: "blur" }],
-                time: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
+                type: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
                 day: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
                 week: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
                 month: [{ required: true, message: this.$t('backup.input11'), trigger: "blur" }],
@@ -140,22 +140,27 @@ export default {
         startsubmit(name){
             this.$refs[name].validate((valid)=>{
                 if(valid){
-                    this.$axios.post(this.$host+'orcl_back',{sid:this.tar.id,filen:this.newback.filename,type:this.newback.func,tables:this.newback.tabback,content:this.newback.content,plan:this.newback.plan,day:this.newback.day,week:this.newback.week,month:this.newback.month}).then(res=>{
+                    this.$axios.post(this.$host+'db_back',{sid:this.tar.id,filen:this.newback.filename,
+                    content:this.newback.content,tables:this.newback.tabback,form:this.newback.func,
+                    plan:this.newback.plan,type:this.newback.type,hour:this.newback.day,day_of_week:this.newback.week,day:this.newback.month}).then(res=>{
                         if(res.data.success){
                             this.$message({
                                 message: this.$t("message.success"),
                                 type: "success",
                             })
+                            var date = new Date()
+                            this.resetSetItem('backup',date.toLocaleString().replace('上午','').replace('下午',''))
                         }
                         else{
                             this.$message.error(res.data.msg);
                         }
+                    
                     }).catch(error => {
                         console.log(error);
                     });
                     this.start=false
-                    this.backreset('newback')
                     this.$emit('changes' ,false)
+                    this.backreset('newback')
                 }
             })
         },

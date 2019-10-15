@@ -17,7 +17,7 @@
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-tianjia iconfont" size='small' @click='addraid = true'></el-button></el-tooltip>
                         </el-col>
                   </el-row>
-                  <el-table :data="raiddata.slice((currpage - 1)* pagesize, currpage *pagesize)" border class="table_cell" style="width:100%;min-height:310px;max-height:100%"  >
+                  <el-table :data="raiddata.slice((currpage - 1)* pagesize, currpage *pagesize)" border class="table_cell" :header-cell-style="getRowClass" style="width:100%;min-height:310px;max-height:100%"  >
                     <el-table-column label="ID" prop="id" ></el-table-column>
                     <el-table-column :label="$t('raid.level')" prop="raid_level"></el-table-column>
                     <el-table-column :label="$t('disk.capacity')" prop="size"></el-table-column>
@@ -82,6 +82,10 @@ export default {
     components:{globalset,createnew,modifyraid},
     data(){
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             raiddata:[],
             pagesize: 5,
             currpage: 1,

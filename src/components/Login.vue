@@ -1,20 +1,20 @@
 <template>
-    <div id='Login'>
+    <div id='Login' >
       <video autoplay loop muted>
         <source src='../../static/images/bg02.mp4' id='bg'></source>
       </video>  
       <el-row>
           
-        <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' :offset='6' style="margin-top:8rem" >
+        <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' :offset='6' id='formcard' style="margin-top:8%">
           <div>
-            <img src="../../static/images/logo02.png" style="height:3rem;margin-bottom:.5rem" />
+            <img src="../../static/images/logo02.png" id='formimg' style="height:3rem;margin-bottom:.5rem" />
           </div>
           <el-row  id='iform'>
-          <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' style="height:100%">
-            <img src='../../static/images/nas.gif' style="width:100%;padding:3rem 0;height:20rem" />
+          <el-col :md='12' :lg='12' :xl='12' class="hidden-sm-and-down " style="height:100%">
+            <img src='../../static/images/nas.gif' style="width:100%;padding:1rem 0;" />
           </el-col>
-          <el-col :xs='12' :sm='12' :md='12' :lg='12' :xl='12' style="padding:8% 3rem 0rem 3rem">
-            <h2 style="color:#01968A">欢迎登录</h2>
+          <el-col :xs='24' :sm='24' :md='12' :lg='12' :xl='12' id='formall'>
+            <p id='welfont'>欢迎登录</p>
             <el-form :model="logindata" ref='logindata' :rules="loginrule" >
               <el-form-item prop="username">
                 <el-input v-model="logindata.username" placeholder="请输入用户名" prefix-icon='el-icon-user-s iconfont' class="user_top" autofocus clearable ></el-input>
@@ -32,7 +32,7 @@
        
       </el-row>
        <el-row id='footer'>
-            <el-col>
+            <el-col class="hidden-xs-only ">
                 <span class="bot">浏览器推荐使用：谷歌（Chrome）、火狐（FireFox）、IE10（以上）版本，大于1440*900分辨率!</span>
                 <span class="bot">Copyright ® 2019 广州五舟科技股份有限公司.</span>
             </el-col>
@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import 'element-ui/lib/theme-chalk/display.css';
 export default {
   name: 'Login',
   data () {
@@ -114,11 +115,52 @@ export default {
         z-index: -100;
         background-size: contain;
     }
+    @media screen and (max-width:740px) {
+      #formcard{
+        margin-top:.5rem !important;
+      }
+      #formimg{
+        height: 1rem !important;
+        margin-bottom: 0 !important
+      }
+      #welfont{
+        font-size:.7rem !important
+      }
+      #formall{
+        padding:0 5% 0rem 5% !important
+      }
+    }
+
+    @media screen and (min-width:1000px) and (max-width: 1200px) {
+      #formcard{
+        margin-top:5% !important;
+      }
+    }
+    @media screen and (min-width:740px) and (max-width: 999px) {
+      #formcard{
+        margin-top:2rem !important;
+      }
+      #formimg{
+        height: 2rem !important;
+      }
+      #welfont{
+        font-size:1rem !important
+      }
+      #formall{
+        padding:2% 5% 0rem 5% !important
+      }
+    }
+    #welfont{
+      color:#01968A;font-weight:700;font-size:1.6rem
+    }
     #iform{
       z-index: 999;
       background-color:white;
       border-radius: .5rem;
       box-shadow: 0px 3px 15px #303133;
+    }
+    #formall{
+      padding:7% 5% 0rem 5%
     }
     .login_btn{
       width:100%;
@@ -135,4 +177,5 @@ export default {
     .bot{
       text-align: center;display:block;font-size:.8rem
     }
+    
 </style>
