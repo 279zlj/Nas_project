@@ -1,10 +1,11 @@
 <template>
-    <div class="content">
+    <div class="content" style="overflow-x:hidden">
             <div class='tip_bg'>
                 <span class='tip'>{{$t('message.sysinfo')}}</span>
             </div>
-            <el-row class="main" style="margin-bottom:2em">
-                <el-col :xs='21' :sm='21' :md='10' :lg='10' :xl='10' :offset='1'>
+            <el-row :gutter='24' class="main" style="margin-bottom:2em;">
+              <div style="width:96%;margin:0 auto">
+                <el-col :xs='24' :sm='24' :md='12' :lg='12' :xl='12' >
                       <el-card class='box-card' style="height:27.5em">
                           <div slot='header' class='clearfix titlebar'>
                               <i class='el-icon-wangluo iconfont' style="font-size:20px"></i>
@@ -37,7 +38,7 @@
                           </div>
                       </el-card>
                 </el-col>
-                <el-col :xs='21' :sm='21' :md='10' :lg='10' :xl='10' :offset='1'>
+                <el-col :xs='24' :sm='24' :md='12' :lg='12' :xl='12'>
                     <el-card class='box-card'  style='height:27.5em'>
                         <div slot='header' class='clearfix titlebar'>
                             <i class='el-icon-cipan iconfont' style="font-size:20px"></i>
@@ -74,9 +75,11 @@
                         
                     </el-card>
                 </el-col>
+                </div>
             </el-row>
-            <el-row class='main' style="margin-bottom:2em">
-                <el-col :xs='21' :sm='21' :md='10' :lg='10' :xl='10' :offset='1'>
+            <el-row :gutter="24" class='main' style="margin-bottom:2em">
+              <div style="width:96%;margin:0 auto">
+                <el-col :xs='24' :sm='24' :md='12' :lg='12' :xl='12' >
                     <el-card class='box-card' style="width:100%">
                         <div slot='header' class='clearfix titlebar'>
                             <i class='el-icon-cpu iconfont'></i>
@@ -85,7 +88,7 @@
                         <div id='cpu'></div>
                     </el-card>
                 </el-col>
-                <el-col :xs='21' :sm='21' :md='10' :lg='10' :xl='10' :offset='1'>
+                <el-col :xs='24' :sm='24' :md='12' :lg='12' :xl='12' >
                     <el-card class='box-card' style="width:100%">
                         <div slot='header' class='clearfix titlebar'>
                             <i class='el-icon-neicun iconfont' style="font-size:20px"></i>
@@ -94,6 +97,7 @@
                         <div id='menory'></div>
                     </el-card>
                 </el-col>
+              </div>
             </el-row>
             
     </div>
@@ -351,7 +355,7 @@ export default {
     height:9rem;background-color:#EFF0F4 !important;margin-top:.5rem;overflow-y:scroll
 }
 .disk{
-  display:inline-block;margin:.5rem 0 0 .5rem;width:5rem;height:1.5rem;background-color:#B3B3B3;border-radius:5px;text-align:right;overflow: hidden;white-space: nowrap;text-overflow: ellipsiss;cursor: pointer;
+  display:inline-block;margin:.5rem 0 0 .5rem;width:5.5rem;height:1.5rem;background-color:#B3B3B3;border-radius:5px;text-align:right;overflow: hidden;white-space: nowrap;text-overflow: ellipsiss;cursor: pointer;
 }
 .diskimg{
   margin-right:1rem;margin-left:.5rem

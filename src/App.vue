@@ -77,10 +77,10 @@ body,html{
     margin-top:2em;
 }
 .main_table{
-  margin-top:3.5em;
+  margin-top:2rem;
 }
 .other_table{
-  margin-top: 6.3em;
+  margin-top: 2em;
 }
 .tip_bg{
     background-color:#FFF;
@@ -95,6 +95,9 @@ body,html{
 }
 a{
   text-decoration:none;
+}
+.el-table td{
+  padding: 8px 0;
 }
 #error_tip,#success_tip{
         display: none;

@@ -4,11 +4,11 @@
             <span class='tip'>{{$t('message.pool')}}</span>
         </div>
         <el-row class='main_table'>
-          <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
+          <div style="width:96%;margin:0 auto">
             <el-row style='margin-bottom:.5em;float:right'>
                 <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createpool = true'></el-button></el-tooltip>
             </el-row>
-            <el-table :data='pooldata.slice((currpage - 1)*pagesize,currpage*pagesize)' :header-cell-style="getRowClass" border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
+            <el-table :data='pooldata.slice((currpage - 1)*pagesize,currpage*pagesize)' :header-cell-style="getRowClass" border  class="table_cell"  style='width:100%;min-height:32rem'>
                 <el-table-column :label="$t('pool.name')" prop='vg_name'></el-table-column>
                 <el-table-column :label="$t('pool.capacity')" prop='vg_size'></el-table-column>
                 <el-table-column prop="vg_status">
@@ -37,11 +37,11 @@
             layout="total, sizes, prev, pager, next, jumper"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :page-sizes="[5, 10]"
+            :page-sizes="[10, 20]"
             :page-size="pagesize"
             :total="pageTotal" style="text-align: right;margin: 1em">
             </el-pagination>
-          </el-col>
+          </div>
         </el-row>
         <el-dialog :title="$t('pool.new')" :visible.sync="createpool" width="45%" :before-close="handleClose" :close-on-click-modal="false">
             <el-form :model="poolform" :rules="poolrule" ref="poolform" label-width="100px" label-position="left" class="demo-ruleForm">
@@ -89,7 +89,7 @@ export default {
             pooldelete:false,
             pooldata:[],
             currpage:1,
-            pagesize:5,
+            pagesize:10,
             pageTotal:0,
             pooltarget:'',
             fullscreenLoading:false,

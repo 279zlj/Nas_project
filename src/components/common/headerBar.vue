@@ -64,13 +64,6 @@
                 ">
                     <el-input v-model="emaildata.email" :placeholder="$t('message.inpute')" clearable ></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="授权码" prop="code" :rules="
-                [
-                {required:true, message:'请输入授权码',trigger:'blur'},
-                ]
-                ">
-                    <el-input v-model="emaildata.code" placeholder="请输入授权码"></el-input>
-                </el-form-item> -->
                 <el-form-item>
                     <el-button type="primary" @click="emailsubmit('emaildata')">{{$t('message.submit')}}</el-button>
                     <el-button @click="emailreset('emaildata')">{{$t('message.reset')}}</el-button>
@@ -211,7 +204,7 @@ export default {
                             this.$message.error(res.data.msg)
                         }
                     })
-                
+                    this.system_info()
                 }).catch(() => {
                 this.$message({
                     type: 'info',

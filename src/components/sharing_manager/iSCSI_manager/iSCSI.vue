@@ -4,11 +4,11 @@
             <span class='tip'>iSCSI {{$t('message.management')}}</span>
         </div>
         <el-row class='main_table'>
-          <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
+          <div style="width:96%;margin:0 auto">
             <el-row style='margin-bottom:.5em;float:right'>
                 <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createiscsi = true'></el-button></el-tooltip>
             </el-row>
-            <el-table :data='iscsidata.slice((currpage - 1)*pagesize,currpage*pagesize)' :header-cell-style="getRowClass" border  class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
+            <el-table :data='iscsidata.slice((currpage - 1)*pagesize,currpage*pagesize)' :header-cell-style="getRowClass" border  class="table_cell" style='width:100%;min-height:32rem'>
                 <el-table-column label="IQN" prop='node_wwn' :show-overflow-tooltip="true"></el-table-column>
                 <el-table-column :label="$t('iscsi.name')" prop='disk_name' width="160"></el-table-column>
                 <el-table-column :label="$t('iscsi.path')" prop='disk_path' width="160"></el-table-column>
@@ -25,11 +25,11 @@
             layout="total, sizes, prev, pager, next, jumper"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :page-sizes="[5, 10]"
+            :page-sizes="[10, 20]"
             :page-size="pagesize"
             :total="pageTotal" style="text-align: right;margin: 1em">
             </el-pagination>
-          </el-col>
+          </div>
         </el-row>
         <el-dialog :title="$t('iscsi.new')" :visible.sync="createiscsi" width="50%" :before-close="handleClose" :close-on-click-modal="false">
             <el-form :model="iscsiform" ref='iscsiform' :rules="iscsirule" label-width="140px" label-position="left" class="rule-Form">
@@ -74,7 +74,7 @@ export default {
             createiscsi:false,
             idelete:false,
             currpage:1,
-            pagesize:5,
+            pagesize:10,
             pageTotal:0,
             iscsidata:[],
             disks:[],

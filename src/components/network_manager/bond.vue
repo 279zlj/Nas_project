@@ -5,12 +5,12 @@
                 <span class='tip'>{{$t('message.bond')}}</span>
             </div>
             <el-row class='main_table'>
-                <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
+                <div style="width:96%;margin:0 auto">
                     <el-row style='margin-bottom:.5em;float:right'>
                         <el-button type='primary' @click='bond = true' size='small'>{{$t('bond.bond')}}</el-button>
                         <el-button type='warning' @click='unbond = true' :disabled="unbondcan" size='small'>{{$t('bond.unbond')}}</el-button>
                     </el-row>
-                    <el-table ref='multipleTable' :data='bonddata' :header-cell-style="getRowClass" tooltip-effect="dark" border class="table_cell" style="width:100%;min-height:310px;max-height:100%" @selection-change="selectrow">
+                    <el-table ref='multipleTable' :data='bonddata' :header-cell-style="getRowClass" tooltip-effect="dark" border class="table_cell" style="width:100%;min-height:32rem" @selection-change="selectrow">
                         <el-table-column type='selection' width="55"></el-table-column>
                         <el-table-column :label="$t('network.interface')" prop='interface' :show-overflow-tooltip="true"></el-table-column>
                         <el-table-column :label="$t('network.ip')" prop='addr' :show-overflow-tooltip="true"></el-table-column>
@@ -35,7 +35,7 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                </el-col>
+                </div>
             </el-row>
             <el-dialog :title="$t('bond.netbond')" :visible.sync="bond" width="50%" center :before-close="handleClose" :close-on-click-modal="false">
                 <el-form :model="bondform" ref='bondform' :rules="bondrule" label-width="140px" label-position="left" class="demo-Form">

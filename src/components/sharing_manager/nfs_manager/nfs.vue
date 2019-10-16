@@ -4,11 +4,11 @@
             <span class='tip'>NFS {{$t('message.file')}}</span>
         </div>    
         <el-row class="main_table">
-          <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
+          <div style="width:96%;margin:0 auto">
             <el-row style='margin-bottom:.5em;float:right'>
                 <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createnfs = true'></el-button></el-tooltip>
             </el-row>
-            <el-table :data='nfsdata.slice((currpage - 1) * pagesize, currpage*pagesize)' :header-cell-style="getRowClass" border  class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
+            <el-table :data='nfsdata.slice((currpage - 1) * pagesize, currpage*pagesize)' :header-cell-style="getRowClass" border  class="table_cell" style='width:100%;min-height:32rem'>
                 <el-table-column :label="$t('nfs.path')" prop='path'></el-table-column>
                 <el-table-column :label="$t('nfs.per')" prop='info'></el-table-column>
                 <el-table-column :label="$t('nfs.ok')" prop='client'></el-table-column>
@@ -23,11 +23,11 @@
             layout="total, sizes, prev, pager, next, jumper"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :page-sizes="[5, 10]"
+            :page-sizes="[10, 20]"
             :page-size="pagesize"
             :total="pageTotal" style="text-align: right;margin: 1em">
             </el-pagination>
-          </el-col>
+          </div>
         </el-row>
         <el-dialog :title="$t('nfs.new')" :visible.sync="createnfs" width="45%" center :before-close="handleClose" :close-on-click-modal="false">
             <el-form :model="nfsform" ref='nfsform' :rules="nfsrule" label-width="190px" label-position="left" class="demo-ruleForm">
@@ -121,7 +121,7 @@ export default {
             modifyreli:[],
             iptarget:'',
             currpage:1,
-            pagesize:5,
+            pagesize:10,
             pageTotal:0,
             nfsdata:[],
             docdata:[],

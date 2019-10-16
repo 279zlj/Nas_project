@@ -5,11 +5,11 @@
                 <span class='tip'>{{$t('message.gateway')}}</span>
             </div>
             <el-row class="main_table">
-              <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
+              <div style="width:96%;margin:0 auto">
                 <el-row style='margin-bottom:.5em;float:right'>
                     <el-button type='primary' @click='create_gw = true' size='small' icon="el-icon-circle-plus" ></el-button>
                 </el-row>
-                <el-table :data='gwdata'  border  class="table_cell" :header-cell-style="getRowClass" style='width:100%;min-height:310px;max-height:100%'>
+                <el-table :data='gwdata'  border  class="table_cell" :header-cell-style="getRowClass" style='width:100%;min-height:32rem'>
                         <el-table-column :label="$t('gateway.interface')" prop='gw'></el-table-column>
                         <el-table-column :label="$t('gateway.ip')" prop='gw_addr'></el-table-column>
                         <el-table-column :label="$t('message.oper')" width:='150'>
@@ -19,7 +19,7 @@
                             </template>
                         </el-table-column>
                     </el-table>
-              </el-col>
+              </div>
             </el-row>
             <el-dialog :title="$t('gateway.create')" :visible.sync="create_gw" width="40%" center :close-on-click-modal="false" :before-close="handleClose">
                 <el-form :model="modifydata" ref='modifydata' :rules="gwrule" label-width="145px" class="demo-rule"  label-position="left">

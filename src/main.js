@@ -19,13 +19,13 @@ Vue.use(Element)
 
 Vue.prototype.$axios = axios
 Vue.prototype.$echarts = echarts
-// Vue.prototype.$host = 'http://192.168.5.6:8000/'
-// Vue.prototype.ip = '192.168.5.6:8000'
-// Vue.prototype.ceph = 'http://192.168.5.6:8001/'
+Vue.prototype.$host = 'http://192.168.5.6:8000/'
+Vue.prototype.ip = '192.168.5.6:8000'
+Vue.prototype.ceph = 'http://192.168.5.6:8001/'
 
-Vue.prototype.$host = 'http://' + location.hostname + ':8000/'
-Vue.prototype.ip = location.hostname + ':8000'
-Vue.prototype.ceph = location.hostname + ':8001'
+// Vue.prototype.$host = 'http://' + location.hostname + ':8000/'
+// Vue.prototype.ip = location.hostname + ':8000'
+// Vue.prototype.ceph = location.hostname + ':8001'
 
 Vue.prototype.resetSetItem = function(key,newVal){
     var newStorage = document.createEvent('StorageEvent');

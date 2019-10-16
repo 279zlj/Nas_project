@@ -5,8 +5,8 @@
                 <span class='tip'>{{this.$t('message.fileback')}}</span>
             </div>
             <el-row class="main_table">
-              <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-                    <el-table :data='rfiledata' border class="table_cell" :header-cell-style="getRowClass" style="width:100%;min-height:150px;max-heigth:100%" >
+              <div style="width:96%;margin:0 auto">
+                    <el-table :data='rfiledata' border class="table_cell" :header-cell-style="getRowClass" style="width:100%;min-height:7rem;max-heigth:100%" >
                         <el-table-column :label="$t('message.service')" prop='service'></el-table-column>
                         <el-table-column :label="$t('message.oper')">
                             <template slot-scope="scope">
@@ -14,8 +14,8 @@
                             </template>
                         </el-table-column>
                     </el-table>
-              </el-col>
-              <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset="2" style="margin-top:1rem">
+              </div>
+              <div style="width:96%;margin:0 auto;margin-top:1rem" >
                   <el-card class="box-card" style="height:32em">
                       <el-tabs v-model="tabname">
                           <el-tab-pane :label="$t('message.fileback')" name='back'>
@@ -65,7 +65,7 @@
                         </el-form-item>
                       </el-form>
                   </el-dialog>
-              </el-col>
+              </div>
             </el-row>
         </div>
     </div>

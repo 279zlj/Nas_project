@@ -5,11 +5,11 @@
                 <span class='tip'>{{$t('message.group')}}</span>
             </div>
             <el-row class='main_table'>
-                <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
+                <div style="width:96%;margin:0 auto">
                 <el-row style='margin-bottom:.5em;float:right'>
                     <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='creategroup = true'></el-button></el-tooltip>
                 </el-row>
-                <el-table :data='groupdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border :header-cell-style="getRowClass"  class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
+                <el-table :data='groupdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border :header-cell-style="getRowClass"  class="table_cell" style='width:100%;min-height:32rem'>
                     <el-table-column :label="$t('group.name')" prop='name'></el-table-column>
                     <el-table-column :label="$t('group.id')" prop='id'></el-table-column>
                     <el-table-column :label="$t('message.oper')" width:='150'>
@@ -22,11 +22,11 @@
                 layout="total, sizes, prev, pager, next, jumper"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-                :page-sizes="[5, 10]"
+                :page-sizes="[10, 20]"
                 :page-size="pagesize"
                 :total="pageTotal" style="text-align: right;margin: 1em">
                 </el-pagination>
-                </el-col>
+                </div>
             </el-row>
             <el-dialog :title="$t('group.new')" width="30%" :close-on-click-modal="false" :visible.sync="creategroup" :before-close="handleClose">
                 <el-form :model='groupform' :rules='grouprule' ref='groupform' label-width="30" class="demo-ruleForm">
@@ -58,7 +58,7 @@ export default {
             },
             groupdata:[],
             creategroup:false,
-            pagesize: 5,
+            pagesize: 10,
             currpage: 1,
             pageTotal: 0,
             groupform:{

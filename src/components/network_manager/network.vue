@@ -5,8 +5,8 @@
                 <span class='tip'>{{$t('message.net_setting')}}</span>
             </div>
             <el-row class='other_table'>
-                <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-                <el-table :data='netdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border :header-cell-style="getRowClass" class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
+                <div style="width:96%;margin:0 auto">
+                <el-table :data='netdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border :header-cell-style="getRowClass" class="table_cell"  style='width:100%;min-height:32rem'>
                     <el-table-column :label="$t('network.interface')" prop='interface' width="120"></el-table-column>
                     <el-table-column :label="$t('network.ip')" prop='addr'  :show-overflow-tooltip="true"></el-table-column>
                     <el-table-column :label="$t('network.mask')" prop='netmask'  :show-overflow-tooltip="true"></el-table-column>
@@ -38,11 +38,11 @@
                     layout="total, sizes, prev, pager, next, jumper"
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :page-sizes="[5, 10]"
+                    :page-sizes="[10,20]"
                     :page-size="pagesize"
                     :total="pageTotal" style="text-align: right;margin: 1em">
                     </el-pagination>
-                </el-col>
+                </div>
             </el-row>
             <el-dialog :title="$t('network.modify')" :before-close="handleClose" :visible.sync="modifyn" width="30%" :close-on-click-modal="false" center>
                 <el-form :model="modifydata" :rules="netrule" ref='modifydata' label-width="100px" label-position="left" class="demo-ruleForm">
@@ -78,7 +78,7 @@ export default {
                 'color':'#fff'
             },
             netdata:[],
-            pagesize: 5,
+            pagesize: 10,
             currpage: 1,
             pageTotal: 0,
             modifyn:false,

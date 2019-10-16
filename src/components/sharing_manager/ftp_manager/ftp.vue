@@ -5,8 +5,8 @@
         </div>
         <div>
             <el-row class="other_table">
-              <el-col :xs='20' :sm='20' :md='20' :lg="20" :xl='20' :offset="2">
-                    <el-table :data='ftpdata' border class="table_cell" :header-cell-style="getRowClass" style="width:100%;min-height:310px;max-heigth:100%" >
+              <div style="width:96%;margin:0 auto">
+                    <el-table :data='ftpdata' border class="table_cell" :header-cell-style="getRowClass" style="width:100%;min-height:10rem;" >
                         <el-table-column :label="$t('message.service')" prop='service'></el-table-column>
                         <el-table-column :label="$t('message.user')" prop="user" >
                             <template slot-scope="scope">
@@ -22,7 +22,7 @@
                             </template>
                         </el-table-column>
                     </el-table>
-              </el-col>
+              </div>
             </el-row>
         </div>
     </div>    

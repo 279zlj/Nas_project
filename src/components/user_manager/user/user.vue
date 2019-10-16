@@ -5,11 +5,11 @@
                 <span class='tip'>{{$t('message.user')}}</span>
             </div>
             <el-row class='main_table'>
-                <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
+                <div style="width:96%;margin:0 auto">
                 <el-row style='margin-bottom:.5em;float:right'>
                     <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createuser = true'></el-button></el-tooltip>
                 </el-row>
-                    <el-table :data='userdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell" :header-cell-style="getRowClass" style='width:100%;min-height:310px;max-height:100%' v-if='alive'>
+                    <el-table :data='userdata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell" :header-cell-style="getRowClass" style='width:100%;min-height:32rem' v-if='alive'>
                         <el-table-column :label="$t('user.id')" prop='userid'></el-table-column>
                         <el-table-column :label="$t('user.name')" prop='username'></el-table-column>
                         <el-table-column :label="$t('user.type')" prop='last_name'></el-table-column>
@@ -26,11 +26,11 @@
                     layout="total, sizes, prev, pager, next, jumper"
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :page-sizes="[5, 10]"
+                    :page-sizes="[10, 20]"
                     :page-size="pagesize"
                     :total="pageTotal" style="text-align: right;margin: 1em">
                     </el-pagination>
-                </el-col>
+                </div>
             </el-row>
             <el-dialog :title="$t('user.new')" :visible.sync="createuser" width="35%" center :before-close="handleClose" :close-on-click-modal='false'>
                 <el-form :model='userform' :rules="userrule" ref='userform' label-width="150px" label-position="left" class='demo-ruleForm'>
@@ -143,7 +143,7 @@ export default {
             },
             userdata:[],
             groupdata:[],
-            pagesize: 5,
+            pagesize: 10,
             currpage: 1,
             pageTotal:0,
             createuser:false,

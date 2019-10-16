@@ -1,6 +1,9 @@
 <template>
     <el-dialog :title="$t('raid.new')" :visible.sync="createraid" width="50%" center :before-close="handleClose" top='5em' :close-on-click-modal="false">
         <el-form :model="newraid" ref="newraid" :rules="newrule" label-width="165px" label-position="left" class="demo-ruleForm">
+            <el-form-item label="阵列名称" prop="name">
+                <el-input v-model="newraid.name" />
+            </el-form-item>
             <el-form-item :label="$t('raid.level')" prop='level'>
                 <el-select v-model="newraid.level" :placeholder="$t('raid.select')">
                 <el-option label="0" value="0"></el-option>
@@ -18,32 +21,31 @@
             <el-form-item :label="$t('raid.ddisks')" prop='readydisk'>
                 <el-transfer v-model="newraid.readydisk" :data="all_disks" :titles="[$t('raid.disk1'),$t('raid.disk2')]" ></el-transfer>
             </el-form-item>
-            <el-form-item :label="$t('raid.select4')" prop='initfun'>
-                <el-select v-model="newraid.initfun" :placeholder="$t('raid.select5')">
-                <el-option :label="$t('raid.notinit')"  value="0"></el-option>
-                <el-option :label="$t('raid.quit')" value='1'></el-option>
-                <el-option :label="$t('raid.all')" value='2'></el-option>
+            <el-form-item label="缓存策略" prop='initfun'>
+                <el-select v-model="newraid.initfun" placeholder="请选择缓存策略">
+                <el-option label="直接"  value="direct"></el-option>
+                <el-option label="缓存" value='cached'></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item :label="$t('raid.chunk')" prop='datablock'>
                 <el-select v-model="newraid.datablock" :placeholder="$t('raid.select2')">
-                <el-option label='64K' value="64K"></el-option>
-                <el-option label="128K" value='128K'></el-option>
-                <el-option label="256K" value='256K'></el-option>
-                <el-option label='512K' value='512K'></el-option>
+                <el-option label='64K' value="64"></el-option>
+                <el-option label="128K" value='128'></el-option>
+                <el-option label="256K" value='256'></el-option>
+                <el-option label='512K' value='512'></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item :label="$t('raid.read')" prop='readplot'>
                 <el-select v-model="newraid.readplot" :placeholder="$t('raid.select6')">
-                <el-option :label="$t('raid.ss')" value="0"></el-option>
-                <el-option :label="$t('raid.ss1')" value='1'></el-option>
+                <el-option label="不预读" value="nora"></el-option>
+                <el-option label="预读" value='ra'></el-option>
+                <el-option label="自适应预读" value='adra'></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item :label="$t('raid.write')" prop='writeplot'>
                 <el-select v-model="newraid.writeplot" :placeholder="$t('raid.select7')">
-                <el-option :label="$t('raid.aa')" value="0"></el-option>
-                <el-option :label="$t('raid.aa1')" value='1'></el-option>
-                <el-option :label="$t('raid.aa2')" value='2'></el-option>
+                <el-option label="直写" value="wt"></el-option>
+                <el-option label="写回" value='wb'></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item >
@@ -60,6 +62,7 @@ export default {
     data(){
         return{
             newraid:{
+                name:'',
                 level:'',
                 datadisk:[],
                 readydisk:[],
@@ -69,6 +72,10 @@ export default {
                 writeplot:''
             },
             newrule:{
+                name:[
+                    {required:true,message:'请输入阵列名称',trigger:'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'}
+                ],
                 level:[
                     {required:true,message:this.$t('raid.select8'), trigger: 'blur'}
                 ],
@@ -110,24 +117,24 @@ export default {
             var _this=this
             this.$refs[name].validate((valid)=>{
                 if(valid){
-                    this.$axios.post(this.$host+'cli',{level:_this.newraid.level,disks:_this.newraid.datadisk,init:_this.newraid.initfun,write_policy:_this.newraid.writeplot,read_policy:_this.newraid.readplot,hot_spares:_this.newraid.readydisk}).then(res=>{
+                    this.$axios.post(this.$host+'cli',{name:_this.newraid.name,level:_this.newraid.level,disks:_this.newraid.datadisk,cache_policy:_this.newraid.initfun,write_policy:_this.newraid.writeplot,read_policy:_this.newraid.readplot,hot_spares:_this.newraid.readydisk,strip:_this.newraid.datablock}).then(res=>{
+                        console.log(res.data.success)
                         if(res.data.success){
                             _this.createraid=false
-                            if(res.data.success){
                                 _this.$message({
                                     message:this.$t('message.success'),
                                     type:'success',
                                     offset:''
                                 })
-                            }
-                            else if(!res.data.success){
-                                _thsi.$message.error(res.data.msg)
-                            }
-                            _this.globalreset('userform')
                         }
+                        else {
+                            _this.$message.error(res.data.msg)
+                        }
+                        _this.globalreset('newraid')
                     }).catch(error=>{
                         console.log(error)
                     })
+                    this.$emit('changenew' ,false)
                 }
             })
         },

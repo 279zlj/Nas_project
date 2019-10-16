@@ -5,26 +5,33 @@
             <span class="tip">{{$t('message.diskMgr')}}</span>
         </div>
             <el-row class="main_table">
-              <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset="2">
+              <div style="width:96%;margin:0 auto">
                   <el-row>
                         <el-col :span='6'>
-                            <span style="line-height:2.5em;font-weight:700">{{$t('raidMgr.alarm')}}：<el-tag effect='dark' :type="this.alert=='Enabled'?'success':'danger'" v-show='this.alert'>{{alert}}</el-tag></span>
+                            <span style="line-height:2.5em;font-weight:700">{{$t('raidMgr.alarm')}}：<el-tag effect='dark' :type="this.alert=='ON'?'success':'danger'" v-show='this.alert'>{{alert}}</el-tag></span>
                         </el-col>
                         <el-col :span="10" style="margin-bottom:.55em;float:right;text-align:end">
-                        <el-tooltip :content="$t('raidMgr.global')" placement="bottom"><el-button type="primary" icon="el-icon-quanjushezhi iconfont" size="small" @click="gset = true"></el-button></el-tooltip>
-                        <el-tooltip :content="$t('raidMgr.start')" placement="bottom"><el-button type="warning" icon="el-icon-zuoyebaojing iconfont" size="small" @click="startwarn"></el-button></el-tooltip>
-                        <el-tooltip :content="$t('raidMgr.stop')" placement="bottom"><el-button type="danger" icon="el-icon-tianranqibaojingqi- iconfont" size="small" @click="stopwarn"></el-button></el-tooltip>
+                        <el-tooltip content="JBOD设置" placement="bottom"><el-button type="primary" icon="el-icon-quanjushezhi iconfont" size="small" @click="gset = true"></el-button></el-tooltip>
+                        <el-tooltip :content="$t('raidMgr.start')" placement="bottom"><el-button type="warning" icon="el-icon-zuoyebaojing iconfont" size="small" @click="startwarn" v-show="this.alert !== 'ON'"></el-button></el-tooltip>
+                        <el-tooltip :content="$t('raidMgr.stop')" placement="bottom"><el-button type="danger" icon="el-icon-tianranqibaojingqi- iconfont" size="small" @click="stopwarn" v-show="this.alert === 'ON'"></el-button></el-tooltip>
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-tianjia iconfont" size='small' @click='addraid = true'></el-button></el-tooltip>
                         </el-col>
                   </el-row>
-                  <el-table :data="raiddata.slice((currpage - 1)* pagesize, currpage *pagesize)" border class="table_cell" :header-cell-style="getRowClass" style="width:100%;min-height:310px;max-height:100%"  >
-                    <el-table-column label="ID" prop="id" ></el-table-column>
-                    <el-table-column :label="$t('raid.level')" prop="raid_level"></el-table-column>
-                    <el-table-column :label="$t('disk.capacity')" prop="size"></el-table-column>
-                    <el-table-column :label="$t('raidMgr.check')" prop="parity_size" width="200px"></el-table-column>
-                    <el-table-column :label="$t('raid.chunk')" prop="sector_size"></el-table-column>
-                    <el-table-column :label="$t('message.state')" prop="state"></el-table-column>
-                    <el-table-column :label="$t('raid.all')" prop="number_of_drives"></el-table-column>
+                  <el-table :data="raiddata.slice((currpage - 1)* pagesize, currpage *pagesize)" border class="table_cell" :header-cell-style="getRowClass" style="width:100%;min-height:32rem"  >
+                    <el-table-column label="ID" prop="DG/VD" ></el-table-column>
+                    <el-table-column label="阵列名字" prop="Name"></el-table-column>
+                    <el-table-column :label="$t('raid.level')" prop="TYPE"></el-table-column>
+                    <el-table-column :label="$t('disk.capacity')" prop="Size"></el-table-column>
+                    <el-table-column label="阵列缓存" prop="Cache"></el-table-column>
+                    <el-table-column label="权限" prop="Access"></el-table-column>
+                    <el-table-column :label="$t('message.state')" prop="State"></el-table-column>
+                    <el-table-column label="初始化状态">
+                        <template slot-scope="scope">
+                            <el-tooltip placement="top" content="预计剩余时间：">
+                                <el-progress percentage="23"/>
+                            </el-tooltip>
+                        </template>
+                    </el-table-column>
                     <el-table-column :label="$t('message.oper')" width="150">
                         <template slot-scope='scope'>
                             <el-dropdown>
@@ -33,12 +40,11 @@
                                 </el-button>
                               <el-dropdown-menu slot="dropdown">
                                   <span  @click="setraid(scope.row)"><el-dropdown-item >{{$t('raidMgr.set')}}</el-dropdown-item></span>
-                                  <span  @click="startinit(scope.row)"><el-dropdown-item :disabled='scope.row.status == "正在初始化"'>{{$t('raidMgr.startinit')}}</el-dropdown-item></span>
-                                  <span  @click="stopinit(scope.row)"><el-dropdown-item :disabled='scope.row.status != "正在初始化"'>{{$t('raidMgr.stopinit')}}</el-dropdown-item></span>
-                                  <span  @click="rebuild(scope.row)"><el-dropdown-item :disabled='scope.row.firmware_state == "离线"'>{{$t('raidMgr.srebuild')}}</el-dropdown-item></span>
-                                  <span  @click="stoprebuild(scope.row)"><el-dropdown-item :disabled='scope.row.firmware_state == "正在重建"'>{{$t('raidMgr.stopreb')}}</el-dropdown-item></span>
+                                  <span  @click="startinit(scope.row)"><el-dropdown-item >{{$t('raidMgr.startinit')}}</el-dropdown-item></span>
+                                  <span  @click="stopinit(scope.row)"><el-dropdown-item >{{$t('raidMgr.stopinit')}}</el-dropdown-item></span>
+                                  <span  @click="rebuild(scope.row)"><el-dropdown-item >{{$t('raidMgr.srebuild')}}</el-dropdown-item></span>
+                                  <span  @click="stoprebuild(scope.row)"><el-dropdown-item >{{$t('raidMgr.stopreb')}}</el-dropdown-item></span>
                                   <span  @click="deleteraid(scope.row)"><el-dropdown-item >{{$t('raidMgr.delraid')}}</el-dropdown-item></span>
-                                  <span  @click="makegood(scope.row)"><el-dropdown-item >Make good</el-dropdown-item></span>
                               </el-dropdown-menu>
                             </el-dropdown>
                         </template>
@@ -47,7 +53,7 @@
                   <el-pagination layout="total, sizes, prev, pager, next, jumper"
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :page-sizes="[5, 10]"
+                    :page-sizes="[10, 20]"
                     :page-size="pagesize"
                     :total="raiddata.length" style="text-align: right;margin: 1em">
                     </el-pagination>
@@ -67,7 +73,7 @@
                           </el-form-item>
                         </el-form>
                     </el-dialog>
-              </el-col>
+              </div>
             </el-row>
         </div>
     </div>
@@ -87,7 +93,7 @@ export default {
                 'color':'#fff'
             },
             raiddata:[],
-            pagesize: 5,
+            pagesize: 10,
             currpage: 1,
             gset:false,
             addraid:false,
@@ -99,7 +105,8 @@ export default {
             all_disks:[],
             globaldata:[],
             rebdata:{},
-            rebrule:{}
+            rebrule:{},
+            dev:''
         }
     },
     mounted(){
@@ -107,29 +114,24 @@ export default {
     },
     methods:{
         getriad(){
+            this.all_disks = []
             this.$axios.get(this.$host+'cli').then(res=>{
-                
-                this.raiddata = res.data.data[0].data
-                for(let i=0;i<this.raiddata.length;i++){
-                    this.raiddata[i].size=change(this.raiddata[i].size)
-                    this.raiddata[i].parity_size=change(this.raiddata[i].parity_size)
-                }
-                var disks=this.raiddata[0].disks[0]
-                for(let p =0;p<disks.length;p++){
-                    var _disk={}
-                    _disk.key=disks[p].driver
-                    _disk.label=disks[p].driver
-                    this.own_disks.push(_disk)
-                }
-                this.diskdata = res.data.data[1].data
+                this.raiddata = res.data.data.virtual
+                this.diskdata = res.data.data.physical
                 for(let a=0;a<this.diskdata.length;a++){
                     var _all={}
-                    if (this.diskdata[a].firmware_state.indexOf('unconfigured(good)') !== -1){
-                        _all.key=this.diskdata[a].driver
-                        _all.label=this.diskdata[a].driver
-                        this.all_disks.push(_all)
+                    if (this.diskdata[a].State.indexOf('UGood') !== -1){
+                        for(let key in this.diskdata[a]){
+                            if(key == 'EID:Slt'){
+                                _all.key=this.diskdata[a][key]
+                                _all.label=this.diskdata[a][key]
+                                this.all_disks.push(_all)
+                            }
+                        }
+                        
                     }
                 }
+
             }).catch(error=>{
                 console.log(error)
             })
@@ -151,16 +153,19 @@ export default {
             this.$refs['rebdata'].resetFields();
         },
         setting(val){
-            this.gset=val
             // this.getriad()
+            this.gset=val
+            this.getriad()
         },
         changeadd(val){
-            this.addraid=val
             // this.getriad()
+            this.addraid=val
+            this.getriad()
         },
         changemo(val){
-            this.mraid=val
             // this.getriad()
+            this.mraid=val
+            this.getriad()
         },
         startwarn(){
             this.$confirm(this.$t('raidMgr.start'),this.$t('message.tips'),{
@@ -168,7 +173,7 @@ export default {
                 cancelButtonText: this.$t('message.cancel'),
                 type:'warning'
             }).then(()=>{
-                this.$axios.post(this.$host+'alarm',{action:'start'}).then(res=>{
+                this.$axios.post(this.$host+'alarm',{active:'on'}).then(res=>{
                     if(res.data.success){
                         this.$message({
                             type: 'success',
@@ -193,7 +198,7 @@ export default {
                 cancelButtonText: this.$t('message.cancel'),
                 type:'warning'
             }).then(()=>{
-                this.$axios.post(this.$host+'alarm',{action:'stop'}).then(res=>{
+                this.$axios.post(this.$host+'alarm',{active:'off'}).then(res=>{
                     if(res.data.success){
                         this.$message({
                             type: 'success',
@@ -218,12 +223,16 @@ export default {
         },
         startinit(row){
             this.nowdata = row
+            for (var key in this.nowdata){
+                if(key == 'DG/VD')
+                    this.dev = this.nowdata[key]
+            }
             this.$confirm(this.$t('raidMgr.startinit'),this.$t('message.tips'),{
                 confirmButtonText: this.$t('message.sure'),
                 cancelButtonText: this.$t('message.cancel'),
                 type:'warning'
             }).then(()=>{
-                this.$axios.post(this.$host+'',{drive:this.nowdata.id}).then(res=>{
+                this.$axios.post(this.$host+'diskinit',{dv:this.dev}).then(res=>{
                     if(res.data.success){
                         this.$message({
                             type: 'success',
@@ -301,12 +310,16 @@ export default {
         },
         deleteraid(row){
             this.nowdata = row
-            this.$confirm(this.$t('stopinit.delraid'),this.$t('message.tips'),{
+            for (var key in this.nowdata){
+                if(key == 'DG/VD')
+                    this.dev = this.nowdata[key]
+            }
+            this.$confirm(this.$t('raidMgr.delraid'),this.$t('message.tips'),{
                 confirmButtonText: this.$t('message.sure'),
                 cancelButtonText: this.$t('message.cancel'),
                 type:'warning'
             }).then(()=>{
-                this.$axios.delete(this.$host+'cli',{data:{drive:this.nowdata.id}}).then(res=>{
+                this.$axios.delete(this.$host+'cli',{data:{vd:this.dev}}).then(res=>{
                     if(res.data.success){
                         this.$message({
                             type: 'success',
@@ -325,32 +338,7 @@ export default {
                 })
             })
         },
-        makegood(row){
-            this.nowdata = row
-            this.$confirm(this.$t('stopinit.startgood'),this.$t('message.tips'),{
-                confirmButtonText: this.$t('message.sure'),
-                cancelButtonText: this.$t('message.cancel'),
-                type:'warning'
-            }).then(()=>{
-                this.$axios.post(this.$host+'').then(res=>{
-                    if(res.data.success){
-                        this.$message({
-                            type: 'success',
-                            message: this.$t('message.success')
-                        });
-                    }
-                    else{
-                        this.$message.error(res.data.data)
-                    }
-                    this.getriad()
-                })
-            }).catch(()=>{
-                this.$message({
-                    type: 'info',
-                    message: this.$t('message.cancel')
-                })
-            })
-        }
+        
     }
 }
 </script>

@@ -5,8 +5,8 @@
                 <span class="tip">{{$t('message.external')}}</span>
             </div>
             <el-row class="other_table">
-                <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset="2">
-                    <el-table :data='rbddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border :header-cell-style="getRowClass" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)"  class='table_cell' style="width:100%;min-height:310px;max-height:100%">
+                <div style="width:96%;margin:0 auto">
+                    <el-table :data='rbddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border :header-cell-style="getRowClass" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)"  class='table_cell' style="width:100%;min-height:32rem">
                       <el-table-column :label="$t('rbd.name')" prop="rbd"></el-table-column>
                       <el-table-column :label="$t('rbd.pool')" prop='pool'></el-table-column>
                       <el-table-column :label="$t('rbd.device')" prop="device"></el-table-column>
@@ -21,11 +21,11 @@
                     layout="total, sizes, prev, pager, next, jumper"
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :page-sizes="[5, 10]"
+                    :page-sizes="[10, 20]"
                     :page-size="pagesize"
                     :total="rbddata.length" style="text-align: right;margin: 1em">
                     </el-pagination>
-                </el-col>
+                </div>
             </el-row>
             <el-dialog :title="$t('rbd.map')" :visible.sync="r_mounted" width="30%" :close-on-click-modal="false">
                 <p>{{$t('rbd.map')}}：{{mount_target.rbd}}？</p>
@@ -51,7 +51,7 @@ export default {
             },
             rbddata:[],
             currpage:1,
-            pagesize:5,
+            pagesize:10,
             r_mounted:false,
             r_unmount:false,
             loading:true,

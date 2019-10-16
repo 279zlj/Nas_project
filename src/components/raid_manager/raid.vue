@@ -5,13 +5,13 @@
             </div>
             <div>
             <el-row class='main_table'>
-              <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
+              <div style="width:96%;margin:0 auto">
                     <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
                     <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
                     <el-row style='margin-bottom:.5em;float:right'>
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createraid = true'></el-button></el-tooltip>
                     </el-row>
-                    <el-table :data='raiddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell" :header-cell-style="getRowClass" style='width:100%;min-height:310px;max-height:100%'>
+                    <el-table :data='raiddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell" :header-cell-style="getRowClass" style='width:100%;min-height:32rem'>
                         <el-table-column :label="$t('raid.name')" prop='name' :show-overflow-tooltip="true"></el-table-column>
                         <el-table-column :label="$t('raid.level')" prop='level'></el-table-column>
                         <el-table-column :label="$t('raid.chunk')" prop='chunk' ></el-table-column>
@@ -35,11 +35,11 @@
                     layout="total, sizes, prev, pager, next, jumper"
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :page-sizes="[5, 10]"
+                    :page-sizes="[10, 20]"
                     :page-size="pagesize"
                     :total="pageTotal" style="text-align: right;margin: 1em">
                     </el-pagination>
-              </el-col>
+              </div>
             </el-row>
             <el-dialog :title="$t('raid.new')" :visible.sync="createraid" width='45%' center :close-on-click-modal="false" top='5em' :before-close='handleClose'>
                 <el-form :model="raidform" :rules="raidrule" ref='raidform' label-width="100px" label-position="left" class='demo-ruleForm'>
@@ -110,7 +110,7 @@ export default {
             raiddata:[],
             createraid:false,
             deletelog:false,
-            pagesize: 5,
+            pagesize: 10,
             raidtarget:'',
             currpage: 1,
             pageTotal: 0,
