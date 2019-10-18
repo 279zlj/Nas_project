@@ -1,22 +1,20 @@
 <template>
     <div class="content">
-        <headerBar></headerBar>
         <div class="tip_bg">
             <span class='tip'>NFS {{$t('message.file')}}</span>
         </div>    
         <el-row class="main_table">
-          <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-            <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
-            <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
+          <div style="width:96%;margin:0 auto">
             <el-row style='margin-bottom:.5em;float:right'>
                 <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createnfs = true'></el-button></el-tooltip>
             </el-row>
-            <el-table :data='nfsdata.slice((currpage - 1) * pagesize, currpage*pagesize)' border  class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
+            <el-table :data='nfsdata.slice((currpage - 1) * pagesize, currpage*pagesize)' :header-cell-style="getRowClass" border  class="table_cell" style='width:100%;min-height:32rem'>
                 <el-table-column :label="$t('nfs.path')" prop='path'></el-table-column>
                 <el-table-column :label="$t('nfs.per')" prop='info'></el-table-column>
                 <el-table-column :label="$t('nfs.ok')" prop='client'></el-table-column>
                 <el-table-column :label="$t('message.oper')">
                     <template slot-scope="scope">
+                        <el-tooltip :content="$t('message.modify')" placement="bottom"><el-button type='warning' icon="el-icon-edit-outline" size='mini' @click='modifynfs(scope.row)'></el-button></el-tooltip>
                         <el-tooltip :content="$t('message.delete')" placement="bottom"><el-button type="danger" icon='el-icon-delete' size='mini' @click="deletenfs(scope.row)"></el-button></el-tooltip>
                     </template>
                 </el-table-column>
@@ -25,16 +23,16 @@
             layout="total, sizes, prev, pager, next, jumper"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :page-sizes="[5, 10]"
+            :page-sizes="[10, 20]"
             :page-size="pagesize"
-            :total="nfsdata.length" style="text-align: right;margin: 1em">
+            :total="pageTotal" style="text-align: right;margin: 1em">
             </el-pagination>
-          </el-col>
+          </div>
         </el-row>
-        <el-dialog :title="$t('nfs.new')" :visible.sync="createnfs" width="30%" center :before-close="handleClose" :close-on-click-modal="false">
-            <el-form :model="nfsform" ref='nfsform' :rules="nfsrule" label-width="100px" label-position="left" class="demo-ruleForm">
+        <el-dialog :title="$t('nfs.new')" :visible.sync="createnfs" width="45%" center :before-close="handleClose" :close-on-click-modal="false">
+            <el-form :model="nfsform" ref='nfsform' :rules="nfsrule" label-width="190px" label-position="left" class="demo-ruleForm">
               <el-form-item :label="$t('nfs.path')" prop='path'>
-                  <el-input v-model="nfsform.path" :placeholder="$t('nfs.input')" ></el-input>
+                  <el-input v-model="nfsform.path" :placeholder="$t('nfs.input')" clearable ></el-input>
               </el-form-item>
               <el-form-item :label="$t('nfs.per')" prop='rank'>
                   <el-select v-model="nfsform.rank" :placeholder="$t('nfs.input1')">
@@ -43,17 +41,35 @@
                   </el-select>
               </el-form-item>
               <el-form-item :label="$t('nfs.reli')" prop='address'>
-                  <el-input v-model="nfsform.address" placeholder="x.x.x.x/x,x.x.x.x/x" ></el-input>
+                  <el-input v-model="nfsform.address" placeholder="x.x.x.x/x,x.x.x.x/x" clearable></el-input>
                   <p style='color:red'>({{$t('nfs.note')}})</p>
               </el-form-item>
-              <el-form-item :label="$t('message.share_file')" prop='doc'>
-                  <el-select v-model="nfsform.doc" :placeholder="$t('message.input')">
+              <el-form-item :label="$t('iscsi.logic')" prop='doc'>
+                  <el-select v-model="nfsform.doc" :placeholder="$t('message.select')">
                     <el-option v-for="i in docdata" :key="i.path" :value="i.path">{{i.name}}</el-option>
                   </el-select>
               </el-form-item>
               <el-form-item>
                       <el-button type="primary" @click="nfssubmit('nfsform')">{{$t('message.submit')}}</el-button>
                       <el-button @click="nfsreset('nfsform')">{{$t('message.reset')}}</el-button>
+              </el-form-item>
+            </el-form>
+        </el-dialog>
+        <el-dialog :title="$t('message.modify')" :visible.sync="nfsmodi" width="30%" center :before-close="handleClose" :close-on-click-modal="false">
+            <el-form :model="nfsform" ref='nfsform' :rules="nfsrule" label-width="100px" label-position="left" class="demo-ruleFrom">
+                <el-form-item :label="$t('nfs.per')" prop="newrank">
+                    <el-select v-model="nfsform.newrank" :placeholder="$t('nfs.input1')" >
+                        <el-option :label="$t('nfs.write')" value="ro"></el-option>
+                        <el-option :label="$t('nfs.read')" value='rw'></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item :label="$t('nfs.reli')" prop="newaddress">
+                    <el-input v-model="nfsform.newaddress" :placeholder="modifyreli.client" clearable ></el-input>
+                    <p style='color:red'>({{$t('nfs.note')}})</p>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="modifysubmit('nfsform')">{{$t('message.submit')}}</el-button>
+                    <el-button @click="nfsreset('nfsform')">{{$t('message.reset')}}</el-button>
               </el-form-item>
             </el-form>
         </el-dialog>
@@ -65,26 +81,12 @@
     </div>    
 </template>
 <script>
-import headerBar from '../../common/headerBar'
 export default {
     name:'nfs',
-    components:{headerBar},
     data(){
-        var pathcheck=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请输入路径名称'))
-            }
-            else{
-                if(val.length<3){
-                    return callback(new Error('请输入长度超过3的路径名称'))
-                }
-                else
-                    callback()
-            }
-        }
         var addcheck=(rule,val,callback)=>{
             if (!val){
-                return callback(new Error('请输入网段'))
+                return callback(new Error(this.$t('nfs.input3')))
             }
             else{
                 if(val){
@@ -94,7 +96,7 @@ export default {
                         var reg=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\/\d{1,2}$/
                         for(let i=0;i<value.length;i++){
                             if(!reg.test(value[i])){
-                                return callback(new Error('请输入正确的ip网段'))
+                                return callback(new Error(this.$t('nfs.input4')))
                             }
                             else
                                 ok+=1;
@@ -107,49 +109,44 @@ export default {
             }
             callback()
         }
-        var rankcheck=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请选择权限'))
-            }
-            else{
-                callback()
-            }
-        }
-        var checkdoc=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请选择共享目录'))
-            }
-            else{
-                callback()
-            }
-        }
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             createnfs:false,
             nfsremove:false,
+            nfsmodi:false,
             ntarget:'',
+            modifyreli:[],
             iptarget:'',
             currpage:1,
-            pagesize:5,
+            pagesize:10,
+            pageTotal:0,
             nfsdata:[],
             docdata:[],
             nfsform:{
                 path:'',
                 rank:'',
                 address:'',
-                doc:''
+                doc:'',
+                newrank:'',
+                newaddress:''
             },
             nfsrule:{
                 path:[
-                    {validator:pathcheck, trigger: 'blur'}
+                    {required:true,message:this.$t('nfs.input'), trigger: 'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {min:3,message:this.$t('nfs.input2'),trigger:'blur'}
                 ],
                 rank:[
-                    {validator:rankcheck, trigger: 'blur'}
+                    {required:true,message:this.$t('nfs.input5'), trigger: 'blur'}
                 ],
                 address:[
-                    {validator:addcheck, trigger: 'blur'}
+                    {required:true,validator:addcheck, trigger: 'blur'}
                 ],
                 doc:[
-                    {validator:checkdoc, trigger: 'blur'}
+                    {required:true,message:this.$t('nfs.input6'), trigger: 'blur'}
                 ]
             }
         }
@@ -157,11 +154,20 @@ export default {
     mounted(){
         this.getnfs()
     },
+    watch:{
+      pageTotal(){
+        if(this.pageTotal==(this.currpage-1)*this.pagesize&& this.pageTotal!=0){
+          this.currpage-=1;
+        //   getuser(this);//获取列表数据
+        }
+      }
+    },
     methods:{
         getnfs(){
             var _this=this
             this.$axios.get(this.$host+'nfs').then(function(res){
-                _this.nfsdata = res.data.data                
+                _this.nfsdata = res.data.data         
+                _this.pageTotal = _this.nfsdata.length       
             })
             this.$axios.get(this.$host+'vd').then(res=>{
                 _this.docdata=res.data.data
@@ -169,23 +175,51 @@ export default {
                 console.log(error)
             })
         },
+        modifynfs(row){
+            this.modifyreli=row
+            this.nfsform.newrank = row.info
+            this.nfsform.newaddress = row.client
+            this.nfsmodi=true
+        },
         nfssubmit(formname){
             var _this=this
             this.$refs[formname].validate((valid)=>{
                 if(valid){
-                    _this.$axios.post(this.$host+'nfs',{path:_this.nfsform.path,ip:_this.nfsform.address,permission:_this.nfsform.rank,lvm:_this.nfsdata.doc}).then(res=>{
+                    _this.$axios.post(this.$host+'nfs',{path:_this.nfsform.path,ip:_this.nfsform.address,permission:_this.nfsform.rank,lvm:_this.nfsform.doc}).then(res=>{
                          _this.createnfs=false
                         if(res.data.success){
-                            $('#success_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#success_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message({
+                                message:this.$t('message.success'),
+                                type:'success',
+                                offset:''
+                            })
                         }
                         else if(!res.data.success){
-                            $('#error_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#error_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message.error(res.data.msg)
+                        }
+                        _this.getnfs()
+                        _this.nfsreset('nfsform')
+                    }).catch(error=>{
+                        console.log(error)
+                    })
+                }
+            })
+        },
+        modifysubmit(formname){
+            var _this=this
+            this.$refs[formname].validate((valid)=>{
+                if(valid){
+                    _this.$axios.put(this.$host+'nfs',{path:_this.modifyreli.path,ip:_this.nfsform.newaddress,permission:_this.nfsform.newrank}).then(res=>{
+                         _this.nfsmodi=false
+                        if(res.data.success){
+                            _this.$message({
+                                message:this.$t('message.success'),
+                                type:'success',
+                                offset:''
+                            })
+                        }
+                        else if(!res.data.success){
+                            _this.$message.error(res.data.msg)
                         }
                         _this.getnfs()
                         _this.nfsreset('nfsform')
@@ -204,16 +238,14 @@ export default {
             this.$axios.delete(this.$host+'nfs',{data:{path:this.ntarget,ip:this.iptarget}}).then(res=>{
                  this.nfsremove=false
                 if(res.data.success){
-                    $('#success_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#success_tip').css({'display':'none'})
-                    },3000)
+                    this.$message({
+                        message:this.$t('message.success'),
+                        type:'success',
+                        offset:''
+                    })
                 }
                 else if(!res.data.success){
-                    $('#error_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#error_tip').css({'display':'none'})
-                    },3000)
+                    this.$message.error(res.data.msg)
                 }
                 this.getnfs()
                 this.nfsreset('nfsform')

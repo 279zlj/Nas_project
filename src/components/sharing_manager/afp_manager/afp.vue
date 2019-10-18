@@ -1,19 +1,16 @@
 <template>
         <div class='content'>
-        <headerBar></headerBar>
         <div class="tip_bg">
             <span class='tip'>AFP {{$t('message.file')}}</span>
         </div>
         <div>
             <el-row class='main_table'>
-              <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-                    <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
-                    <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
+              <div style="width:96%;margin:0 auto">
                     <el-row style='margin-bottom:.5em;float:right'>
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createafp = true'></el-button></el-tooltip>
                     </el-row>
-                    <el-table :data='afpdata.slice((currpage - 1) * pagesize, currpage*pagesize)' border  class="table_cell" style='width:100%;min-height:310px;max-height:100%'>
-                        <el-table-column :label="$t('afp.name')" prop='name'></el-table-column>
+                    <el-table :data='afpdata.slice((currpage - 1) * pagesize, currpage*pagesize)' border :header-cell-style="getRowClass" class="table_cell" style='width:100%;min-height:32rem'>
+                        <el-table-column :label="$t('afp.name')" prop='name'></el-table-column> 
                         <el-table-column :label="$t('afp.path')" prop='path'></el-table-column>
                         <el-table-column :label="$t('message.oper')">
                             <template slot-scope="scope">
@@ -25,33 +22,30 @@
                     layout="total, sizes, prev, pager, next, jumper"
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :page-sizes="[5, 10]"
+                    :page-sizes="[10, 20]"
                     :page-size="pagesize"
-                    :total="afpdata.length" style="text-align: right;margin: 1em">
+                    :total="pageTotal" style="text-align: right;margin: 1em">
                     </el-pagination>
-              </el-col>
+              </div>
             </el-row>
-            <el-dialog :title="$t('afp.new')" :visible.sync="createafp" width="30%" center :before-close="handleClose" :close-on-click-modal="false">
-            <el-form :model="afpform" ref='afpform' :rules="afprule" label-width="100px" label-position="left" class="demo-ruleForm">
+            <el-dialog :title="$t('afp.new')" :visible.sync="createafp" width="35%" center :before-close="handleClose" :close-on-click-modal="false">
+            <el-form :model="afpform" ref='afpform' :rules="afprule" label-width="130px" label-position="left" class="demo-ruleForm">
               <el-form-item :label="$t('afp.name')" prop='name'>
-                  <el-input v-model="afpform.name" :placeholder="$t('afp.input')" ></el-input>
+                  <el-input v-model="afpform.name" :placeholder="$t('afp.input')" clearable  ></el-input>
               </el-form-item>
               <el-form-item :label="$t('afp.p_name')" prop='path'>
-                  <el-input v-model="afpform.path" :placeholder="$t('afp.input1')" ></el-input>
+                  <el-input v-model="afpform.path" :placeholder="$t('afp.input1')" clearable ></el-input>
               </el-form-item>
               <el-form-item :label="$t('afp.user')" prop='user'>
                   <el-select v-model="afpform.user" :placeholder="$t('afp.input2')">
                     <el-option v-for="u in user" :key="u" :value="u">{{u}}</el-option>
                   </el-select>
               </el-form-item>
-              <el-form-item :label="$t('message.share_file')" prop='doc'>
-                  <el-select v-model="afpform.doc" :placeholder="$t('message.input')">
+              <el-form-item :label="$t('iscsi.logic')" prop='doc'>
+                  <el-select v-model="afpform.doc" :placeholder="$t('message.select')">
                     <el-option v-for="i in docdata" :key="i.path" :value="i.path">{{i.name}}</el-option>
                   </el-select>
               </el-form-item>
-              <!-- <el-form-item label="密码" prop='pwd'>
-                  <el-input v-model="afpform.pwd" type='password' placeholder="请输入密码" style="width:80%"></el-input>
-              </el-form-item> -->
               <el-form-item>
                       <el-button type="primary" @click="afpsubmit('afpform')">{{$t('message.submit')}}</el-button>
                       <el-button @click="afpreset('afpform')">{{$t('message.reset')}}</el-button>
@@ -67,61 +61,21 @@
     </div>    
 </template>
 <script>
-import headerBar from '../../common/headerBar'
 export default {
     name:'afp',
-    components:{headerBar},
     data(){
-        var checkname=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请输入名称'))
-            }
-            else
-                callback()
-        }
-        var checkpath=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请输入路径名称'))
-            }
-            else{
-                if(val.length<2){
-                    return callback(new Error('请输入长度超过2的路径名称'))
-                }
-                else
-                    callback()
-            }
-        }
-        var checkuser=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请选择用户'))
-            }
-            else{
-                callback()
-            }
-        }
-        var checkdoc=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请选择共享目录'))
-            }
-            else{
-                callback()
-            }
-        }
-        // var checkpwd=(rule,val,callback)=>{
-        //     if(!val){
-        //         return callback(new Error('请输入密码'))
-        //     }
-        //     else{
-        //         callback()
-        //     }
-        // }
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             createafp:false,
             afpremove:false,
             afpdata:[],
             atarget:'',
             currpage:1,
-            pagesize:5,
+            pagesize:10,
+            pageTotal:0,
             user:[],
             docdata:[],
             afpform:{
@@ -133,16 +87,19 @@ export default {
             },
             afprule:{
                 name:[
-                    {validator:checkname, trigger:'blur'}
+                    {required:true,message:this.$t('smb.input'), trigger:'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'}
                 ],
                 path:[
-                    {validator:checkpath, trigger:'blur'}
+                    {required:true,message:this.$t('smb.input1'), trigger:'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {min:2,message:this.$t('smb.input3'),trigger:'blur'}
                 ],
                 user:[
-                    {validator:checkuser, trigger:'blur'}
+                    {required:true,message:this.$t('afp.input2'), trigger:'blur'}
                 ],
                 doc:[
-                    {validator:checkdoc, trigger: 'blur'}
+                    {required:true,message:this.$t('message.input'), trigger: 'blur'}
                 ]
                 // pwd:[
                 //     {validator:checkpwd, trigger:'blur'}
@@ -153,11 +110,20 @@ export default {
     mounted(){
         this.getafp()
     },
+    watch:{
+      pageTotal(){
+        if(this.pageTotal==(this.currpage-1)*this.pagesize&& this.pageTotal!=0){
+          this.currpage-=1;
+        //   getuser(this);//获取列表数据
+        }
+      }
+    },
     methods:{
         getafp(){
             var _this=this
             this.$axios.get(this.$host+'afp').then(res=>{
                 _this.afpdata=res.data.data
+                _this.pageTotal=_this.afpdata.length
             }).catch(error=>{
                 console.log(error)
             })
@@ -169,7 +135,8 @@ export default {
             this.$axios.get(this.$host+'users').then(res=>{
                 var users=[]
                 for(let i=0;i<res.data.data.length;i++){
-                    users.push(res.data.data[i].username)
+                    if (res.data.data[i].last_name=='afp')
+                        users.push(res.data.data[i].username)
                 }
                 _this.user = users
             }).catch(error=>{
@@ -191,16 +158,14 @@ export default {
                     _this.$axios.post(this.$host+'afp',{name:_this.afpform.name,path:_this.afpform.path,user:_this.afpform.user,lvm:_this.afpform.doc}).then(res=>{
                         _this.createafp=false
                         if(res.data.success){
-                            $('#success_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#success_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message({
+                                message:this.$t('message.success'),
+                                type:'success',
+                                offset:''
+                            })
                         }
                         else if(!res.data.success){
-                            $('#error_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#error_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message.error(res.data.msg)
                         }
                         _this.getafp()
                         _this.afpreset('afpform')
@@ -217,16 +182,14 @@ export default {
             this.$axios.delete(this.$host+'afp',{data:{name:this.atarget}}).then(res=>{
                 this.afpremove=false
                 if(res.data.success){
-                    $('#success_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#success_tip').css({'display':'none'})
-                    },3000)
+                    this.$message({
+                        message:this.$t('message.success'),
+                        type:'success',
+                        offset:''
+                    })
                 }
                 else if(!res.data.success){
-                    $('#error_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#error_tip').css({'display':'none'})
-                    },3000)
+                    this.$message.error(res.data.msg)
                 }
                 this.getafp()
                 this.afpreset('afpform')

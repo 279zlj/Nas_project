@@ -1,30 +1,29 @@
 <template>
     <div class='content'>
-        <headerBar></headerBar>
         <div class='tip_bg'>
             <span class='tip'>{{$t('message.pool')}}</span>
         </div>
         <el-row class='main_table'>
-          <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
-            <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
-            <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
+          <div style="width:96%;margin:0 auto">
             <el-row style='margin-bottom:.5em;float:right'>
                 <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createpool = true'></el-button></el-tooltip>
             </el-row>
-            <el-table :data='pooldata.slice((currpage - 1)*pagesize,currpage*pagesize)' border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
+            <el-table :data='pooldata.slice((currpage - 1)*pagesize,currpage*pagesize)' :header-cell-style="getRowClass" border  class="table_cell"  style='width:100%;min-height:32rem'>
                 <el-table-column :label="$t('pool.name')" prop='vg_name'></el-table-column>
                 <el-table-column :label="$t('pool.capacity')" prop='vg_size'></el-table-column>
-                <el-table-column :label="$t('message.state')" prop="vg_status">
-                    <template slot-scope="scope">
-                        <el-tag :type="scope.row.vg_status === 'active' ? 'success' : 'warning'" disable-transitions>{{scope.row.vg_status}}</el-tag>
+                <el-table-column prop="vg_status">
+                    <template slot="header">
+                        <span>{{$t('message.state')}}</span>
                         <el-popover
                             placement="top-start"
                             :title="$t('message.note')"
-                            width="200"
                             trigger="hover"
                             content="unkonw:无法识别,resizable:可扩容,active:已激活,inactive:无效">
-                            <el-button slot="reference" type="info" size='mini' circle><i class="el-icon-info"></i></el-button>
+                            <el-button slot="reference" type="info" size='mini' circle style="margin-left:1em"><i class="el-icon-question" ></i></el-button>
                         </el-popover>
+                    </template>
+                    <template slot-scope="scope">
+                        <el-tag :type="scope.row.vg_status === 'active' ? 'success' : 'warning'" disable-transitions>{{scope.row.vg_status}}</el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column :label="$t('message.oper')">
@@ -38,16 +37,16 @@
             layout="total, sizes, prev, pager, next, jumper"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :page-sizes="[5, 10]"
+            :page-sizes="[10, 20]"
             :page-size="pagesize"
-            :total="pooldata.length" style="text-align: right;margin: 1em">
+            :total="pageTotal" style="text-align: right;margin: 1em">
             </el-pagination>
-          </el-col>
+          </div>
         </el-row>
         <el-dialog :title="$t('pool.new')" :visible.sync="createpool" width="45%" :before-close="handleClose" :close-on-click-modal="false">
             <el-form :model="poolform" :rules="poolrule" ref="poolform" label-width="100px" label-position="left" class="demo-ruleForm">
                 <el-form-item :label="$t('pool.name')" prop='name'>
-                    <el-input v-model="poolform.name" :placeholder="$t('pool.input')" ></el-input>
+                    <el-input v-model="poolform.name" :placeholder="$t('pool.input')" clearable ></el-input>
                 </el-form-item>
                 <el-form-item :label="$t('pool.disk')" prop="disks">
                     <el-transfer v-model="poolform.disks" :data="disks" :titles="[$t('pool.select'),$t('pool.alaway')]" ></el-transfer>
@@ -77,43 +76,21 @@
     </div>    
 </template>
 <script>
-import headerBar from '../../common/headerBar'
 export default {
     name:'pool',
-    components:{headerBar},
     data(){
-        var checkname=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请输入名称'))
-            }
-            else{
-                if(val.length<3){
-                    return callback(new Error('请输入长度至少为3的名称'))
-                }
-                callback()
-            }
-        }
-        var checkdisks=(rule,val,callback)=>{
-            if(val.length==0){
-                return callback(new Error('请选择磁盘'))
-            }
-            else
-                callback()
-        }
-        var checkadddisks=(rule,val,callback)=>{
-            if(val.length==0){
-                return callback(new Error('请选择磁盘'))
-            }
-            else
-                callback()
-        }
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             createpool:false,
             poolmodify:false,
             pooldelete:false,
             pooldata:[],
             currpage:1,
-            pagesize:5,
+            pagesize:10,
+            pageTotal:0,
             pooltarget:'',
             fullscreenLoading:false,
             poolform:{
@@ -123,13 +100,15 @@ export default {
             },
             poolrule:{
                 name:[
-                    {validator:checkname, trigger: 'blur'},
+                    {required:true,message:this.$t('pool.input'), trigger: 'blur'},
+                    {pattern:/^[0-9a-zA-Z_]+$/,message:this.$t('user.reg'),trigger:'blur'},
+                    {min:3,message:this.$t('pool.input1'),trigger:'blur'}
                 ],
                 disks:[
-                    {validator:checkdisks, trigger: 'blur'}
+                    {required:true,message:this.$t('pool.select1'), trigger: 'blur'}
                 ],
                 adddisks:[
-                    {validator:checkadddisks, trigger: 'blur'}
+                    {required:true,message:this.$t('pool.select1'), trigger: 'blur'}
                 ]
             },
             disks:[],
@@ -138,11 +117,20 @@ export default {
     mounted(){
         this.getpool()
     },
+    watch:{
+      pageTotal(){
+        if(this.pageTotal==(this.currpage-1)*this.pagesize&& this.pageTotal!=0){
+          this.currpage-=1;
+        //   getuser(this);//获取列表数据
+        }
+      }
+    },
     methods:{
         getpool(){
             var _this=this
             this.$axios.get(this.$host+'pool').then(res=>{
                 _this.pooldata=res.data.data
+                _this.pageTotal = _this.pooldata.length
                 for (let i in _this.pooldata){
                     if(_this.pooldata[i].vg_status==0){
                         _this.pooldata[i].vg_status='unknow'
@@ -206,17 +194,15 @@ export default {
                         _this.createpool=false
                         if(res.data.success){
                             loading.close();
-                            $('#success_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#success_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message({
+                                message:_this.$t('message.success'),
+                                type:'success',
+                                offset:''
+                            })
                         }
                         else if(!res.data.success){
                             loading.close();
-                            $('#error_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#error_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message.error(res.data.msg)
                         }
                         _this.getpool()
                         _this.poolreset('poolform')
@@ -240,17 +226,15 @@ export default {
                         _this.poolmodify=false
                         if(res.data.success){
                             loading.close();
-                            $('#success_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#success_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message({
+                                message:_this.$t('message.success'),
+                                type:'success',
+                                offset:''
+                            })
                         }
                         else if(!res.data.success){
                             loading.close();
-                            $('#error_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#error_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message.error(res.data.msg)
                         }
                         _this.getpool()
                         _this.poolreset('poolform')
@@ -265,16 +249,14 @@ export default {
             this.$axios.delete(this.$host+'pool',{data:{name:_this.pooltarget}}).then(res=>{
                 _this.pooldelete=false
                 if(res.data.success){
-                    $('#success_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#success_tip').css({'display':'none'})
-                    },3000)
+                    _this.$message({
+                        message:this.$t('message.success'),
+                        type:'success',
+                        offset:''
+                    })
                 }
                 else if(!res.data.success){
-                    $('#error_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#error_tip').css({'display':'none'})
-                    },3000)
+                    _this.$message.error(res.data.msg)
                 }
                 _this.getpool()
                 _this.poolreset('poolform')

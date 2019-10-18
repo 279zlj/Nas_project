@@ -1,26 +1,22 @@
 <template>
     <div class='content'>
-        <headerBar></headerBar>
             <div class="tip_bg">
-                <span class="tip">{{$t('message.raid')}}</span>
+                <span class="tip">{{$t('message.softraid')}}</span>
             </div>
             <div>
             <el-row class='main_table'>
-              <el-col :xs='20' :sm='20' :md='20' :lg='20' :xl='20' :offset='2'>
+              <div style="width:96%;margin:0 auto">
                     <el-alert type="error" :title="$t('message.failed')" show-icon id='error_tip' :closable='false' center ></el-alert>
                     <el-alert type="success" :title="$t('message.success')" show-icon id='success_tip' :closable='false' center ></el-alert>
                     <el-row style='margin-bottom:.5em;float:right'>
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createraid = true'></el-button></el-tooltip>
                     </el-row>
-                    <el-table :data='raiddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell"  style='width:100%;min-height:310px;max-height:100%'>
-                        <el-table-column :label="$t('raid.name')" prop='name' :show-overflow-tooltip="true"></el-table-column>
+                    <el-table :data='raiddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell" :header-cell-style="getRowClass" style='width:100%;min-height:32rem'>
+                        <el-table-column :label="$t('raid.nn')" prop='name' :show-overflow-tooltip="true"></el-table-column>
                         <el-table-column :label="$t('raid.level')" prop='level'></el-table-column>
                         <el-table-column :label="$t('raid.chunk')" prop='chunk' ></el-table-column>
                         <el-table-column :label="$t('raid.all')" prop='total' ></el-table-column>
                         <el-table-column :label="$t('raid.spare')" prop='spare_num' width="110"></el-table-column>
-                        <el-table-column :label="$t('raid.active')" prop='active_num'></el-table-column>
-                        <el-table-column :label="$t('raid.working')" prop='working_num'></el-table-column>
-                        <el-table-column :label="$t('raid.failed')" prop='failed_num'></el-table-column>
                         <el-table-column :label="$t('message.state')" prop='state'>
                             <template slot-scope="scope">
                                 <el-tooltip :content="scope.row.state" placement="bottom">
@@ -28,9 +24,10 @@
                                 </el-tooltip>
                             </template>
                         </el-table-column>
-                        <el-table-column :label="$t('message.oper')">
+                        <el-table-column :label="$t('message.oper')" width="160">
                             <template slot-scope='scope'>
                                 <el-tooltip :content="$t('message.delete')" placement="bottom"><el-button type="danger" icon="el-icon-delete" size='mini' @click='raiddelete(scope.row)'></el-button></el-tooltip>
+                                <el-tooltip :content="$t('raid.detail')" placement="bottom"><el-button type='primary' icon="el-icon-document" size="mini" @click="raiddetail(scope.row)"></el-button></el-tooltip>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -38,17 +35,14 @@
                     layout="total, sizes, prev, pager, next, jumper"
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :page-sizes="[5, 10]"
+                    :page-sizes="[10, 20]"
                     :page-size="pagesize"
-                    :total="raiddata.length" style="text-align: right;margin: 1em">
+                    :total="pageTotal" style="text-align: right;margin: 1em">
                     </el-pagination>
-              </el-col>
+              </div>
             </el-row>
-            <el-dialog :title="$t('raid.new')" :visible.sync="createraid" width='45%' center :close-on-click-modal="false" top='5em' :before-close='handleClose'>
+            <el-dialog :title="$t('raid.new1')" :visible.sync="createraid" width='45%' center :close-on-click-modal="false" top='5em' :before-close='handleClose'>
                 <el-form :model="raidform" :rules="raidrule" ref='raidform' label-width="100px" label-position="left" class='demo-ruleForm'>
-                  <!-- <el-form-item label="名称" prop='name'>   
-                        <el-input v-model="raidform.name" placeholder="请输入名称" style='width:80%'></el-input>
-                  </el-form-item> -->
                   <el-form-item :label="$t('raid.level')" prop='raidtype'>
                     <el-select v-model="raidform.raidtype" :placeholder="$t('raid.select')">
                       <el-option label="0" value="0"></el-option>
@@ -81,59 +75,46 @@
                 </el-form>
             </el-dialog>
             <el-dialog :title="$t('raid.delete')" :visible.sync='deletelog' width="30%" center :close-on-click-modal="false">
-                <p>{{$t('raid.delete')}}：{{raidtarget}}?</p>
+                <p>{{$t('raid.delete')}}：{{raidtarget.name}}?</p>
                 <el-button type="primary" @click='rdelete()'>{{$t('message.sure')}}</el-button>
                 <el-button @click='deletelog=false'>{{$t('message.cancel')}}</el-button>
+            </el-dialog>
+            <el-dialog :title="$t('raid.detail')" :visible.sync="detail" width="30%" center :close-on-click-modal="false" >
+                <el-form label-width="100px" label-position="left">
+                    <el-form-item class="ma" :label="$t('raid.name')">{{raidtarget.name}}</el-form-item>
+                    <el-form-item class="ma" :label="$t('raid.level')">{{raidtarget.level}}</el-form-item>
+                    <el-form-item class="ma" :label="$t('raid.chunk')">{{raidtarget.chunk}}</el-form-item>
+                    <el-form-item class="ma" :label="$t('raid.all')">{{raidtarget.total}}</el-form-item>
+                    <el-form-item class="ma" :label="$t('raid.use')"><span v-for='(r,index) in raidtarget.device' style='display:block' :key="index">{{r.device}} — {{$t('message.state')}}： {{r.state}}</span></el-form-item>
+                    <el-form-item class="ma" :label="$t('raid.spare')">{{raidtarget.spare_num}}</el-form-item>
+                    <el-form-item class="ma" :label="$t('raid.active')">{{raidtarget.active_num}}</el-form-item>
+                    <el-form-item class="ma" :label="$t('raid.working')">{{raidtarget.working_num}}</el-form-item>
+                    <el-form-item class="ma" :label="$t('raid.failed')">{{raidtarget.failed_num}}</el-form-item>
+                    <el-form-item class="ma" :label="$t('message.size')">{{raidtarget.size}}</el-form-item>
+                    <el-form-item class="ma" :label="$t('message.state')">{{raidtarget.state}}</el-form-item>
+                </el-form>
             </el-dialog>
         </div>
     </div>
 </template>
 <script>
-import headerBar from '../common/headerBar'
+import {change} from '../../assets/change_size'
 export default {
     name:'raid',
-    components:{headerBar},
-    data(){
-        // var nameval=(rule,val,callback)=>{
-        //     if(!val){
-        //         return callback(new Error('请输入用户名'))
-        //     }
-        //     else{
-        //         if(val.length<3){
-        //             return callback(new Error('请输入长度至少为3的用户名'))
-        //         }
-        //         callback()
-        //     }
-        // }
-        var typeval=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请选择阵列类别'))
-            }
-            else
-                callback()
-        }
-        var blockval=(rule,val,callback)=>{
-            if(!val){
-                return callback(new Error('请选择数据块大小'))
-            }
-            else
-                callback()
-        }
-        var diskval=(rule,val,callback)=>{
-            if(val.length==0){
-                return callback(new Error('请选择数据盘'))
-            }
-            else
-                callback()
-        }
-        
+    data(){        
         return{
+            getRowClass:{
+                'background-color':'#009588',
+                'color':'#fff'
+            },
             raiddata:[],
             createraid:false,
             deletelog:false,
-            pagesize: 5,
+            pagesize: 10,
             raidtarget:'',
             currpage: 1,
+            pageTotal: 0,
+            detail:false,
             raidform:{
                 // name:'',
                 raidtype:'',
@@ -146,13 +127,13 @@ export default {
                 //     {validator: nameval, trigger: 'blur'},
                 // ],
                 raidtype:[
-                    {validator: typeval, trigger: 'blur'},
+                    {required:true,message:this.$t('raid.select'), trigger: 'blur'},
                 ],
                 datablock:[
-                    {validator: blockval, trigger: 'blur'},
+                    {required:true,message:this.$t('raid.select2'), trigger: 'blur'},
                 ],
                 datadisk:[
-                    {validator: diskval, trigger: 'blur'},
+                    {required:true,message:this.$t('raid.select3'), trigger: 'blur'},
                 ],
                 
             },
@@ -162,11 +143,23 @@ export default {
     mounted(){
         this.getraid()
     },
+    watch:{
+      pageTotal(){
+        if(this.pageTotal==(this.currpage-1)*this.pagesize&& this.pageTotal!=0){
+          this.currpage-=1;
+        //   getuser(this);//获取列表数据
+        }
+      }
+    },
     methods: {
         getraid(){
             var _this=this
             this.$axios.get(this.$host+'mdadm').then(res=>{
                 _this.raiddata=res.data.data
+                _this.pageTotal=_this.raiddata.length
+                for(let i=0;i<_this.raiddata.length;i++){
+                    _this.raiddata[i].size=change(_this.raiddata[i].size)
+                }
             }).catch(error=>{
                 console.log(error)
             })
@@ -196,16 +189,14 @@ export default {
                     _this.$axios.post(this.$host+'mdadm',{level:_this.raidform.raidtype,disks:_this.raidform.datadisk,spares:_this.raidform.readydisk,chunk:_this.raidform.datablock}).then(function(res){
                         _this.createraid=false
                         if(res.data.success){
-                            $('#success_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#success_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message({
+                                message:_this.$t('message.success'),
+                                type:'success',
+                                offset:''
+                            })
                         }
                         else if(!res.data.success){
-                            $('#error_tip').css({'display':'flex'})
-                            setTimeout(function(){
-                                $('#error_tip').css({'display':'none'})
-                            },3000)
+                            _this.$message.error(res.data.msg)
                         }
                         _this.getraid()
                         _this.raidreset('raidform')
@@ -217,23 +208,21 @@ export default {
         },
         rdelete(){
             var _this=this
-            this.$axios.delete(this.$host+'mdadm',{data:{name:_this.raidtarget}}).then(res=>{
+            this.$axios.delete(this.$host+'mdadm',{data:{name:_this.raidtarget.name}}).then(res=>{
                 _this.deletelog=false
                 if(res.data.success){
-                    $('#success_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#success_tip').css({'display':'none'})
-                    },3000)
+                    _this.$message({
+                        message:this.$t('message.success'),
+                        type:'success',
+                        offset:''
+                    })
                 }
                 else if(!res.data.success){
-                    $('#error_tip').css({'display':'flex'})
-                    setTimeout(function(){
-                        $('#error_tip').css({'display':'none'})
-                    },3000)
+                    _this.$message.error(res.data.msg)
                 }
                 setTimeout(function(){
                     _this.getraid()
-                },3000)
+                },2000)
                 _this.raidreset('raidform')
             }).catch(error=>{
                 console.log(error)
@@ -244,7 +233,11 @@ export default {
         },
         raiddelete(row){
             this.deletelog=true;
-            this.raidtarget=row.name
+            this.raidtarget=row
+        },
+        raiddetail(row){
+            this.detail=true
+            this.raidtarget=row
         },
         handleClose(done){
             done();
@@ -260,5 +253,5 @@ export default {
 }
 </script>
 <style>
-
+.ma{margin-bottom:0px !important}
 </style>

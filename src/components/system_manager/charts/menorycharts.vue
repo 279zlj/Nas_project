@@ -4,14 +4,24 @@
 <script>
 export default {
     name:'menorycharts',
+    props:['alldata','time'],
     data(){
         return{
-            time:'',
-            data:''
+            // alldata:[],
+            // time:[]
         }
     },
+    watch:{
+      alldata(){
+        this.draw_mom(this.time,this.alldata)
+        return this.alldata
+      },
+      time(){
+        return this.time
+      }
+    },
     mounted(){
-        this.draw_mom(this.time,this.memory)
+        this.draw_mom(this.time,this.alldata)
     },
     methods:{
         draw_mom(time,data){
@@ -59,6 +69,6 @@ export default {
 </script>
 <style>
     #menory{
-        width: 100%;height:250px;border-radius: .3em;
+        width: 100%;height:300px;border-radius: .3em;
     }
 </style>
