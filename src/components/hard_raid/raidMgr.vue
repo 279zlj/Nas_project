@@ -27,9 +27,10 @@
                     <el-table-column :label="$t('message.state')" prop="State"></el-table-column>
                     <el-table-column :label="$t('raid.init')">
                         <template slot-scope="scope">
-                            <el-tooltip placement="top" :content="$t('raid.time')+'：'+scope.row.timend">
-                                <el-progress :percentage="scope.row.pro"/>
+                            <el-tooltip class="item" effect="dark" :content="$t('raid.time')+'?'+scope.row.timend" placement="top" v-if='scope.row.timend != 0 && scope.row.pro !=0'>
+                                <el-progress :percentage="scope.row.pro" />
                             </el-tooltip>
+                            <span v-else>{{$t('raidMgr.no')}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column :label="$t('message.oper')" width="150">
@@ -115,7 +116,7 @@ export default {
         let _this=this
         _this.inter = setInterval(function(){
             _this.getriad()
-        },1800000)
+        },900000)
     },
     destroyed(){
         clearInterval(this.inter)
