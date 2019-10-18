@@ -39,7 +39,7 @@
                 <el-select v-model="newraid.readplot" :placeholder="$t('raid.select6')">
                 <el-option :label="$t('raid.notinit')" value="nora"></el-option>
                 <el-option :label="$t('raid.quit')" value='ra'></el-option>
-                <el-option :label="$t('raid.all')" value='adra'></el-option>
+                <el-option :label="$t('raid.all1')" value='adra'></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item :label="$t('raid.write')" prop='writeplot'>

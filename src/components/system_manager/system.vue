@@ -65,10 +65,16 @@
                             </el-col>
                             <el-col :span="24">
                               <div class="rightbar">
+                                
                                 <div class="disk" v-for="(p,index) in diskdata" @click="changedisk(index,p)" :id='diskid(index)' :class="target === index?'now':''" >
-                                  <img src='../../../static/images/u130.png' class="diskimg"/>
-                                  <span class="diskfont">{{p.path}}</span>
+                                  <el-tooltip placement="top" :content="p.path">
+                                    <div>
+                                      <img src='../../../static/images/u130.png' class="diskimg"/>
+                                      <span class="diskfont">{{p.path}}</span>
+                                    </div>
+                                  </el-tooltip>
                                 </div>
+                                
                               </div>
                             </el-col>
                           </el-row>
@@ -233,6 +239,12 @@ export default {
                     itemStyle:{
                         shadowBlur:0
                     },
+                    grid:{
+                      top:'0%',
+                      left:'0%',
+                      right:'0%',
+                      bottom:'0%'
+                    },
                     outline:{
                         borderDistance:0,
                         itemStyle:{
@@ -260,16 +272,22 @@ export default {
         draw_cpu(time,data){
             var cpu=this.$echarts.init(document.getElementById('cpu'))
             var option={
-              color: ['#67C23A'],
+              color: ['#8ec6ad'],
               xAxis: [{
                 data: time,
                 type : 'category',
                 boundaryGap : false,
               },
-
               ],
+              grid:{
+                top:'5%',
+                left:'8%',
+                right:'5%',
+                bottom:'8%'
+              },
               tooltip: {
-                trigger: 'axis'
+                trigger: 'axis',
+                formatter: "{a}：{c} %"
               },
               yAxis: [{
                 name:'(%)',
@@ -281,16 +299,26 @@ export default {
                 splitLine: {show: false}
               }],
               series: [{
-                name:'CPU',
+                name:this.$t('sys.cpu_used'),
                 data: data,
                 type: 'line',
                 smooth: true,
-                areaStyle: {normal: {}},
+                areaStyle: {
+                normal: {
+                    color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: '#8ec6ad'
+                    }, {
+                        offset: 1,
+                        color: '#ffe'
+                    }])
+                }
+                },
                 itemStyle : {
                   normal : {
                     lineStyle:{
-                      color:'#67C23A',
-                      width:5
+                      color:'#8ec6ad',
+                      width:2
                     }
                   }
                 },
@@ -302,15 +330,22 @@ export default {
         draw_mom(time,data){
           var mom=this.$echarts.init(document.getElementById('menory'))
           var option={
-            color: ['#F56C6C'],
+            color: ['#d68262'],
             xAxis:[{
               data: time,
               type : 'category',
               boundaryGap : false,
             },
             ],
+            grid:{
+                top:'5%',
+                left:'8%',
+                right:'5%',
+                bottom:'8%'
+              },
             tooltip: {
-              trigger: 'axis'
+              trigger: 'axis',
+              formatter: "{a}：{c} %"
             },
             yAxis: [{
               name:'(%)',
@@ -322,16 +357,26 @@ export default {
               splitLine: {show: false}
             }],
             series: [{
-              name:'Memory',
+              name:this.$t('sys.mem_used'),
               data: data,
               type: 'line',
               smooth: true,
-              areaStyle: {normal: {}},
+              areaStyle: {
+                normal: {
+                    color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: '#d68262'
+                    }, {
+                        offset: 1,
+                        color: '#ffe'
+                    }])
+                }
+                },
               itemStyle : {
                 normal : {
                   lineStyle:{
-                    color:'#F56C6C',
-                    width:5
+                    color:'#d68262',
+                    width:2
                   }
                 }
               },
@@ -358,7 +403,7 @@ export default {
   display:inline-block;margin:.5rem 0 0 .5rem;width:5.5rem;height:1.5rem;background-color:#B3B3B3;border-radius:5px;text-align:right;overflow: hidden;white-space: nowrap;text-overflow: ellipsiss;cursor: pointer;
 }
 .diskimg{
-  margin-right:1rem;margin-left:.5rem
+  display: inline;float: left;margin:.5rem
 }
 .diskfont{
   font-size:.8rem;margin-right:.5rem;color:white

@@ -31,7 +31,7 @@
                     </el-pagination>
               </div>
             </el-row>
-            <el-dialog :title="$t('smb.new')" :visible.sync="createsmb" width="40%" center :before-close="handleClose" :close-on-click-modal="false">
+            <el-dialog :title="$t('smb.new')" :visible.sync="createsmb" width="40%" center :before-close="mhandleClose" :close-on-click-modal="false">
             <el-form :model="smbform" ref='smbform' :rules="smbrule" label-width="130px" label-position="left" class="demo-ruleForm">
               <el-form-item :label="$t('smb.name')" prop='name'>
                   <el-input v-model="smbform.name" :placeholder="$t('smb.input')" clearable></el-input>
@@ -290,9 +290,13 @@ export default {
         smbreset(formname){
             this.$refs[formname].resetFields();
         },
-        handleClose(done){
+        mhandleClose(done){
             done();
             this.$refs['smbform'].resetFields();
+        },
+        handleClose(done){
+            done();
+            this.$refs['modifydata'].resetFields();
         },
         handleCurrentChange(cpage) {
           this.currpage = cpage;

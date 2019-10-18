@@ -12,7 +12,7 @@
                         <el-tooltip :content="$t('message.add')" placement="bottom"><el-button type='primary' icon="el-icon-circle-plus" size='small' @click='createraid = true'></el-button></el-tooltip>
                     </el-row>
                     <el-table :data='raiddata.slice((currpage - 1) * pagesize, currpage * pagesize)' border  class="table_cell" :header-cell-style="getRowClass" style='width:100%;min-height:32rem'>
-                        <el-table-column :label="$t('raid.name')" prop='name' :show-overflow-tooltip="true"></el-table-column>
+                        <el-table-column :label="$t('raid.nn')" prop='name' :show-overflow-tooltip="true"></el-table-column>
                         <el-table-column :label="$t('raid.level')" prop='level'></el-table-column>
                         <el-table-column :label="$t('raid.chunk')" prop='chunk' ></el-table-column>
                         <el-table-column :label="$t('raid.all')" prop='total' ></el-table-column>
@@ -41,7 +41,7 @@
                     </el-pagination>
               </div>
             </el-row>
-            <el-dialog :title="$t('raid.new')" :visible.sync="createraid" width='45%' center :close-on-click-modal="false" top='5em' :before-close='handleClose'>
+            <el-dialog :title="$t('raid.new1')" :visible.sync="createraid" width='45%' center :close-on-click-modal="false" top='5em' :before-close='handleClose'>
                 <el-form :model="raidform" :rules="raidrule" ref='raidform' label-width="100px" label-position="left" class='demo-ruleForm'>
                   <el-form-item :label="$t('raid.level')" prop='raidtype'>
                     <el-select v-model="raidform.raidtype" :placeholder="$t('raid.select')">
