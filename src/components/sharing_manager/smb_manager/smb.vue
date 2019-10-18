@@ -280,6 +280,7 @@ export default {
                 this.smbform.gest=true
             else
                 this.smbform.gest=false
+            this.modifydata.newname = row.name
             this.smbmodi=true
         },
         deletesmb(row){

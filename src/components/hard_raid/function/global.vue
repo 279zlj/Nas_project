@@ -1,8 +1,8 @@
 <template>
     <el-dialog :title="$t('raidMgr.global')" :visible.sync="globalset" width="35%" center :before-close="handleClose" :close-on-click-modal="false">
-        <el-form :model="setdata" ref="setdata" :rules="setrule" label-width="200px" label-position="left" class="demo-ruleForm">
-            <el-form-item label="JBOD状态" prop="state">
-                <el-switch v-model="setdata.state" active-text="开启" inactive-text="关闭"></el-switch>
+        <el-form :model="setdata" ref="setdata" label-width="200px" label-position="left" class="demo-ruleForm">
+            <el-form-item :label="$t('global.status')" prop="state">
+                <el-switch v-model="setdata.state" :active-text="$t('global.open')" :inactive-text="$t('global.close')"></el-switch>
             </el-form-item>
             <el-form-item >
                 <el-button type="primary" @click="globalsubmit('setdata')">{{$t('message.submit')}}</el-button>

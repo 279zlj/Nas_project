@@ -35,7 +35,7 @@ export default {
             modata:{
                 dbuser:'',
                 dbpwd:'',
-                sid:''
+                sid: ''
             },
             datarule:{
                 dbuser:[
@@ -51,7 +51,15 @@ export default {
     watch:{
         status(val){
             this.modify=val
+        },
+        tar(val){
+            this.modata.dbuser = val.sys_user,
+            this.modata.sid = val.sid
         }
+    },
+    mounted(){
+        this.modata.dbuser = this.tar.sys_user,
+        this.modata.sid = this.tar.sid
     },
     methods:{
         handleClose(done) {
@@ -76,6 +84,7 @@ export default {
                         console.log(error);
                     });
                     this.modify=false
+                    this.$emit('changes' ,false)
                     this.backreset('modata')
                 }
             })

@@ -189,7 +189,7 @@ export default {
           this.netdata[a].info.bytes_sent=renderSize(this.netdata[a].info.bytes_sent)
           this.netdata[a].info.bytes_recv=renderSize(this.netdata[a].info.bytes_recv)
           if(this.netdata[a].iface == 'all')
-            this.netdata[a].iface = '总网速'
+            this.netdata[a].iface = this.$t('message.speed')
         }
         for(let a = 0;a<this.diskdata.length;a++){
           this.diskdata[a].info.read_bytes=renderSize(this.diskdata[a].info.read_bytes)
@@ -206,7 +206,7 @@ export default {
                 this.drawdisks(da)
               }
             }
-            this.diskdata[a].path = '总读写'
+            this.diskdata[a].path = this.$t('message.write')
           }
           
         }

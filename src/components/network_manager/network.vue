@@ -140,8 +140,12 @@ export default {
             })
         },
         modifynet(row){
-            this.modifyn=true
             this.rowdata=row
+            this.modifydata.IP = row.addr
+            this.modifydata.mask = row.netmask
+            this.modifydata.DNS = row.dns
+            this.modifyn=true
+
         },
         netsubmit(formname){
             var _this=this

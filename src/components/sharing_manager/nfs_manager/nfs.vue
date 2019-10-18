@@ -176,8 +176,10 @@ export default {
             })
         },
         modifynfs(row){
-            this.nfsmodi=true
             this.modifyreli=row
+            this.nfsform.newrank = row.info
+            this.nfsform.newaddress = row.client
+            this.nfsmodi=true
         },
         nfssubmit(formname){
             var _this=this

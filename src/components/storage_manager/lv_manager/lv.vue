@@ -209,7 +209,7 @@ export default {
             for(let i=0;i<this.pooldata.length;i++){
                 console.log(this.pooldata)
                 if(this.pooldata[i].name==row.vg_name){
-                    this.poolfree=this.pooldata[i].capacity
+                    this.poolfree=this.pooldata[i].capacity.replace('<','').replace('>','')
                 }
             }
             this.lvextend=true

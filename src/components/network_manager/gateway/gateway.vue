@@ -111,8 +111,11 @@ export default {
             })
         },
         modifygw(row){
-            this.gwdialog=true;
             this.rowdata=row
+            this.modifydata.iface = row.gw
+            this.modifydata.gwip = row.gw_addr
+            this.gwdialog=true;
+
         },
         gwsubmit(formname){
             var _this=this
@@ -159,16 +162,16 @@ export default {
             })
         },
         gwpool(row){
-            this.$confirm('删除：'+'row.interface'+'？',$t('message.tips'),{
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
+            this.$confirm(this.$t('message.delete')+'：'+row.gw+'？',this.$t('message.tips'),{
+                confirmButtonText: this.$t('message.sure'),
+                cancelButtonText: this.$t('message.cancel'),
                 type:'warning'
             }).then(()=>{
                 this.$axios.delete(this.$host+'gw',{data:{name:row.interface}}).then(res=>{
                     if(res.data.success){
                         this.$message({
                             type: 'success',
-                            message: '已完成'
+                            message: this.$t('message.success')
                         });
                     }
                     this.getdisk()

@@ -9,18 +9,18 @@
                   <el-table :data="diskdata.slice((currpage - 1)* pagesize, currpage *pagesize)" border class="table_cell" :header-cell-style="getRowClass" style="width:100%;min-height:32rem"  >
                     <el-table-column :label="$t('raid.name')" prop="EID:Slt"></el-table-column>
                     <el-table-column :label="$t('disk.capacity')" prop="Size"></el-table-column>
-                    <el-table-column label="面板位置" prop="DID"></el-table-column>
-                    <el-table-column label="磁盘分组" prop="DG"></el-table-column>
+                    <el-table-column :label="$t('raid.panel')" prop="DID"></el-table-column>
+                    <el-table-column :label="$t('raid.group')" prop="DG"></el-table-column>
                     <!-- <el-table-column :label="$t('disk.inter')" prop="port_linkspeed"></el-table-column> -->
                     <el-table-column :label="$t('message.state')" prop='State' >
                         <!-- <template slot-scope="scope">
                             <el-tag :type="{scope.row.health === '' ? 'success' : '',scope.row.health === '' ? '' : '' }" disable-transitions>{{scope.row.health}}</el-tag>
                         </template> -->
                     </el-table-column>
-                    <el-table-column label="初始化状态">
+                    <el-table-column :label="$t('raid.init')" prop="pro">
                         <template slot-scope="scope">
-                            <el-tooltip class="item" effect="dark" :content="'预计剩余时间：'+preinit[0].Estimated" placement="top">
-                                <el-progress :percentage="preinit[0].Progress" />
+                            <el-tooltip class="item" effect="dark" :content="$t('raid.time')+'：'+scope.row.timend" placement="top">
+                                <el-progress :percentage="scope.row.pro" />
                             </el-tooltip>
                         </template>
                     </el-table-column>
@@ -31,17 +31,17 @@
                                     {{$t('message.opr')}}<i class="el-icon-arrow-down el-icon--right" ></i>
                                 </el-button>
                               <el-dropdown-menu slot="dropdown">
-                                  <span  @click="startinit(scope.row)"><el-dropdown-item >开始初始化</el-dropdown-item></span>
-                                  <span  @click="stopinit(scope.row)"><el-dropdown-item >停止初始化</el-dropdown-item></span>
+                                  <span  @click="startinit(scope.row)"><el-dropdown-item >{{$t('raidMgr.startinit')}}</el-dropdown-item></span>
+                                  <span  @click="stopinit(scope.row)"><el-dropdown-item >{{$t('raidMgr.stopinit')}}</el-dropdown-item></span>
                                   <span  @click="addspare(scope.row)"><el-dropdown-item :disabled='scope.row.State == "DHS" || scope.row.State == "GHS"'>{{$t('disk.addspare')}}</el-dropdown-item></span>
                                   <span  @click="removespare(scope.row)"><el-dropdown-item :disabled='scope.row.State | rmstate'>{{$t('disk.delspare')}}</el-dropdown-item></span>
                                   <span  @click="gps(scope.row)"><el-dropdown-item >{{$t('raid.gps')}}</el-dropdown-item></span>
                                   <span  @click="stopgps(scope.row)"><el-dropdown-item >{{$t('raid.stopgps')}}</el-dropdown-item></span>
-                                  <span  @click="makestate(scope.row,'good')"><el-dropdown-item>Make good</el-dropdown-item></span>
+                                  <span  @click="makestate(scope.row,'good')"><el-dropdown-item :disabled="!(scope.row.State == 'JBOD' || scope.row.State == 'UBad')">Make good</el-dropdown-item></span>
                                   <!-- <span  @click="makestate(scope.row,'online')"><el-dropdown-item>Make online</el-dropdown-item></span>
                                   <span  @click="makestate(scope.row,'offline')"><el-dropdown-item>Make offline</el-dropdown-item></span>
                                   <span  @click="makestate(scope.row,'missing')"><el-dropdown-item>Make missing</el-dropdown-item></span> -->
-                                  <span  @click="makestate(scope.row,'jbod')"><el-dropdown-item>Make jbod</el-dropdown-item></span>
+                                  <span  @click="makestate(scope.row,'jbod')"><el-dropdown-item :disabled="scope.row.State != 'UGood'">Make jbod</el-dropdown-item></span>
                               </el-dropdown-menu>
                             </el-dropdown>
                         </template>
@@ -110,15 +110,7 @@ export default {
             },
             nowdata:[],
             dev:'',
-            preinit:[
-                {
-                "VD": 0,
-                "Operation": "INIT",
-                "Progress": 35,
-                "Status": "In progress",
-                "Estimated": "5 Hours 58 Minutes"
-                }
-            ]
+            interval:null
         }
     },
     filters:{
@@ -132,6 +124,13 @@ export default {
     },
     mounted(){
         this.getdisk()
+        let _this=this
+        _this.interval = setInterval(function(){
+            _this.getdisk()
+        },1800000)
+    },
+    destroyed(){
+        clearInterval(this.interval)
     },
     methods:{
         getdisk(){
@@ -171,7 +170,7 @@ export default {
                 if(key == 'EID:Slt')
                     this.dev = this.nowdata[key]
             }
-            this.$confirm('开始进行make '+action+'操作',this.$t('message.tips'),{
+            this.$confirm(this.$t('raidMgr.startgood')+' '+action+' '+this.$t('message.oper'),this.$t('message.tips'),{
                 confirmButtonText: this.$t('message.sure'),
                 cancelButtonText: this.$t('message.cancel'),
                 type:'warning'
@@ -231,12 +230,12 @@ export default {
                 if(key == 'EID:Slt')
                     this.dev = this.nowdata[key]
             }
-            this.$confirm('磁盘初始化',this.$t('message.tips'),{
+            this.$confirm(this.$t('raid.diskinit'),this.$t('message.tips'),{
                 confirmButtonText: this.$t('message.sure'),
                 cancelButtonText: this.$t('message.cancel'),
                 type:'warning'
             }).then(()=>{
-                this.$axios.post(this.$host+'diskinit',{device:this.dev}).then(res=>{
+                this.$axios.post(this.$host+'diskinit',{drive:this.dev}).then(res=>{
                     if(res.data.success){
                         this.$message({
                             type: 'success',
@@ -261,12 +260,12 @@ export default {
                 if(key == 'EID:Slt')
                     this.dev = this.nowdata[key]
             }
-            this.$confirm('磁盘初始化',this.$t('message.tips'),{
+            this.$confirm(this.$t('raid.stopinit'),this.$t('message.tips'),{
                 confirmButtonText: this.$t('message.sure'),
                 cancelButtonText: this.$t('message.cancel'),
                 type:'warning'
             }).then(()=>{
-                this.$axios.delete(this.$host+'diskinit',{data:{device:this.dev}}).then(res=>{
+                this.$axios.delete(this.$host+'diskinit',{data:{drive:this.dev}}).then(res=>{
                     if(res.data.success){
                         this.$message({
                             type: 'success',
